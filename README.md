@@ -1,36 +1,134 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# 🚀 Devfolio – Dynamic API-Powered Portfolio for Developers
 
-First, run the development server:
+> **Easily manage your portfolio projects, blogs, and useful links through a simple dashboard with ready-to-use APIs. Perfect for ML Engineers, Developers, and Students.**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 📢 About Devfolio
+
+**Devfolio** is a platform designed for developers who don’t want to waste time rebuilding portfolios again and again.  
+Instead, you manage your content through a simple admin panel and get ready-to-use APIs for your static sites.
+
+### 🔥 What Problem Does It Solve?
+- Developers struggle to update static portfolios.
+- ML engineers / backend devs don’t want to write React every time.
+- No more copy-pasting links or updating code for small changes.
+
+---
+
+## ✨ Key Features
+- 🔐 Admin Dashboard (with Authentication)
+- 📂 Add / Edit / Delete Projects, Blogs, and Useful Links
+- 🌐 Auto-generated APIs for integration:
+  - `/api/{username}/projects`
+  - `/api/{username}/blogs`
+  - `/api/{username}/links`
+- 📊 Basic Analytics (Visitors Count, Project Views)
+- 🔗 Public Profile Pages like `/username`
+- 🚀 Easy integration with Next.js / React static sites
+
+---
+
+## 📂 Project Structure
+```
+/pages
+  /api
+    /projects
+    /blogs
+    /links
+  /admin
+  /[username]
+/components
+/utils
+/styles
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠 Tech Stack
+- **Next.js 14 (App Router)**
+- **Tailwind CSS**
+- **MongoDB** (Mongoose)
+- **JWT Authentication**
+- **REST APIs**
+- **TypeScript (optional)**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 📥 Getting Started Locally
 
-To learn more about Next.js, take a look at the following resources:
+### 1️⃣ Clone the repository
+```bash
+git clone https://github.com/your-username/devfolio.git
+cd devfolio
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 2️⃣ Install dependencies
+```bash
+npm install
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 3️⃣ Setup environment variables
+Create `.env.local`
+```env
+MONGO_URI=your_mongo_connection_string
+JWT_SECRET=your_secret_key
+BASE_URL=http://localhost:3000
+```
 
-## Deploy on Vercel
+### 4️⃣ Run the project
+```bash
+npm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📄 Example API Response
+### `GET /api/mrravipandey/projects`
+```json
+[
+  {
+    "title": "AI Content Generator",
+    "description": "Generate SEO-optimized content automatically.",
+    "tech": ["Next.js", "AI API", "Tailwind CSS"],
+    "github": "https://github.com/...",
+    "live": "https://ai-content.xyz",
+    "image": "https://example.com/image.png"
+  }
+]
+```
+
+---
+
+## 📊 Future Roadmap
+- OAuth Login (GitHub, Google)
+- Custom Subdomains: `username.xyz.in`
+- Advanced Analytics
+- Templates for Instant Portfolio Setup
+- Dark/Light Mode
+
+---
+
+## 💡 Why Use Devfolio?
+| For         | What It Solves            |
+|-------------|----------------------------|
+| ML Engineers | Share projects dynamically, no frontend needed |
+| Students    | Easy to maintain project lists for placements  |
+| Developers  | Focus on tech, not updating static files |
+
+---
+
+## 🤝 Contributing
+Pull requests are welcome. For major changes, please open an issue first.
+
+---
+
+## 📜 License
+[MIT License](LICENSE)
+
+---
+
+## 🙌 Author
+**Ravi Pandey**  
+[Portfolio](https://imravidev.vercel.app) • [LinkedIn](https://linkedin.com/in/mrravipandee/) • [GitHub](https://github.com/mrravipandee)
