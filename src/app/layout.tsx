@@ -1,16 +1,13 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import type { Metadata } from "next";
+import { Poppins } from "next/font/google";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const poppins = Poppins({
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-poppins",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "DevSpace | Dynamic Portfolio for Developers",
@@ -36,7 +33,7 @@ export const metadata: Metadata = {
     siteName: "Devspace",
     images: [
       {
-        url: "https://xyz.in/og-image.png", 
+        url: "https://xyz.in/og-image.png",
         width: 1200,
         height: 630,
         alt: "Devfolio - Dynamic Portfolio Platform",
@@ -47,14 +44,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" className={`${poppins.variable}`}>
+      <body className={`${poppins.variable}`}>
         {children}
       </body>
     </html>
