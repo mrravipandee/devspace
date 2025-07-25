@@ -27,7 +27,7 @@ export default function VisitorsLineChart() {
     const isPositive = percentageChange >= 0;
 
     return (
-        <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg w-full max-w-3xl mx-auto">
+        <div className="bg-white p-4 sm:p-6 rounded-2xl w-full max-w-3xl mx-auto">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
                 <div>
                     <h2 className="text-lg sm:text-xl font-semibold text-primaryText">

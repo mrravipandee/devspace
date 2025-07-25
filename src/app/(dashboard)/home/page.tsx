@@ -1,4 +1,6 @@
 import BlogArticleChart from "./_components/BlogArticleChart";
+import Documentation from "./_components/Documentation";
+import HowToUse from "./_components/HowToUse";
 import SmallCards from "./_components/SmallCards";
 import VisitorsChart from "./_components/Visitors";
 
@@ -10,6 +12,8 @@ export default function page() {
           <VisitorsChart />
           <BlogArticleChart />
         </div>
+        <HowToUse />
+        <Documentation />
     </div>
   );
 }
