@@ -133,7 +133,7 @@ function Portfolio() {
         <div className="space-y-6">
           <h3 className="text-2xl font-bold text-gray-800">Example Output</h3>
           <p className="text-gray-600">
-            Here's how your <span className="font-semibold text-blue-600">dynamic data</span> will appear:
+            Here&apos;s how your <span className="font-semibold text-blue-600">dynamic data</span> will appear:
           </p>
           
           <div className="border rounded-lg overflow-hidden shadow-sm">
@@ -163,11 +163,11 @@ function Portfolio() {
           
           <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
             <h4 className="font-medium text-gray-800 mb-2">Snapshot:</h4>
-            <img 
+            {/* <img 
               src="/portfolio-snapshot.png" 
               alt="Portfolio Snapshot"
               className="rounded border shadow-sm w-full max-w-md"
-            />
+            /> */}
             <p className="text-gray-600 text-sm mt-2">Example of dynamic portfolio using our API</p>
           </div>
         </div>
