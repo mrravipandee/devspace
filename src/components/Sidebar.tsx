@@ -1,4 +1,6 @@
+"use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
     House,
     Layers,
@@ -10,6 +12,8 @@ import {
 } from "lucide-react";
 
 export default function Sidebar() {
+    const pathname = usePathname();
+
     return (
         <div className="flex flex-col h-screen bg-white/80 w-full px-2 md:px-4 py-6 md:py-8">
             {/* Logo */}
@@ -20,7 +24,6 @@ export default function Sidebar() {
                 </h1>
             </div>
 
-
             {/* Description (Only on md+) */}
             <p className="text-xs text-secondaryText text-center hidden lg:block">
                 Your development hub
@@ -30,16 +33,31 @@ export default function Sidebar() {
 
             {/* Menus */}
             <nav className="flex-1 text-secondaryText mt-4 space-y-2">
-                {menuItems.map(({ href, icon: Icon, label }) => (
-                    <Link
-                        key={label}
-                        href={href}
-                        className="flex items-center gap-3 justify-center md:justify-start px-3 md:px-4 py-2 text-sm hover:text-primaryText transition-colors duration-150 group hover:border-r-4 border-primary rounded-[4px]"
-                    >
-                        <Icon className="h-5 w-5 text-secondaryText group-hover:text-primary" />
-                        <span className="hidden md:inline font-medium text-[16px] tracking-wide">{label}</span>
-                    </Link>
-                ))}
+                {menuItems.map(({ href, icon: Icon, label }) => {
+                    const isActive = pathname === href;
+                    return (
+                        <Link
+                            key={label}
+                            href={href}
+                            className={`flex items-center gap-3 justify-center md:justify-start px-3 md:px-4 py-2 text-sm transition-colors duration-150 group rounded-[4px] ${
+                                isActive
+                                    ? "text-primaryText border-r-4 border-primary"
+                                    : "hover:text-primaryText hover:border-r-4 border-primary"
+                            }`}
+                        >
+                            <Icon 
+                                className={`h-5 w-5 ${
+                                    isActive 
+                                        ? "text-primary" 
+                                        : "text-secondaryText group-hover:text-primary"
+                                }`} 
+                            />
+                            <span className="hidden md:inline font-medium text-[16px] tracking-wide">
+                                {label}
+                            </span>
+                        </Link>
+                    );
+                })}
             </nav>
 
             {/* Bottom Card */}
