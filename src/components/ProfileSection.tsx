@@ -7,9 +7,10 @@ type ProfileSectionProps = {
         primary: string;
         secondary: string;
     };
+    username?: string;
 };
 
-const ProfileSection = ({ theme }: ProfileSectionProps) => {
+const ProfileSection = ({ theme, username }: ProfileSectionProps) => {
     return (
         <section className="mb-16">
             <div className="flex flex-col md:flex-row items-center gap-8">
@@ -31,6 +32,7 @@ const ProfileSection = ({ theme }: ProfileSectionProps) => {
                 </div>
                 <div className="w-full md:w-2/3 text-center md:text-left">
                     <h2 className="text-4xl font-bold mb-2">John Doe</h2>
+                    <p className="text-sm mb-4">@{username}</p>
                     <p className="text-xl mb-4">Frontend Developer</p>
                     <p className="mb-6 max-w-2xl">
                         Passionate about creating beautiful, functional user interfaces with React and TypeScript.
