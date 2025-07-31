@@ -1,9 +1,23 @@
+'use client';
+import { Navbar, Hero, Features, DevCard, OpenSource, Testimonials, Footer } from "@/components/LandingPage";
 
-export default function page() {
+export default function Home() {
   return (
-    <div>
-      <h1>Welcome to the DevSpace</h1>
-      <p>Explore the latest features and updates.</p>
+    <div className="min-h-screen bg-background">
+      <Navbar />
+
+      <Hero />
+
+      <Features />
+
+      <DevCard />
+
+      <OpenSource />
+
+      <Testimonials />
+
+      <Footer />
+
     </div>
   );
 }
