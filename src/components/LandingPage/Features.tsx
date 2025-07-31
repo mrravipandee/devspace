@@ -6,10 +6,10 @@ export default function Features() {
             <section className="py-20">
                 <div className="container mx-auto px-6 max-w-7xl">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-primaryText">
+                        <h2 className="text-[25px] md:text-4xl font-bold mb-4 text-primaryText">
                             Unmatchable Features. Free, Forever
                         </h2>
-                        <p className="text-xl max-w-2xl mx-auto text-secondaryText">
+                        <p className="text-[13px] md:text-xl max-w-2xl mx-auto text-secondaryText">
                             Everything you need to showcase your work without the hassle
                         </p>
                     </div>
@@ -39,7 +39,7 @@ export default function Features() {
                         ].map((feature, index) => (
                             <div
                                 key={index}
-                                className="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+                                className="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-center items-center md:justify-start md:items-start"
                             >
                                 <div className="w-12 h-12 flex items-center justify-center rounded-lg mb-4 bg-primary/10">
                                     {feature.icon}
@@ -47,7 +47,7 @@ export default function Features() {
                                 <h3 className="text-xl font-semibold mb-2 text-primaryText">
                                     {feature.title}
                                 </h3>
-                                <p className="text-secondaryText">{feature.description}</p>
+                                <p className="text-secondaryText text-center md:text-start text-[12px] md:text-base">{feature.description}</p>
                             </div>
                         ))}
                     </div>

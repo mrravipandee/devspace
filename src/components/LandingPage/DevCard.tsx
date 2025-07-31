@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { Twitter, Github, Linkedin } from "lucide-react";
+import { Twitter, Github, Linkedin, MessageSquarePlus } from "lucide-react";
+import Link from "next/link";
 
 
 export default function DevCard() {
@@ -19,8 +20,8 @@ export default function DevCard() {
                                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                                        <button className="text-white font-medium bg-primary/90 hover:bg-primary px-4 py-2 rounded-lg transition-all transform translate-y-2 group-hover:translate-y-0">
-                                            View Portfolio
+                                        <button  className="text-white font-medium rounded-lg transition-all transform translate-y-2 group-hover:translate-y-0">
+                                            Ravi Pandey @Dev
                                         </button>
                                     </div>
 
@@ -31,17 +32,17 @@ export default function DevCard() {
                             <div className="w-full md:w-2/3 p-8 md:p-12">
                                 <div className="flex flex-col h-full justify-center">
                                     <div className="mb-6">
-                                        <h2 className="text-4xl font-bold text-gray-900">
+                                        <h2 className="text-3xl md:text-4xl font-bold text-primaryText">
                                             Ravi Pandey
-                                            <span className="block text-primary text-xl font-normal mt-1">@mrravipandee</span>
+                                            <span className="block text-primary text-[16px] md:text-xl font-normal mt-[-4px] md:mt-1">@mrravipandee</span>
                                         </h2>
                                         <div className="flex items-center mt-4">
                                             <div className="w-3 h-3 rounded-full bg-green-400 mr-2"></div>
-                                            <span className="text-sm text-gray-600">Available for freelance work</span>
+                                            <span className="text-[12px] md:text-sm text-gray-600">Available for freelance work</span>
                                         </div>
                                     </div>
 
-                                    <p className="text-lg mb-8 text-gray-600 leading-relaxed border-l-4 border-primary/30 pl-4">
+                                    <p className="text-[13px] md:text-lg mb-8 text-gray-600 leading-relaxed border-l-4 border-primary/30 pl-4">
                                         Full-stack developer passionate about creating tools that make developer&apos;s lives easier.
                                         I built DevSpace to help fellow developers showcase their work without the hassle of
                                         maintaining complex portfolios.
@@ -51,7 +52,7 @@ export default function DevCard() {
                                         {['React', 'Next.js', 'Node.js', 'Express.js', 'MongoDB', 'Tailwind CSS', 'TypeScript'].map((skill) => (
                                             <span
                                                 key={skill}
-                                                className="px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium hover:bg-primary/20 transition-colors cursor-default"
+                                                className="px-[10px] md:px-4 py-1.5 bg-primary/10 text-primary rounded-full text-[10px] md:text-sm font-medium hover:bg-primary/20 transition-colors cursor-default"
                                             >
                                                 {skill}
                                             </span>
@@ -83,28 +84,13 @@ export default function DevCard() {
                                             </a>
                                         </div>
 
-                                        <a
-                                            href="#"
-                                            className="px-6 py-3 bg-gradient-to-r from-primary to-primary-dark text-white rounded-lg hover:from-primary-dark hover:to-primary transition-all font-medium flex items-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                                        <Link
+                                            href="https://imravidev.vercel.app/about" target="_blank"
+                                            className="px-6 py-3 bg-primary text-white rounded-lg hover:from-primary-dark hover:to-primary transition-all font-medium flex items-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
                                         >
                                             <span>Contact Me</span>
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="16"
-                                                height="16"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeWidth="2"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                className="animate-bounce-horizontal"
-                                            >
-                                                <path d="M4 4h16v16H4z"></path>
-                                                <path d="M12 8v8"></path>
-                                                <path d="M8 12h8"></path>
-                                            </svg>
-                                        </a>
+                                            <MessageSquarePlus className="animate-bounce-horizontal" />
+                                        </Link>
                                     </div>
                                 </div>
                             </div>
