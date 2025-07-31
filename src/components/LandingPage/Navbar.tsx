@@ -26,8 +26,9 @@ export default function Navbar() {
 
     // Close menu when clicking outside
     useEffect(() => {
-        const handleClickOutside = (event: any) => {
-            if (menuOpen && !event.target.closest('.navbar-container')) {
+        const handleClickOutside = (event: MouseEvent) => {
+            const target = event.target as HTMLElement;
+            if (menuOpen && !target.closest('.navbar-container')) {
                 setMenuOpen(false);
             }
         };
@@ -36,6 +37,7 @@ export default function Navbar() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [menuOpen]);
 
+
     // Check if link is active
     const isActive = (href: string) => {
         return pathname === href;
@@ -43,8 +45,8 @@ export default function Navbar() {
 
     return (
         <nav className={`fixed top-4 left-4 right-4 mx-auto max-w-[1800px] rounded-xl z-50 transition-all duration-300 ${scrolled
-                ? 'bg-white/70 backdrop-blur-md shadow-lg border border-white/20'
-                : 'bg-white/30 backdrop-blur-sm border border-white/10'
+            ? 'bg-white/70 backdrop-blur-md shadow-lg border border-white/20'
+            : 'bg-white/30 backdrop-blur-sm border border-white/10'
             } hover:bg-white/50 hover:backdrop-blur-md hover:border-white/30 transition-all duration-300`}>
             <div className="container mx-auto px-6 py-3 navbar-container">
                 <div className="flex justify-between items-center">
