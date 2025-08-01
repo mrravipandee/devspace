@@ -4,20 +4,36 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        // Simulate login
-        setTimeout(() => {
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert('Login successful.');
+                router.push('/home');
+            } else {
+                alert(data?.msg || 'Invalid credentials');
+            }
+        } catch (error) {
+            alert('Login failed.');
+        } finally {
             setIsLoading(false);
-        }, 2000);
+        }
     };
 
     return (
@@ -38,9 +54,9 @@ export default function LoginPage() {
                         >
                         </motion.div>
                         <div className="text-start mb-4">
-                        <h2 className="text-xl sm:text-2xl font-bold text-primaryText mb-2">Sign In</h2>
-                        <p className="text-secondaryText text-[11px] sm:text-[13px]">Enter your credentials to access your account</p>
-                    </div>
+                            <h2 className="text-xl sm:text-2xl font-bold text-primaryText mb-2">Sign In</h2>
+                            <p className="text-secondaryText text-[11px] sm:text-[13px]">Enter your credentials to access your account</p>
+                        </div>
                     </div>
 
                     {/* Google Login */}

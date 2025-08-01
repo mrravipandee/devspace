@@ -3,6 +3,7 @@ import { Github } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 
 export default function SignupPage() {
@@ -11,15 +12,35 @@ export default function SignupPage() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (password !== confirmPassword) {
+            alert('Passwords do not match.');
+            return;
+        }
         setIsLoading(true);
-        // Simulate signup
-        setTimeout(() => {
+        try {
+            const res = await fetch('/api/auth/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: username, email, password }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert('Account created successfully.');
+                router.push('/login');
+            } else {
+                alert(data?.msg || 'Something went wrong');
+            }
+        } catch (error) {
+            alert('Signup failed.');
+        } finally {
             setIsLoading(false);
-        }, 2000);
+        }
     };
+
 
     return (
         <div className="flex flex-col lg:flex-row-reverse min-h-screen">
