@@ -43,3 +43,17 @@ html, body {
 .animate-scale-in {
   animation: scale-in 0.2s ease-out forwards;
 }
+
+
+/* Landing page card - Open source */
+.openSource::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 150px;
+  z-index: 1;
+  background: var(--white);
+  clip-path: ellipse(130vw 100vw at 50vw 100vw);
+}

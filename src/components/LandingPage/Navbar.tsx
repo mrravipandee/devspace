@@ -62,35 +62,35 @@ export default function Navbar() {
                     <div className="hidden md:flex items-center space-x-8">
                         <Link
                             href="#features"
-                            className={`relative text-gray-700 hover:text-purple-600 transition-colors font-medium group ${isActive('/features') ? 'text-purple-600' : ''}`}
+                            className={`relative text-primary/80 hover:text-primary transition-colors font-medium group ${isActive('/features') ? 'text-primary' : ''}`}
                         >
                             Features
-                            <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-purple-600 transition-all duration-300 group-hover:w-full ${isActive('/features') ? 'w-full' : ''}`}></span>
+                            <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full ${isActive('/features') ? 'w-full' : ''}`}></span>
                         </Link>
                         <Link
                             href="#pricing"
-                            className={`relative text-gray-700 hover:text-purple-600 transition-colors font-medium group ${isActive('/pricing') ? 'text-purple-600' : ''}`}
+                            className={`relative text-primary/80 hover:text-primary transition-colors font-medium group ${isActive('/pricing') ? 'text-primary' : ''}`}
                         >
                             Pricing
-                            <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-purple-600 transition-all duration-300 group-hover:w-full ${isActive('/pricing') ? 'w-full' : ''}`}></span>
+                            <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full ${isActive('/pricing') ? 'w-full' : ''}`}></span>
                         </Link>
                         <Link
                             href="#faq"
-                            className={`relative text-gray-700 hover:text-purple-600 transition-colors font-medium group ${isActive('/faq') ? 'text-purple-600' : ''}`}
+                            className={`relative text-primary/80 hover:text-primary transition-colors font-medium group ${isActive('/faq') ? 'text-primary' : ''}`}
                         >
                             FAQ
-                            <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-purple-600 transition-all duration-300 group-hover:w-full ${isActive('/faq') ? 'w-full' : ''}`}></span>
+                            <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full ${isActive('/faq') ? 'w-full' : ''}`}></span>
                         </Link>
                         <div className="flex items-center space-x-4 ml-4">
                             <Link
                                 href="/login"
-                                className={`px-4 py-2 border rounded-lg transition-colors font-medium ${isActive('/login') ? 'bg-purple-600 text-white border-purple-600' : 'border-purple-600 text-purple-600 hover:bg-purple-50'}`}
+                                className={`px-4 py-2 border rounded-lg transition-colors font-medium ${isActive('/login') ? 'bg-primary/80 text-white border-primary' : 'border-primary text-primary/80 hover:bg-primary/30'}`}
                             >
                                 Login
                             </Link>
                             <Link
                                 href="/signup"
-                                className={`px-4 py-2 bg-gradient-to-r rounded-lg transition-all shadow-lg font-medium ${isActive('/signup') ? 'from-purple-700 to-indigo-700' : 'from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700'} text-white hover:shadow-purple-300/50`}
+                                className={`px-4 py-2 rounded-lg transition-all font-medium ${isActive('/signup') ? 'bg-primary' : 'bg-primary/80 hover:bg-primary'} text-white`}
                             >
                                 Sign Up
                             </Link>
