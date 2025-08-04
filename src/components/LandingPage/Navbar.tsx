@@ -53,7 +53,7 @@ export default function Navbar() {
                     {/* Logo */}
                     <Link
                         href="/"
-                        className="text-[1.5rem] font-bold text-primary hover:text-primary/90 transition-colors flex items-center logo"
+                        className="text-[1.5rem] font-bold text-primary/80 transition-colors flex items-center logo"
                     >
                         Dev <span className='text-primaryText ml-[2px]'>Space</span>
                     </Link>
@@ -104,7 +104,7 @@ export default function Navbar() {
                         aria-label="Toggle menu"
                     >
                         {menuOpen ? (
-                            <X size={24} className="text-purple-600" />
+                            <X size={24} className="text-primary" />
                         ) : (
                             <Menu size={24} />
                         )}
@@ -116,21 +116,21 @@ export default function Navbar() {
                     <div className="flex flex-col space-y-4 px-2">
                         <Link
                             href="#features"
-                            className={`text-gray-700 transition-colors font-medium py-2 px-3 rounded-lg ${isActive('/features') ? 'bg-purple-50 text-purple-600' : 'hover:bg-purple-50 hover:text-purple-600'}`}
+                            className={`text-gray-700 transition-colors font-medium py-2 px-3 rounded-lg ${isActive('/features') ? 'bg-purple-50 text-primary/80' : 'hover:bg-purple-50 hover:text-primary'}`}
                             onClick={() => setMenuOpen(false)}
                         >
                             Features
                         </Link>
                         <Link
                             href="#pricing"
-                            className={`text-gray-700 transition-colors font-medium py-2 px-3 rounded-lg ${isActive('/pricing') ? 'bg-purple-50 text-purple-600' : 'hover:bg-purple-50 hover:text-purple-600'}`}
+                            className={`text-gray-700 transition-colors font-medium py-2 px-3 rounded-lg ${isActive('/pricing') ? 'bg-purple-50 text-primary/80' : 'hover:bg-purple-50 hover:text-primary'}`}
                             onClick={() => setMenuOpen(false)}
                         >
                             Pricing
                         </Link>
                         <Link
                             href="#faq"
-                            className={`text-gray-700 transition-colors font-medium py-2 px-3 rounded-lg ${isActive('/faq') ? 'bg-purple-50 text-purple-600' : 'hover:bg-purple-50 hover:text-purple-600'}`}
+                            className={`text-gray-700 transition-colors font-medium py-2 px-3 rounded-lg ${isActive('/faq') ? 'bg-purple-50 text-primary/80' : 'hover:bg-purple-50 hover:text-primary'}`}
                             onClick={() => setMenuOpen(false)}
                         >
                             FAQ
@@ -138,14 +138,14 @@ export default function Navbar() {
                         <div className="flex flex-col space-y-3 pt-2 border-t border-gray-100 mt-2">
                             <Link
                                 href="/login"
-                                className={`text-center px-4 py-2 border rounded-lg transition-colors font-medium ${isActive('/login') ? 'bg-purple-600 text-white border-purple-600' : 'border-purple-600 text-purple-600 hover:bg-purple-50'}`}
+                                className={`px-4 py-2 border rounded-lg transition-colors font-medium ${isActive('/login') ? 'bg-primary/80 text-white border-primary' : 'border-primary text-primary/80 hover:bg-primary/30'}`}
                                 onClick={() => setMenuOpen(false)}
                             >
                                 Login
                             </Link>
                             <Link
                                 href="/signup"
-                                className={`text-center px-4 py-2 bg-gradient-to-r rounded-lg transition-all font-medium ${isActive('/signup') ? 'from-purple-700 to-indigo-700' : 'from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700'} text-white`}
+                                className={`px-4 py-2 rounded-lg transition-all font-medium ${isActive('/signup') ? 'bg-primary' : 'bg-primary/80 hover:bg-primary'} text-white`}
                                 onClick={() => setMenuOpen(false)}
                             >
                                 Sign Up

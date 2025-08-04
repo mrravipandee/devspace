@@ -12,9 +12,9 @@ export default function DevCard() {
                         <div className="flex flex-col md:flex-row">
                             {/* Image Section */}
                             <div className="w-full md:w-1/3 p-8 flex justify-center md:justify-end relative">
-                                <div className="relative aspect-square w-64 h-64 rounded-2xl overflow-hidden border-4 border-primary/20 shadow-lg group">
+                                <div className="relative aspect-square w-64 h-64 md:h-full rounded-2xl overflow-hidden border-4 border-primary/20 shadow-lg group">
                                     <Image
-                                        src="/devspace_dev.jpeg"
+                                        src="/img_dev.jpeg"
                                         alt="Ravi Pandey"
                                         fill
                                         className="object-cover transition-transform duration-500 group-hover:scale-105"

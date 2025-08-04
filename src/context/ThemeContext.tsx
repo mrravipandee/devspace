@@ -29,24 +29,32 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
             text: darkMode ? 'text-purple-200' : 'text-purple-900',
             primary: darkMode ? 'bg-purple-800' : 'bg-purple-600',
             secondary: darkMode ? 'bg-purple-900' : 'bg-purple-500',
+            gradientFrom: darkMode ? 'from-purple-700' : 'from-purple-500',
+            gradientTo: darkMode ? 'to-pink-700' : 'to-pink-500'
         },
         orange: {
             bg: darkMode ? 'bg-gray-900' : 'bg-orange-50',
             text: darkMode ? 'text-orange-200' : 'text-orange-900',
             primary: darkMode ? 'bg-orange-800' : 'bg-orange-600',
             secondary: darkMode ? 'bg-orange-900' : 'bg-orange-500',
+            gradientFrom: darkMode ? 'from-orange-700' : 'from-orange-500',
+            gradientTo: darkMode ? 'to-amber-700' : 'to-amber-500'
         },
         green: {
             bg: darkMode ? 'bg-gray-900' : 'bg-green-50',
             text: darkMode ? 'text-green-200' : 'text-green-900',
             primary: darkMode ? 'bg-green-800' : 'bg-green-600',
             secondary: darkMode ? 'bg-green-900' : 'bg-green-500',
+            gradientFrom: darkMode ? 'from-green-700' : 'from-green-500',
+            gradientTo: darkMode ? 'to-emerald-700' : 'to-emerald-500'
         },
         'blue-purple': {
             bg: darkMode ? 'bg-gray-900' : 'bg-indigo-50',
             text: darkMode ? 'text-indigo-200' : 'text-indigo-900',
             primary: darkMode ? 'bg-indigo-800' : 'bg-indigo-600',
             secondary: darkMode ? 'bg-indigo-900' : 'bg-indigo-500',
+            gradientFrom: darkMode ? 'from-indigo-700' : 'from-indigo-500',
+            gradientTo: darkMode ? 'to-purple-700' : 'to-purple-500'
         },
     };
 
@@ -80,3 +88,6 @@ export const useTheme = () => {
     }
     return context;
 };
+
+// Export the Theme type for use in components
+export type { Theme };
