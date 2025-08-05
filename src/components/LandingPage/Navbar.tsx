@@ -53,7 +53,7 @@ export default function Navbar() {
                     {/* Logo */}
                     <Link
                         href="/"
-                        className="text-[1.5rem] font-bold text-primary/80 transition-colors flex items-center logo"
+                        className="text-[1.5rem] font-bold text-primary_landing/80 transition-colors flex items-center logo"
                     >
                         Dev <span className='text-primaryText ml-[2px]'>Space</span>
                     </Link>
@@ -62,35 +62,35 @@ export default function Navbar() {
                     <div className="hidden md:flex items-center space-x-8">
                         <Link
                             href="#features"
-                            className={`relative text-primary/80 hover:text-primary transition-colors font-medium group ${isActive('/features') ? 'text-primary' : ''}`}
+                            className={`relative text-primary_landing/80 hover:text-primary_landing transition-colors font-medium group ${isActive('/features') ? 'text-primary_landing_landing' : ''}`}
                         >
                             Features
-                            <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full ${isActive('/features') ? 'w-full' : ''}`}></span>
+                            <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-primary_landing transition-all duration-300 group-hover:w-full ${isActive('/features') ? 'w-full' : ''}`}></span>
                         </Link>
                         <Link
                             href="#pricing"
-                            className={`relative text-primary/80 hover:text-primary transition-colors font-medium group ${isActive('/pricing') ? 'text-primary' : ''}`}
+                            className={`relative text-primary_landing/80 hover:text-primary_landing transition-colors font-medium group ${isActive('/pricing') ? 'text-primary_landing' : ''}`}
                         >
                             Pricing
-                            <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full ${isActive('/pricing') ? 'w-full' : ''}`}></span>
+                            <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-primary_landing transition-all duration-300 group-hover:w-full ${isActive('/pricing') ? 'w-full' : ''}`}></span>
                         </Link>
                         <Link
                             href="#faq"
-                            className={`relative text-primary/80 hover:text-primary transition-colors font-medium group ${isActive('/faq') ? 'text-primary' : ''}`}
+                            className={`relative text-primary_landing/80 hover:text-primary_landing transition-colors font-medium group ${isActive('/faq') ? 'text-primary_landing' : ''}`}
                         >
                             FAQ
-                            <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full ${isActive('/faq') ? 'w-full' : ''}`}></span>
+                            <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-primary_landing transition-all duration-300 group-hover:w-full ${isActive('/faq') ? 'w-full' : ''}`}></span>
                         </Link>
                         <div className="flex items-center space-x-4 ml-4">
                             <Link
                                 href="/login"
-                                className={`px-4 py-2 border rounded-lg transition-colors font-medium ${isActive('/login') ? 'bg-primary/80 text-white border-primary' : 'border-primary text-primary/80 hover:bg-primary/30'}`}
+                                className={`px-4 py-2 border rounded-lg transition-colors font-medium ${isActive('/login') ? 'bg-primary_landing/80 text-white border-primary_landing' : 'border-primary_landing text-primary_landing/80 hover:bg-primary_landing/30'}`}
                             >
                                 Login
                             </Link>
                             <Link
                                 href="/signup"
-                                className={`px-4 py-2 rounded-lg transition-all font-medium ${isActive('/signup') ? 'bg-primary' : 'bg-primary/80 hover:bg-primary'} text-white`}
+                                className={`px-4 py-2 rounded-lg transition-all font-medium ${isActive('/signup') ? 'bg-primary_landing' : 'bg-primary_landing/80 hover:bg-primary_landing'} text-white`}
                             >
                                 Sign Up
                             </Link>
@@ -104,7 +104,7 @@ export default function Navbar() {
                         aria-label="Toggle menu"
                     >
                         {menuOpen ? (
-                            <X size={24} className="text-primary" />
+                            <X size={24} className="text-primary_landing" />
                         ) : (
                             <Menu size={24} />
                         )}
@@ -116,21 +116,21 @@ export default function Navbar() {
                     <div className="flex flex-col space-y-4 px-2">
                         <Link
                             href="#features"
-                            className={`text-gray-700 transition-colors font-medium py-2 px-3 rounded-lg ${isActive('/features') ? 'bg-purple-50 text-primary/80' : 'hover:bg-purple-50 hover:text-primary'}`}
+                            className={`text-gray-700 transition-colors font-medium py-2 px-3 rounded-lg ${isActive('/features') ? 'bg-purple-50 text-primary_landing/80' : 'hover:bg-purple-50 hover:text-primary_landing'}`}
                             onClick={() => setMenuOpen(false)}
                         >
                             Features
                         </Link>
                         <Link
                             href="#pricing"
-                            className={`text-gray-700 transition-colors font-medium py-2 px-3 rounded-lg ${isActive('/pricing') ? 'bg-purple-50 text-primary/80' : 'hover:bg-purple-50 hover:text-primary'}`}
+                            className={`text-gray-700 transition-colors font-medium py-2 px-3 rounded-lg ${isActive('/pricing') ? 'bg-purple-50 text-primary_landing/80' : 'hover:bg-purple-50 hover:text-primary_landing'}`}
                             onClick={() => setMenuOpen(false)}
                         >
                             Pricing
                         </Link>
                         <Link
                             href="#faq"
-                            className={`text-gray-700 transition-colors font-medium py-2 px-3 rounded-lg ${isActive('/faq') ? 'bg-purple-50 text-primary/80' : 'hover:bg-purple-50 hover:text-primary'}`}
+                            className={`text-gray-700 transition-colors font-medium py-2 px-3 rounded-lg ${isActive('/faq') ? 'bg-purple-50 text-primary_landing/80' : 'hover:bg-purple-50 hover:text-primary_landing'}`}
                             onClick={() => setMenuOpen(false)}
                         >
                             FAQ
@@ -138,14 +138,14 @@ export default function Navbar() {
                         <div className="flex flex-col space-y-3 pt-2 border-t border-gray-100 mt-2">
                             <Link
                                 href="/login"
-                                className={`px-4 py-2 border rounded-lg transition-colors font-medium ${isActive('/login') ? 'bg-primary/80 text-white border-primary' : 'border-primary text-primary/80 hover:bg-primary/30'}`}
+                                className={`px-4 py-2 border rounded-lg transition-colors font-medium ${isActive('/login') ? 'bg-primary_landing/80 text-white border-primary_landing' : 'border-primary_landing text-primary_landing/80 hover:bg-primary_landing/30'}`}
                                 onClick={() => setMenuOpen(false)}
                             >
                                 Login
                             </Link>
                             <Link
                                 href="/signup"
-                                className={`px-4 py-2 rounded-lg transition-all font-medium ${isActive('/signup') ? 'bg-primary' : 'bg-primary/80 hover:bg-primary'} text-white`}
+                                className={`px-4 py-2 rounded-lg transition-all font-medium ${isActive('/signup') ? 'bg-primary_landing' : 'bg-primary_landing/80 hover:bg-primary_landing'} text-white`}
                                 onClick={() => setMenuOpen(false)}
                             >
                                 Sign Up

@@ -117,14 +117,14 @@ export default function BlogPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-gray-800">My Blog</h2>
-            <p className="text-gray-600 mt-2 max-w-2xl">
+            <h2 className="text-3xl font-bold text-primaryText">My Blog</h2>
+            <p className="text-secondaryText mt-2 max-w-2xl">
               Welcome to my blog! Here you&apos;ll find articles on web development, design, and more.
             </p>
           </div>
           <button
             onClick={handleCreateNew}
-            className="bg-blue-600 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-blue-700 transition-colors whitespace-nowrap shadow-sm hover:shadow-md"
+            className="bg-primary text-white px-5 py-2.5 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-primary/90 transition-colors whitespace-nowrap"
           >
             <PlusCircle className="w-5 h-5" />
             Create New Post
@@ -149,11 +149,11 @@ export default function BlogPage() {
                 )}
                 <div className="flex-1 p-6">
                   <div className="flex justify-between items-start">
-                    <h3 className="text-xl font-bold text-gray-800 mb-2">{post.title}</h3>
+                    <h3 className="text-xl font-bold text-primaryText mb-2">{post.title}</h3>
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleEdit(post)}
-                        className="text-gray-500 hover:text-blue-600 p-1 rounded-full hover:bg-gray-100"
+                        className="text-secondaryText hover:text-primary p-1 rounded-full hover:bg-gray-100"
                         title="Edit post"
                         aria-label="Edit post"
                       >
@@ -161,7 +161,7 @@ export default function BlogPage() {
                       </button>
                       <button
                         onClick={() => handleDelete(post.id)}
-                        className="text-gray-500 hover:text-red-600 p-1 rounded-full hover:bg-gray-100"
+                        className="text-secondaryText hover:text-red-600 p-1 rounded-full hover:bg-gray-100"
                         title="Delete post"
                         aria-label="Delete post"
                       >
@@ -174,7 +174,7 @@ export default function BlogPage() {
                     {post.tags.map(tag => (
                       <span 
                         key={tag} 
-                        className="bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full"
+                        className="bg-background text-primary text-xs px-3 py-1 rounded-full"
                       >
                         #{tag}
                       </span>
@@ -184,7 +184,7 @@ export default function BlogPage() {
                     <span>
                       {post.lastUpdated ? `Updated: ${post.lastUpdated}` : `Published: ${post.publishedDate}`}
                     </span>
-                    <button className="text-blue-600 hover:text-blue-800 font-medium">
+                    <button className="text-primary hover:text-primary/90 font-medium">
                       Read more →
                     </button>
                   </div>
@@ -198,11 +198,11 @@ export default function BlogPage() {
           <div className="bg-white rounded-xl shadow-sm p-8 text-center">
             <div className="mx-auto max-w-md">
               <ImageIcon className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No blog posts yet</h3>
-              <p className="text-gray-500 mb-6">Get started by creating your first blog post.</p>
+              <h3 className="text-lg font-medium text-primaryText mb-2">No blog posts yet</h3>
+              <p className="text-secondaryText mb-6">Get started by creating your first blog post.</p>
               <button
                 onClick={handleCreateNew}
-                className="bg-blue-600 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-blue-700 transition-colors mx-auto"
+                className="bg-primary text-white px-5 py-2.5 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-primary/90 transition-colors mx-auto"
               >
                 <PlusCircle className="w-5 h-5" />
                 Create First Post
@@ -218,7 +218,7 @@ export default function BlogPage() {
           <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">
+                <h2 className="text-2xl font-bold text-primaryText">
                   {currentPost?.id ? 'Edit Blog Post' : 'Create New Blog Post'}
                 </h2>
                 <button
@@ -342,13 +342,13 @@ export default function BlogPage() {
                       setIsModalOpen(false);
                       setCurrentPost(null);
                     }}
-                    className="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                    className="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+                    className="px-5 py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors shadow-sm"
                   >
                     {currentPost?.id ? 'Update Post' : 'Publish Post'}
                   </button>

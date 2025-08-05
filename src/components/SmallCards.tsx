@@ -6,7 +6,7 @@ export default function SmallCards() {
             {menuItems.map(({ title, description, icon: Icon, showDate }, idx) => (
                 <div
                     key={idx}
-                    className="bg-white rounded-xl p-4 transition-all duration-300 hover:shadow-md cursor-pointer flex flex-col h-full border border-gray-100 hover:border-gray-200 group"
+                    className="bg-white rounded-xl p-4 cursor-pointer flex flex-col h-full border border-gray-100 hover:border-gray-200 group"
                 >
                     <div className="flex justify-between items-start gap-3">
                         <div className="flex items-start gap-3">
@@ -44,22 +44,22 @@ export default function SmallCards() {
 // Helper functions for dynamic styling
 function getIconBgColor(title: string) {
     const colors: Record<string, string> = {
-        'Visitors': 'bg-purple-100',
-        'Projects': 'bg-blue-100',
-        'Blog and Articles': 'bg-green-100',
-        'Fourth Card': 'bg-orange-100'
+        'Visitors': 'bg-[#F4F7FE]',
+        'Projects': 'bg-[#F4F7FE]',
+        'Blog and Articles': 'bg-[#F4F7FE]',
+        'Fourth Card': 'bg-[#F4F7FE]'
     };
-    return colors[title] || 'bg-gray-100';
+    return colors[title] || 'bg-[#F4F7FE]';
 }
 
 function getIconColor(title: string) {
     const colors: Record<string, string> = {
-        'Visitors': 'text-purple-600',
-        'Projects': 'text-blue-600',
-        'Blog and Articles': 'text-green-600',
-        'Fourth Card': 'text-orange-600'
+        'Visitors': 'text-primary',
+        'Projects': 'text-primary',
+        'Blog and Articles': 'text-primary',
+        'Fourth Card': 'text-primary'
     };
-    return colors[title] || 'text-gray-600';
+    return colors[title] || 'text-primary';
 }
 
 const menuItems = [

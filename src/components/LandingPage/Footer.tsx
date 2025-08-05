@@ -3,7 +3,7 @@ import { Twitter, Github, Linkedin } from "lucide-react";
 export default function Footer() {
     return (
         <div>
-            <footer className="py-12 px-6 bg-[#174871]">
+            <footer className="py-12 px-6 bg-primary_landing">
                 <div className="container mx-auto max-w-7xl">
                     <div className="flex flex-col md:flex-row justify-between items-center md:items-start gap-12">
                         {/* Left Side */}
@@ -59,7 +59,9 @@ export default function Footer() {
                         </div>
                     </div>
 
-                    <div className="border-t border-primary/30 mt-12 pt-8 text-center text-sm text-lightText">
+                    
+
+                    <div className="border-t border-primary_landing/30 mt-12 pt-8 text-center text-sm text-lightText">
                         <p>© {new Date().getFullYear()} DevSpace. All rights reserved.</p>
                     </div>
                 </div>

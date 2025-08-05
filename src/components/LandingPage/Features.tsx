@@ -19,29 +19,29 @@ export default function Features() {
                             {
                                 title: "Instant Setup",
                                 description: "Get your portfolio live in minutes with zero configuration",
-                                icon: <Zap size={24} className="text-primary" />
+                                icon: <Zap size={24} className="text-primary_landing" />
                             },
                             {
                                 title: "No Backend Needed",
                                 description: "All your content updates happen without server maintenance",
-                                icon: <Monitor size={24} className="text-primary" />
+                                icon: <Monitor size={24} className="text-primary_landing" />
                             },
                             {
                                 title: "Custom Domains",
                                 description: "Connect your own domain for a professional touch",
-                                icon: <Globe size={24} className="text-primary" />
+                                icon: <Globe size={24} className="text-primary_landing" />
                             },
                             {
                                 title: "Analytics Included",
                                 description: "Track your visitors with built-in analytics dashboard",
-                                icon: <BarChart2 size={24} className="text-primary" />
+                                icon: <BarChart2 size={24} className="text-primary_landing" />
                             }
                         ].map((feature, index) => (
                             <div
                                 key={index}
                                 className="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow flex flex-col justify-center items-center md:justify-start md:items-start"
                             >
-                                <div className="w-12 h-12 flex items-center justify-center rounded-lg mb-4 bg-primary/10">
+                                <div className="w-12 h-12 flex items-center justify-center rounded-lg mb-4 bg-primary_landing/10">
                                     {feature.icon}
                                 </div>
                                 <h3 className="text-xl font-semibold mb-2 text-primaryText">

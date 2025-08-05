@@ -44,7 +44,7 @@ export default function Hero() {
                         transition={{ duration: 0.5 }}
                         className="flex flex-col items-center mb-10 mt-12"
                     >
-                        <div className="flex text-primary gap-1 mb-3">
+                        <div className="flex text-primary_landing gap-1 mb-3">
                             {[...Array(4)].map((_, i) => (
                                 <Star key={i} size={20} fill="currentColor" />
                             ))}
@@ -60,7 +60,7 @@ export default function Hero() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.1 }}
-                        className="text-[25px] md:text-6xl font-bold mb-6 max-w-4xl leading-tight text-primaryText"
+                        className="text-[25px] md:text-6xl font-bold mb-6 max-w-4xl leading-tight text-primary_landingText"
                     >
                         Transform your static portfolio into a dynamic showcase in minutes
                     </motion.h1>
@@ -84,13 +84,13 @@ export default function Hero() {
                     >
                         <button
                             onClick={() => router.push('/signup')}
-                            className="px-8 py-3 bg-primary/80 text-white rounded-lg hover:bg-primary/90 transition-colors font-medium shadow-lg hover:shadow-primary/30"
+                            className="px-8 py-3 bg-primary_landing/80 text-white rounded-lg hover:bg-primary_landing/90 transition-colors font-medium shadow-lg hover:shadow-primary_landing/30"
                         >
                             Get Started Free
                         </button>
                         <button
                             onClick={() => setIsModalOpen(true)}
-                            className="px-8 py-3 border border-primary text-primary rounded-lg hover:bg-primary/10 transition-colors font-medium"
+                            className="px-8 py-3 border border-primary_landing text-primary_landing rounded-lg hover:bg-primary_landing/10 transition-colors font-medium"
                         >
                             See Live Demo
                         </button>

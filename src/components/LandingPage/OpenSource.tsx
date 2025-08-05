@@ -3,7 +3,7 @@ import { Code, Github, Users, HeartHandshake } from "lucide-react";
 export default function OpenSource() {
     return (
         <div className="relative">
-            <section className="py-20 bg-primary">
+            <section className="py-20 bg-primary_landing">
                 <div className="container mx-auto px-6 max-w-7xl">
                     <div className="mx-auto text-center">
                         <h2 className="text-[26px] md:text-4xl font-bold mb-6 text-white">
@@ -52,7 +52,7 @@ export default function OpenSource() {
                             </p>
                             <a
                                 href="https://github.com/devspace"
-                                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors mx-auto bg-primaryText text-white hover:bg-primaryText/90"
+                                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors mx-auto bg-primaryText text-white hover:bg-primary_landingText/90"
                             >
                                 <Github size={20} />
                                 Star the Repository

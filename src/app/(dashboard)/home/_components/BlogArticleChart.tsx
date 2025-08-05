@@ -30,7 +30,7 @@ export default function BlogArticleChart() {
                 </h2>
                 <div className="flex gap-2 text-xs sm:text-sm">
                     <div className="flex items-center">
-                        <div className="w-3 h-3 rounded-full bg-[#775FFC] mr-2"></div>
+                        <div className="w-3 h-3 rounded-full bg-primary mr-2"></div>
                         <span>Blogs</span>
                     </div>
                     <div className="flex items-center">
@@ -76,7 +76,7 @@ export default function BlogArticleChart() {
                         />
                         <Bar 
                             dataKey="blogs" 
-                            fill="#775FFC" 
+                            fill="#4318FF" 
                             name="Blogs" 
                             radius={[4, 4, 0, 0]} 
                         />

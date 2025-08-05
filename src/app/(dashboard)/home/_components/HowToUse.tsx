@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function HowToUse() {
     return (
-        <div className="bg-white p-4 sm:p-8 rounded-xl shadow-sm border border-gray-100 w-full max-w-6xl mx-auto my-6">
+        <div className="bg-white p-4 md:p-8 rounded-xl border border-gray-100 w-full max-w-[80rem] mx-auto my-6">
             <div className="mb-6">
                 <h2 className="text-xl sm:text-2xl font-bold text-primaryText mb-3 flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primaryText" fill="none" viewBox="0 0 24 24" stroke="currentColor">
