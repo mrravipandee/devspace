@@ -16,11 +16,6 @@ export default function Home() {
 
       <Testimonials />
 
-      <section className="my-96">
-        <h2 className="text-center font-bold logo text-primary/80 text-[5rem]">Dev</h2>
-        <h3 className="text-center logo text-primaryText text-[4rem] mt-[-40px]">Space</h3>
-      </section>
-
       <Footer />
 
     </div>

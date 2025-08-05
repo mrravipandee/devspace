@@ -11,17 +11,20 @@ export default function Hero() {
     const router = useRouter();
     const containerRef = useRef<HTMLDivElement>(null);
 
-    // Scroll-based animations
+    // Scroll-based animations for the main container
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ['start start', 'end start'],
     });
 
-    // Animate scale, rotation, position, and fade out as user scrolls
-    const scale = useTransform(scrollYProgress, [0, 1], [1, 0.5]);
-    const rotate = useTransform(scrollYProgress, [0, 1], [12, 90]);
-    const y = useTransform(scrollYProgress, [0, 1], [0, 100]);
-    const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
+    // Animation for left content - flip and move left
+    const leftFlip = useTransform(scrollYProgress, [0, 0.5], [0, -180]);
+    const leftX = useTransform(scrollYProgress, [0, 0.5], [0, -200]);
+    const leftOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+
+    // Animation for right content - zoom in and fade
+    const rightScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.5]);
+    const rightOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
     useEffect(() => {
         document.body.style.overflow = isModalOpen ? 'hidden' : 'auto';
@@ -94,23 +97,34 @@ export default function Hero() {
                     </motion.div>
                 </div>
 
-                {/* Animated Images */}
+                {/* Animated Images - Left and Right Content */}
                 <div className="hidden md:block absolute inset-0 overflow-hidden pointer-events-none">
+                    {/* Left Content - Will flip and move left */}
                     <motion.div
-                        style={{ scale, rotate, y, opacity }}
-                        className="absolute top-[15%] left-20 w-[200px] origin-center"
+                        style={{
+                            rotateY: leftFlip,
+                            x: leftX,
+                            opacity: leftOpacity,
+                            perspective: '1000px',
+                            transformStyle: 'preserve-3d'
+                        }}
+                        className="absolute top-[15%] left-[-80px] w-[400px]"
                     >
                         <Image
-                            src="/user_in_frame.png"
-                            height={200}
-                            width={200}
-                            className="rounded-[30px] object-cover shadow-xl"
-                            alt="Phone user mode left"
+                            src="/devspace_adarsh.png"
+                            height={500}
+                            width={500}
+                            className="-rotate-12"
+                            alt="Adarsh dubey Review"
                         />
                     </motion.div>
 
+                    {/* Right Content - Will zoom in */}
                     <motion.div
-                        style={{ scale, rotate, y, opacity }}
+                        style={{
+                            scale: rightScale,
+                            opacity: rightOpacity,
+                        }}
                         className="absolute top-[15%] right-[5%] w-[220px] origin-center"
                     >
                         <Image
