@@ -139,12 +139,12 @@ export default function TechStackPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <SmallCards />
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-primaryText">My Tech Stack</h2>
+            <h2 className="text-3xl font-bold text-primaryText dark:text-background">My Tech Stack</h2>
             <p className="text-secondaryText mt-2 max-w-2xl">
               The technologies, tools, and frameworks I work with regularly.
             </p>
@@ -161,7 +161,7 @@ export default function TechStackPage() {
         {/* Tech Stack List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {techStack.map(tech => (
-            <div key={tech.id} className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+            <div key={tech.id} className="bg-white dark:bg-cardDark rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center gap-3">
@@ -175,7 +175,7 @@ export default function TechStackPage() {
                         />
                       </div>
                     )}
-                    <h3 className="text-xl font-bold text-primaryText">{tech.name}</h3>
+                    <h3 className="text-xl font-bold text-primaryText dark:text-background">{tech.name}</h3>
                   </div>
                   <div className="flex gap-2">
                     <button
@@ -188,7 +188,7 @@ export default function TechStackPage() {
                     </button>
                     <button
                       onClick={() => handleDelete(tech.id)}
-                      className="text-secondaryText hover:text-red-600 p-1 rounded-full hover:bg-gray-100"
+                      className="text-secondaryText hover:text-primary p-1 rounded-full hover:bg-gray-100"
                       title="Delete technology"
                       aria-label="Delete technology"
                     >
@@ -197,7 +197,7 @@ export default function TechStackPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
+                <div className="flex items-center gap-2 text-sm text-secondaryText/80 mb-3">
                   {getCategoryIcon(tech.category)}
                   <span className="capitalize">{tech.category}</span>
                 </div>
@@ -206,13 +206,13 @@ export default function TechStackPage() {
                   <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${getProficiencyColor(tech.proficiency)}`}>
                     {tech.proficiency}
                   </span>
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-secondaryText/80">
                     {tech.yearsOfExperience} {tech.yearsOfExperience === 1 ? 'year' : 'years'} experience
                   </span>
                 </div>
 
                 <div className="mb-4">
-                  <p className="text-xs text-gray-500 mb-1">Last used: {tech.lastUsed}</p>
+                  <p className="text-xs text-secondaryText mb-1">Last used: {tech.lastUsed}</p>
                   <div className="flex flex-wrap gap-1">
                     {tech.projects.map(project => (
                       <span 

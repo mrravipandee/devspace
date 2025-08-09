@@ -148,12 +148,12 @@ export default function OpenSourcePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <SmallCards />
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-primaryText">Open Source Contributions</h2>
+            <h2 className="text-3xl font-bold text-primaryText dark:text-background">Open Source Contributions</h2>
             <p className="text-secondaryText mt-2 max-w-2xl">
               A showcase of my contributions to open source projects and communities.
             </p>
@@ -170,7 +170,7 @@ export default function OpenSourcePage() {
         {/* Contributions List */}
         <div className="grid grid-cols-1 gap-6">
           {contributions.map(contribution => (
-            <div key={contribution.id} className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+            <div key={contribution.id} className="bg-white dark:bg-cardDark rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
               <div className="p-6">
                 <div className="flex flex-col md:flex-row md:items-start gap-6">
                   {contribution.projectLogo ? (
@@ -191,7 +191,7 @@ export default function OpenSourcePage() {
                   <div className="flex-1">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="text-xl font-bold text-primaryText">
+                        <h3 className="text-xl font-bold text-primaryText dark:text-background">
                           <a href={contribution.projectUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
                             {contribution.projectName}
                           </a>
@@ -200,7 +200,7 @@ export default function OpenSourcePage() {
                           <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${getContributionTypeColor(contribution.contributionType)}`}>
                             {contribution.contributionType.replace('-', ' ')}
                           </span>
-                          <span className="text-sm text-gray-500">
+                          <span className="text-sm text-secondaryText/80">
                             {new Date(contribution.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                           </span>
                         </div>
@@ -216,7 +216,7 @@ export default function OpenSourcePage() {
                         </button>
                         <button
                           onClick={() => handleDelete(contribution.id)}
-                          className="text-secondaryText hover:text-red-600 p-1 rounded-full hover:bg-gray-100"
+                          className="text-secondaryText hover:text-primary p-1 rounded-full hover:bg-gray-100"
                           title="Delete contribution"
                           aria-label="Delete contribution"
                         >
@@ -225,20 +225,20 @@ export default function OpenSourcePage() {
                       </div>
                     </div>
 
-                    <p className="text-gray-600 my-4">{contribution.description}</p>
+                    <p className="text-secondaryText my-4">{contribution.description}</p>
 
                     <div className="flex flex-wrap items-center gap-4">
                       <a 
                         href={contribution.pullRequestUrl} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-sm text-primary hover:text-primary/90 font-medium flex items-center gap-1"
+                        className="text-sm text-indigo-500 hover:text-primary/80 font-medium flex items-center gap-1"
                       >
                         <GitPullRequest className="w-4 h-4" />
                         View Pull Request
                       </a>
 
-                      <div className="flex items-center gap-4 text-sm text-gray-500">
+                      <div className="flex items-center gap-4 text-sm text-secondaryText/80">
                         <span className="flex items-center gap-1">
                           <Star className="w-4 h-4" />
                           {formatNumber(contribution.stars)}

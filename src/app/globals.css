@@ -57,3 +57,9 @@ html, body {
   background: var(--white);
   clip-path: ellipse(130vw 100vw at 50vw 100vw);
 }
+
+.custom-date-icon::-webkit-calendar-picker-indicator {
+  filter: invert(35%) sepia(85%) saturate(500%) hue-rotate(250deg);
+  cursor: pointer;
+}
+

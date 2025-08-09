@@ -22,21 +22,21 @@ const data = [
 ];
 
 export default function VisitorsLineChart() {
-    // Calculate percentage change (example calculation)
+    // Calculate percentage change
     const percentageChange = ((data[data.length - 1].visitors - data[0].visitors) / data[0].visitors) * 100;
     const isPositive = percentageChange >= 0;
 
     return (
-        <div className="bg-white p-4 sm:p-6 rounded-2xl w-full max-w-3xl mx-auto">
+        <div className="bg-white dark:bg-cardDark p-4 sm:p-6 rounded-2xl w-full max-w-3xl mx-auto shadow-sm dark:shadow-gray-800/50">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
                 <div>
-                    <h2 className="text-lg sm:text-xl font-semibold text-primaryText">
+                    <h2 className="text-lg sm:text-xl font-semibold text-primaryText dark:text-white">
                         Weekly Visitors
                     </h2>
-                    <p className="text-sm text-gray-500">Last 7 days</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Last 7 days</p>
                 </div>
 
-                <div className={`flex items-center text-sm ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
+                <div className={`flex items-center text-sm ${isPositive ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>
                     <ArrowUpRight className={`w-4 h-4 mr-1 ${isPositive ? '' : 'rotate-180'}`} />
                     {Math.abs(percentageChange).toFixed(1)}% {isPositive ? 'increase' : 'decrease'}
                 </div>
@@ -57,6 +57,8 @@ export default function VisitorsLineChart() {
                             strokeDasharray="3 3"
                             vertical={false}
                             stroke="#f0f0f0"
+                            strokeOpacity={0.5}
+                            className="dark:stroke-gray-700"
                         />
                         <XAxis
                             dataKey="day"
@@ -64,6 +66,7 @@ export default function VisitorsLineChart() {
                             tickLine={false}
                             tick={{ fill: '#6b7280', fontSize: 12 }}
                             tickMargin={10}
+                            className="dark:text-gray-400"
                         />
                         <YAxis
                             axisLine={false}
@@ -71,6 +74,7 @@ export default function VisitorsLineChart() {
                             tick={{ fill: '#6b7280', fontSize: 12 }}
                             tickMargin={10}
                             width={30}
+                            className="dark:text-gray-400"
                         />
                         <Tooltip
                             contentStyle={{
@@ -78,6 +82,7 @@ export default function VisitorsLineChart() {
                                 boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
                                 border: 'none',
                                 background: '#ffffff',
+                                color: '#2b3674'
                             }}
                             itemStyle={{
                                 color: '#2b3674',
@@ -93,24 +98,24 @@ export default function VisitorsLineChart() {
                             dataKey="visitors"
                             stroke="#2b3674"
                             strokeWidth={2.5}
+                            className="dark:stroke-blue-400"
                             dot={{
                                 r: 4,
                                 stroke: '#2b3674',
                                 strokeWidth: 2,
-                                fill: '#ffffff'
+                                fill: '#ffffff',
+                                className: 'dark:stroke-blue-400 dark:fill-gray-800'
                             }}
                             activeDot={{
                                 r: 6,
                                 stroke: '#ffffff',
                                 strokeWidth: 2,
-                                fill: '#2b3674'
+                                fill: '#2b3674',
+                                className: 'dark:stroke-gray-800 dark:fill-blue-400'
                             }}
                         />
                     </LineChart>
                 </ResponsiveContainer>
-            </div>
-
-            <div className="flex justify-end mt-2">
             </div>
         </div>
     );

@@ -81,12 +81,12 @@ export default function ResumePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <SmallCards />
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-primaryText">My Resume</h2>
+            <h2 className="text-3xl font-bold text-primaryText dark:text-background">My Resume</h2>
             <p className="text-secondaryText mt-2 max-w-2xl">
               Manage your professional resume. Upload a PDF file under 5MB to keep it updated.
             </p>
@@ -94,19 +94,19 @@ export default function ResumePage() {
         </div>
 
         {/* Resume Upload Area */}
-        <div className="bg-white rounded-xl shadow-sm p-8 max-w-3xl mx-auto">
+        <div className="bg-white dark:bg-cardDark rounded-xl shadow-sm p-8 max-w-3xl mx-auto">
           <div className="text-center">
             <div className="mx-auto max-w-md">
               {!resumeFile ? (
                 <>
                   <div 
                     onClick={triggerFileInput}
-                    className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center cursor-pointer mb-4"
+                    className="mx-auto w-24 h-24 bg-gray-100 dark:bg-[#1b254b] rounded-full flex items-center justify-center cursor-pointer mb-4"
                   >
-                    <Upload className="w-10 h-10 text-gray-400" />
+                    <Upload className="w-10 h-10 text-primaryText" />
                   </div>
-                  <h3 className="text-lg font-medium text-primaryText mb-2">Upload Your Resume</h3>
-                  <p className="text-secondaryText mb-6">PDF format only, maximum 5MB</p>
+                  <h3 className="text-lg font-medium text-secondaryText mb-2">Upload Your Resume</h3>
+                  <p className="text-secondaryText/65 mb-6">PDF format only, maximum 5MB</p>
                   <button
                     onClick={triggerFileInput}
                     className="bg-primary text-white px-5 py-2.5 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-primary/90 transition-colors mx-auto"
@@ -191,8 +191,8 @@ export default function ResumePage() {
 
         {/* Resume Tips */}
         <div className="mt-12 max-w-3xl mx-auto">
-          <h3 className="text-xl font-semibold text-primaryText mb-4">Resume Tips</h3>
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <h3 className="text-xl font-semibold text-primaryText dark:text-background mb-4">Resume Tips</h3>
+          <div className="bg-white dark:bg-cardDark rounded-xl shadow-sm p-6">
             <ul className="space-y-3 list-disc pl-5 text-secondaryText">
               <li>Keep your resume to 1-2 pages maximum</li>
               <li>Use clear section headings (Experience, Education, Skills)</li>

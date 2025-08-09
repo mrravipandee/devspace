@@ -24,7 +24,7 @@ export default function AchievementsPage() {
       title: 'AWS Certified Developer',
       description: 'Earned AWS Certified Developer - Associate certification',
       type: 'certification',
-      image: '/cert-placeholder.jpg',
+      image: '/certificate_demo.jpg',
       issuer: 'Amazon Web Services',
       date: '2025-03-15',
       verificationUrl: 'https://aws.amazon.com/certification/',
@@ -35,7 +35,7 @@ export default function AchievementsPage() {
       title: '1st Place - Hack the Future',
       description: 'Won first place in the annual Hack the Future hackathon',
       type: 'hackathon',
-      image: '/hackathon-placeholder.jpg',
+      image: '/certificate_demo.jpg',
       issuer: 'Tech Innovators Inc.',
       date: '2025-02-20',
       verificationUrl: 'https://hackthefuture.dev/winners',
@@ -84,7 +84,7 @@ export default function AchievementsPage() {
       title: formData.get('title') as string,
       description: formData.get('description') as string,
       type: formData.get('type') as Achievement['type'],
-      image: imagePreview || '/achievement-placeholder.jpg',
+      image: imagePreview || '/certificate_demo.jpg',
       issuer: formData.get('issuer') as string,
       date: formData.get('date') as string,
       verificationUrl: formData.get('verificationUrl') as string,
@@ -133,12 +133,12 @@ export default function AchievementsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <SmallCards />
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-primaryText">My Achievements</h2>
+            <h2 className="text-3xl font-bold text-primaryText dark:text-background">My Achievements</h2>
             <p className="text-secondaryText mt-2 max-w-2xl">
               A showcase of my professional accomplishments, certifications, and recognitions.
             </p>
@@ -155,7 +155,7 @@ export default function AchievementsPage() {
         {/* Achievements List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
           {achievements.map(achievement => (
-            <div key={achievement.id} className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+            <div key={achievement.id} className="bg-white dark:bg-cardDark rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
               <div className="flex flex-col md:flex-row">
                 {achievement.image && (
                   <div className="relative w-full md:w-1/3 h-48 md:h-auto">
@@ -172,12 +172,12 @@ export default function AchievementsPage() {
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
                       {getAchievementIcon(achievement.type)}
-                      <h3 className="text-xl font-bold text-primaryText">{achievement.title}</h3>
+                      <h3 className="text-xl font-bold text-primaryText dark:text-background">{achievement.title}</h3>
                     </div>
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleEdit(achievement)}
-                        className="text-secondaryText hover:text-primary p-1 rounded-full hover:bg-gray-100"
+                        className="text-secondaryText hover:text-primary p-1 rounded-full hover:bg-background"
                         title="Edit achievement"
                         aria-label="Edit achievement"
                       >
@@ -185,7 +185,7 @@ export default function AchievementsPage() {
                       </button>
                       <button
                         onClick={() => handleDelete(achievement.id)}
-                        className="text-secondaryText hover:text-red-600 p-1 rounded-full hover:bg-gray-100"
+                        className="text-secondaryText hover:text-primary p-1 rounded-full hover:bg-background"
                         title="Delete achievement"
                         aria-label="Delete achievement"
                       >
@@ -193,17 +193,17 @@ export default function AchievementsPage() {
                       </button>
                     </div>
                   </div>
-                  <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
+                  <div className="mt-2 flex items-center gap-2 text-sm text-secondaryText/80">
                     <span>{achievement.issuer}</span>
                     <span>•</span>
                     <span>{achievement.date}</span>
                   </div>
-                  <p className="text-gray-600 my-4">{achievement.description}</p>
+                  <p className="text-secondaryText my-4">{achievement.description}</p>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {achievement.skills.map(skill => (
                       <span 
                         key={skill} 
-                        className="bg-background text-primary text-xs px-3 py-1 rounded-full"
+                        className="bg-background text-primary/80 text-xs px-3 py-1 rounded-full"
                       >
                         {skill}
                       </span>
@@ -226,9 +226,9 @@ export default function AchievementsPage() {
         </div>
 
         {achievements.length === 0 && (
-          <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+          <div className="bg-white dark:bg-cardDark rounded-xl shadow-sm p-8 text-center">
             <div className="mx-auto max-w-md">
-              <Award className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+              <Award className="w-12 h-12 mx-auto text-primaryText mb-4" />
               <h3 className="text-lg font-medium text-primaryText mb-2">No achievements yet</h3>
               <p className="text-secondaryText mb-6">Start building your achievements portfolio by adding your first accomplishment.</p>
               <button
@@ -246,10 +246,10 @@ export default function AchievementsPage() {
       {/* Create/Edit Achievement Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-cardDark rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-primaryText">
+                <h2 className="text-2xl font-bold text-primaryText dark:text-background">
                   {currentAchievement?.id ? 'Edit Achievement' : 'Add New Achievement'}
                 </h2>
                 <button
@@ -268,23 +268,23 @@ export default function AchievementsPage() {
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Title*</label>
+                      <label className="block text-sm font-medium text-secondaryText/80 mb-2">Title*</label>
                       <input
                         type="text"
                         name="title"
                         defaultValue={currentAchievement?.title || ''}
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryText focus:border-transparent"
                         required
                         placeholder="Achievement title"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Type*</label>
+                      <label className="block text-sm font-medium text-secondaryText/80 mb-2">Type*</label>
                       <select
                         name="type"
                         defaultValue={currentAchievement?.type || 'certification'}
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         required
                       >
                         <option value="certification">Certification</option>
@@ -297,12 +297,12 @@ export default function AchievementsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Description*</label>
+                    <label className="block text-sm font-medium text-secondaryText/80 mb-2">Description*</label>
                     <textarea
                       name="description"
                       defaultValue={currentAchievement?.description || ''}
                       rows={3}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       required
                       placeholder="Describe your achievement"
                     />
@@ -310,54 +310,54 @@ export default function AchievementsPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Issuer/Organization*</label>
+                      <label className="block text-sm font-medium text-secondaryText/80 mb-2">Issuer/Organization*</label>
                       <input
                         type="text"
                         name="issuer"
                         defaultValue={currentAchievement?.issuer || ''}
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         required
                         placeholder="Company or organization name"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Date*</label>
+                      <label className="block text-sm font-medium text-secondaryText/80 mb-2">Date*</label>
                       <input
                         type="date"
                         name="date"
                         defaultValue={currentAchievement?.date || ''}
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText custom-date-icon [color-scheme:dark] text-[#2B3674] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         required
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Verification URL*</label>
+                    <label className="block text-sm font-medium text-secondaryText/80 mb-2">Verification URL*</label>
                     <input
                       type="url"
                       name="verificationUrl"
                       defaultValue={currentAchievement?.verificationUrl || ''}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       required
                       placeholder="https://example.com/verification"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Skills (comma separated)</label>
+                    <label className="block text-sm font-medium text-secondaryText/80 mb-2">Skills (comma separated)</label>
                     <input
                       type="text"
                       name="skills"
                       defaultValue={currentAchievement?.skills.join(', ') || ''}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="JavaScript, React, Cloud Computing"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Certificate/Badge Image</label>
+                    <label className="block text-sm font-medium text-secondaryText/80 mb-2">Certificate/Badge Image</label>
                     <input
                       type="file"
                       ref={fileInputRef}
@@ -389,7 +389,7 @@ export default function AchievementsPage() {
                               className="absolute top-3 right-3 bg-white/80 hover:bg-white p-1.5 rounded-full shadow-sm"
                               aria-label="Remove image"
                             >
-                              <X size={18} className="text-red-600" />
+                              <X size={18} className="text-primary border border-primaryText rounded-full" />
                             </button>
                           </div>
                         ) : (
@@ -414,7 +414,7 @@ export default function AchievementsPage() {
                       setIsModalOpen(false);
                       setCurrentAchievement(null);
                     }}
-                    className="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+                    className="px-5 py-2.5 bg-secondaryText rounded-lg text-gray-700 hover:bg-gray-200 transition-colors"
                   >
                     Cancel
                   </button>

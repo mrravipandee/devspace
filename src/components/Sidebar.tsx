@@ -15,12 +15,12 @@ export default function Sidebar() {
     const pathname = usePathname();
 
     return (
-        <div className="flex flex-col h-screen bg-white/80 w-full px-2 md:px-4 py-6 md:py-8">
+        <div className="flex flex-col h-screen bg-white/80 dark:bg-cardDark w-full px-2 md:px-4 py-6 md:py-8">
             {/* Logo */}
             <div className="flex justify-center px-2 md:px-4 py-1">
                 <h1 className="text-xl md:text-2xl font-bold text-primaryText text-center logo">
                     <span className="text-primary logo">Dev</span>
-                    <span className="logo"> Space</span>
+                    <span className="logo dark:text-background"> Space</span>
                 </h1>
             </div>
 
@@ -32,7 +32,7 @@ export default function Sidebar() {
             <div className="border-b border-gray-200 my-3 hidden md:block" />
 
             {/* Menus */}
-            <nav className="flex-1 text-secondaryText mt-4 space-y-2">
+            <nav className="flex-1 text-secondaryText dark:text-white/70 mt-4 space-y-2">
                 {menuItems.map(({ href, icon: Icon, label }) => {
                     const isActive = pathname === href;
                     return (
@@ -41,7 +41,7 @@ export default function Sidebar() {
                             href={href}
                             className={`flex items-center gap-3 justify-center md:justify-start px-3 md:px-4 py-2 text-sm transition-colors duration-150 group rounded-[4px] ${
                                 isActive
-                                    ? "text-primaryText border-r-4 border-primary"
+                                    ? "text-primaryText dark:text-background border-r-4 border-primary"
                                     : "hover:text-primaryText hover:border-r-4 border-primary"
                             }`}
                         >

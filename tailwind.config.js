@@ -18,6 +18,7 @@ module.exports = {
         primaryText: "#2B3674",
         secondaryText: "#A3AED0",
         lightText: "#A3AED0",
+        cardDark: "#111C44",
       },
 
       fontFamily: {

@@ -23,7 +23,7 @@ export default function BlogPage() {
       title: 'Getting Started with Next.js',
       content: 'This is a full blog post content about Next.js...',
       excerpt: 'Learn the basics of Next.js and how to set up your first project',
-      image: '/blog-placeholder.jpg',
+      image: '/how-to-use-devspace-api-call.png',
       tags: ['Next.js', 'React', 'Web Development'],
       publishedDate: '2025-01-01',
     },
@@ -32,7 +32,7 @@ export default function BlogPage() {
       title: 'Advanced TypeScript Patterns',
       content: 'Deep dive into advanced TypeScript concepts...',
       excerpt: 'Explore powerful TypeScript patterns for better code',
-      image: '/blog-placeholder.jpg',
+      image: '/how-to-use-devspace-api-call.png',
       tags: ['TypeScript', 'Programming'],
       publishedDate: '2025-01-15',
     }
@@ -77,7 +77,7 @@ export default function BlogPage() {
       title: formData.get('title') as string,
       content: formData.get('content') as string,
       excerpt: formData.get('excerpt') as string,
-      image: imagePreview || '/blog-placeholder.jpg',
+      image: imagePreview || '/how-to-use-devspace-api-call.png',
       tags: (formData.get('tags') as string).split(',').map(tag => tag.trim()),
       publishedDate: currentPost?.publishedDate || new Date().toISOString().split('T')[0],
       lastUpdated: new Date().toISOString().split('T')[0],
@@ -112,12 +112,12 @@ export default function BlogPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <SmallCards />
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-primaryText">My Blog</h2>
+            <h2 className="text-3xl font-bold text-primaryText dark:text-background">My Blog</h2>
             <p className="text-secondaryText mt-2 max-w-2xl">
               Welcome to my blog! Here you&apos;ll find articles on web development, design, and more.
             </p>
@@ -134,7 +134,7 @@ export default function BlogPage() {
         {/* Blog Posts List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
           {posts.map(post => (
-            <div key={post.id} className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+            <div key={post.id} className="bg-white dark:bg-cardDark rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
               <div className="flex flex-col md:flex-row">
                 {post.image && (
                   <div className="relative w-full md:w-1/3 h-48 md:h-auto">
@@ -149,11 +149,11 @@ export default function BlogPage() {
                 )}
                 <div className="flex-1 p-6">
                   <div className="flex justify-between items-start">
-                    <h3 className="text-xl font-bold text-primaryText mb-2">{post.title}</h3>
+                    <h3 className="text-xl font-bold text-primaryText dark:text-background mb-2">{post.title}</h3>
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleEdit(post)}
-                        className="text-secondaryText hover:text-primary p-1 rounded-full hover:bg-gray-100"
+                        className="text-secondaryText hover:text-primary p-1 rounded-full hover:bg-background"
                         title="Edit post"
                         aria-label="Edit post"
                       >
@@ -161,7 +161,7 @@ export default function BlogPage() {
                       </button>
                       <button
                         onClick={() => handleDelete(post.id)}
-                        className="text-secondaryText hover:text-red-600 p-1 rounded-full hover:bg-gray-100"
+                        className="text-secondaryText hover:text-primary p-1 rounded-full hover:bg-gray-100"
                         title="Delete post"
                         aria-label="Delete post"
                       >
@@ -169,22 +169,22 @@ export default function BlogPage() {
                       </button>
                     </div>
                   </div>
-                  <p className="text-gray-600 mb-4 line-clamp-2">{post.excerpt}</p>
+                  <p className="text-secondaryText mb-4 line-clamp-2">{post.excerpt}</p>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {post.tags.map(tag => (
                       <span 
                         key={tag} 
-                        className="bg-background text-primary text-xs px-3 py-1 rounded-full"
+                        className="bg-background text-primary/80 text-xs px-3 py-1 rounded-full"
                       >
                         #{tag}
                       </span>
                     ))}
                   </div>
-                  <div className="flex items-center justify-between text-sm text-gray-500">
+                  <div className="flex items-center justify-between text-sm text-secondaryText/80">
                     <span>
                       {post.lastUpdated ? `Updated: ${post.lastUpdated}` : `Published: ${post.publishedDate}`}
                     </span>
-                    <button className="text-primary hover:text-primary/90 font-medium">
+                    <button className="text-secondaryText hover:text-primary/90 font-medium">
                       Read more →
                     </button>
                   </div>

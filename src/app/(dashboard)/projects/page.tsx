@@ -151,11 +151,11 @@ export default function ProjectsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-scree">
       <SmallCards />
       <div className="container mx-auto px-4 py-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-          <h1 className="text-2xl font-bold text-gray-800">My Projects</h1>
+          <h1 className="text-2xl font-bold text-primaryText dark:text-background">My Projects</h1>
           <button
             onClick={() => setIsModalOpen(true)}
             className="bg-primary text-white px-4 py-2 rounded-md flex items-center gap-2 cursor-pointer hover:bg-primary/90 hover:duration-150 transition-all whitespace-nowrap"
@@ -169,7 +169,7 @@ export default function ProjectsPage() {
           {projects.map((project) => (
             <div
               key={project.id}
-              className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-200 flex flex-col h-full"
+              className="bg-white dark:bg-cardDark rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-200 flex flex-col h-full"
             >
               <div className="relative h-48 w-full">
                 <Image
@@ -182,25 +182,24 @@ export default function ProjectsPage() {
               </div>
               <div className="p-4 flex-1 flex flex-col">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-lg font-semibold text-gray-800 line-clamp-1">{project.title}</h3>
+                  <h3 className="text-lg font-semibold text-primaryText dark:text-background line-clamp-1">{project.title}</h3>
                   <span
-                    className={`px-2 py-1 text-xs rounded-full whitespace-nowrap ${
-                      project.status === 'active'
+                    className={`px-2 py-1 text-xs rounded-full whitespace-nowrap ${project.status === 'active'
                         ? 'bg-green-100 text-green-800'
                         : project.status === 'completed'
-                        ? 'bg-blue-100 text-blue-800'
-                        : 'bg-gray-100 text-gray-800'
-                    }`}
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}
                   >
                     {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
                   </span>
                 </div>
-                <p className="text-sm text-gray-600 mb-4 line-clamp-2">{project.description}</p>
+                <p className="text-sm text-secondaryText mb-4 line-clamp-2">{project.description}</p>
 
                 <div className="mt-auto">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-gray-500">Progress: {project.progress}%</span>
-                    <span className="text-xs text-gray-500">{project.members} {project.members === 1 ? 'member' : 'members'}</span>
+                    <span className="text-xs text-secondaryText">Progress: {project.progress}%</span>
+                    <span className="text-xs text-secondaryText">{project.members} {project.members === 1 ? 'member' : 'members'}</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
                     <div
@@ -327,9 +326,8 @@ export default function ProjectsPage() {
                     <div className="relative">
                       <div
                         onClick={triggerFileInput}
-                        className={`border-2 border-dashed rounded-md flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors ${
-                          imagePreview ? 'border-transparent' : 'border-gray-300 p-4'
-                        }`}
+                        className={`border-2 border-dashed rounded-md flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors ${imagePreview ? 'border-transparent' : 'border-gray-300 p-4'
+                          }`}
                       >
                         {imagePreview ? (
                           <>
