@@ -70,7 +70,7 @@ export default function Navbar() {
   ];
 
   const profileMenu = [
-    { label: "Profile", icon: <User className="h-4 w-4" />, href: "#" },
+    { label: "Profile", icon: <User className="h-4 w-4" />, href: "profile" },
     { label: "Settings", icon: <Settings className="h-4 w-4" />, href: "#" },
     { label: "Logout", icon: <LogOut className="h-4 w-4" />, href: "#" },
   ];

@@ -79,7 +79,7 @@ export default function BlogArticleChart() {
                                 borderRadius: '8px',
                                 boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
                                 border: 'none',
-                                background: '#ffffff',
+                                background: '#f1f1f1',
                                 color: '#2b3674',
                             }}
                             itemStyle={{
@@ -99,7 +99,7 @@ export default function BlogArticleChart() {
                         />
                         <Bar 
                             dataKey="blogs" 
-                            fill="#4318FF" 
+                            fill="#3c82f7" 
                             name="Blogs" 
                             radius={[4, 4, 0, 0]}
                             className="dark:fill-blue-500"
