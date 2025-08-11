@@ -185,10 +185,10 @@ export default function ProjectsPage() {
                   <h3 className="text-lg font-semibold text-primaryText dark:text-background line-clamp-1">{project.title}</h3>
                   <span
                     className={`px-2 py-1 text-xs rounded-full whitespace-nowrap ${project.status === 'active'
-                        ? 'bg-green-100 text-green-800'
-                        : project.status === 'completed'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-gray-100 text-gray-800'
+                      ? 'bg-green-100 text-green-800'
+                      : project.status === 'completed'
+                        ? 'bg-blue-100 text-blue-800'
+                        : 'bg-gray-100 text-gray-800'
                       }`}
                   >
                     {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
@@ -245,13 +245,13 @@ export default function ProjectsPage() {
       {/* Create Project Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-cardDark rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-gray-800">Create New Project</h2>
+                <h2 className="text-xl font-bold text-primaryText dark:text-background">Create New Project</h2>
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-gray-500 hover:text-secondaryText"
                 >
                   <X size={20} />
                 </button>
@@ -261,7 +261,7 @@ export default function ProjectsPage() {
                 {/* Left Column */}
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-primaryText dark:text-secondaryText/80 mb-1">
                       Project Title*
                     </label>
                     <input
@@ -270,14 +270,14 @@ export default function ProjectsPage() {
                       onChange={(e) =>
                         setNewProject({ ...newProject, title: e.target.value })
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryText focus:border-transparent"
                       placeholder="Enter project title"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-primaryText dark:text-secondaryText/80 mb-1">
                       Description
                     </label>
                     <textarea
@@ -285,14 +285,14 @@ export default function ProjectsPage() {
                       onChange={(e) =>
                         setNewProject({ ...newProject, description: e.target.value })
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryText focus:border-transparent"
                       placeholder="Enter project description"
                       rows={4}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-primaryText dark:text-secondaryText/80 mb-1">
                       Tech Stack (comma separated)
                     </label>
                     <input
@@ -304,7 +304,7 @@ export default function ProjectsPage() {
                           techStack: e.target.value.split(',').map(t => t.trim()),
                         })
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryText focus:border-transparent"
                       placeholder="React, Node.js, MongoDB"
                     />
                   </div>
@@ -313,7 +313,7 @@ export default function ProjectsPage() {
                 {/* Right Column */}
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-primaryText dark:text-secondaryText/80 mb-1">
                       Project Image
                     </label>
                     <input
@@ -326,7 +326,7 @@ export default function ProjectsPage() {
                     <div className="relative">
                       <div
                         onClick={triggerFileInput}
-                        className={`border-2 border-dashed rounded-md flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors ${imagePreview ? 'border-transparent' : 'border-gray-300 p-4'
+                        className={`border-2 border-dashed rounded-md flex flex-col items-center justify-center cursor-pointer hover:border-primaryText transition-colors ${imagePreview ? 'border-transparent' : 'border-gray-300 p-4'
                           }`}
                       >
                         {imagePreview ? (
@@ -368,7 +368,7 @@ export default function ProjectsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-primaryText dark:text-secondaryText/80 mb-1">
                       Tags
                     </label>
                     <div className="flex flex-wrap gap-2 mb-2">
@@ -392,7 +392,7 @@ export default function ProjectsPage() {
                       value={tagInput}
                       onChange={(e) => setTagInput(e.target.value)}
                       onKeyDown={handleTagInputKeyDown}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryText focus:border-transparent"
                       placeholder="Enter tags separated by comma or enter"
                     />
                     <p className="text-xs text-gray-500 mt-1">
@@ -402,7 +402,7 @@ export default function ProjectsPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-primaryText dark:text-secondaryText/80 mb-1">
                         Status
                       </label>
                       <select
@@ -413,7 +413,7 @@ export default function ProjectsPage() {
                             status: e.target.value as 'active' | 'inactive' | 'completed',
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryText focus:border-transparent"
                       >
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
@@ -422,7 +422,7 @@ export default function ProjectsPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-primaryText dark:text-secondaryText/80 mb-1">
                         Members
                       </label>
                       <input
@@ -434,14 +434,14 @@ export default function ProjectsPage() {
                             members: parseInt(e.target.value) || 0,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryText focus:border-transparent"
                         min="0"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-primaryText dark:text-secondaryText/80 mb-1">
                       Progress (%)
                     </label>
                     <input
