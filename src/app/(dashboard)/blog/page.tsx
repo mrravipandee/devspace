@@ -215,10 +215,10 @@ export default function BlogPage() {
       {/* Create/Edit Post Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-cardDark rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-primaryText">
+                <h2 className="text-2xl font-bold text-primaryText dark:text-background">
                   {currentPost?.id ? 'Edit Blog Post' : 'Create New Blog Post'}
                 </h2>
                 <button
@@ -236,12 +236,12 @@ export default function BlogPage() {
               <form onSubmit={handleSubmit}>
                 <div className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Title*</label>
+                    <label className="block text-sm font-medium text-secondaryText mb-2">Title*</label>
                     <input
                       type="text"
                       name="title"
                       defaultValue={currentPost?.title || ''}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryText focus:border-transparent"
                       required
                       placeholder="Enter post title"
                     />
@@ -249,36 +249,36 @@ export default function BlogPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Excerpt*</label>
+                      <label className="block text-sm font-medium text-secondaryText mb-2">Excerpt*</label>
                       <textarea
                         name="excerpt"
                         defaultValue={currentPost?.excerpt || ''}
                         rows={3}
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryText focus:border-transparent"
                         required
                         placeholder="Short description of your post"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Tags (comma separated)</label>
+                      <label className="block text-sm font-medium text-secondaryText mb-2">Tags (comma separated)</label>
                       <input
                         type="text"
                         name="tags"
                         defaultValue={currentPost?.tags.join(', ') || ''}
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryText focus:border-transparent"
                         placeholder="web development, design, tutorial"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Content*</label>
+                    <label className="block text-sm font-medium text-secondaryText mb-2">Content*</label>
                     <textarea
                       name="content"
                       defaultValue={currentPost?.content || ''}
                       rows={8}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryText focus:border-transparent"
                       required
                       placeholder="Write your post content here..."
                     />
@@ -297,7 +297,7 @@ export default function BlogPage() {
                       <div
                         onClick={triggerFileInput}
                         className={`w-full h-64 border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer transition-colors ${
-                          imagePreview ? 'border-transparent' : 'border-gray-300 hover:border-gray-400'
+                          imagePreview ? 'border-transparent' : 'border-secondaryText/80 hover:border-secondaryText'
                         }`}
                       >
                         {imagePreview ? (
