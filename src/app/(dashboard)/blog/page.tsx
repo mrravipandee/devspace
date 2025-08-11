@@ -285,7 +285,7 @@ export default function BlogPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Featured Image</label>
+                    <label className="block text-sm font-medium text-secondaryText mb-2">Featured Image</label>
                     <input
                       type="file"
                       ref={fileInputRef}

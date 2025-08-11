@@ -71,7 +71,7 @@ export default function Navbar() {
 
   const profileMenu = [
     { label: "Profile", icon: <User className="h-4 w-4" />, href: "profile" },
-    { label: "Settings", icon: <Settings className="h-4 w-4" />, href: "#" },
+    { label: "Settings", icon: <Settings className="h-4 w-4" />, href: "setting" },
     { label: "Logout", icon: <LogOut className="h-4 w-4" />, href: "#" },
   ];
 
@@ -97,7 +97,7 @@ export default function Navbar() {
             <input
               type="text"
               placeholder="Search..."
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-900 dark:bg-gray-900 dark:text-white rounded-full bg-gray-50 text-primaryText placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-primaryText dark:bg-[#1b254b] dark:text-secondaryText rounded-full bg-gray-50 text-primaryText placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primaryText focus:border-transparent transition-all duration-200"
             />
           </div>
         </div>
