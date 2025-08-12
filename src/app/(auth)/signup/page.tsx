@@ -12,35 +12,37 @@ export default function SignupPage() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError(''); // Clear previous errors
+
         if (password !== confirmPassword) {
-            alert('Passwords do not match.');
+            setError('Passwords do not match.');
             return;
         }
+
         setIsLoading(true);
         try {
             const res = await fetch('/api/auth/signup', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: username, email, password }),
+                body: JSON.stringify({ username, email, password })
             });
             const data = await res.json();
             if (res.ok) {
-                alert('Account created successfully.');
                 router.push('/login');
             } else {
-                alert(data?.msg || 'Something went wrong');
+                setError(data?.msg || 'Something went wrong');
             }
         } catch (error) {
-            alert('Signup failed.');
+            setError('Signup failed. Please try again.');
         } finally {
             setIsLoading(false);
         }
     };
-
 
     return (
         <div className="flex flex-col lg:flex-row-reverse min-h-screen">
@@ -56,6 +58,13 @@ export default function SignupPage() {
                         <h2 className="text-xl sm:text-2xl font-bold text-primaryText mb-2">Sign Up</h2>
                         <p className="text-secondaryText text-[11px] sm:text-[13px]">Create an account to get started</p>
                     </div>
+
+                    {/* Error message */}
+                    {error && (
+                        <div className="mb-4 p-3 text-sm text-red-600 bg-red-50 rounded-lg">
+                            {error}
+                        </div>
+                    )}
 
                     {/* Social Login Buttons - Same Line */}
                     <div className="flex flex-col sm:flex-row gap-2 mb-4">
@@ -213,15 +222,15 @@ export default function SignupPage() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2, duration: 0.5 }}
                     >
-                        <h3 className="text-4xl font-bold mb-4">Welcome!</h3>
+                        <h3 className="text-4xl font-bold mb-4">Welcome! <span className='logo'>Dev Space</span></h3>
                         <p className="text-xl max-w-md">Join our community and start your journey with us today.</p>
                     </motion.div>
                 </div>
             </div>
 
             {/* Mobile Footer */}
-            <div className="lg:hidden py-4 text-center text-sm text-gray-500 mt-auto">
-                © {new Date().getFullYear()} Your Brand. All rights reserved.
+            <div className="lg:hidden py-4 text-center text-sm text-secondaryText mt-auto">
+                © {new Date().getFullYear()} <span className='logo'>Dev space</span>. All rights reserved.
             </div>
         </div>
     );
