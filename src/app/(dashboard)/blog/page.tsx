@@ -273,7 +273,7 @@ export default function BlogPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-secondaryText mb-2">Content*</label>
+                    <label className="block text-sm font-medium text-secondaryText mb-2">Content* </label>
                     <textarea
                       name="content"
                       defaultValue={currentPost?.content || ''}
