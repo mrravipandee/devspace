@@ -42,6 +42,11 @@ export default function LoginPage() {
         }
     };
 
+    const workinprogress = (e: React.FormEvent) => {
+        e.preventDefault();
+        toast.info('⚙️ This feature is under process...');
+    };
+
     return (
         <>
             <ToastContainer
@@ -56,7 +61,7 @@ export default function LoginPage() {
                 pauseOnHover
                 theme="light"
             />
-            
+
             <div className="flex flex-col lg:flex-row min-h-screen">
                 {/* Left Side - Form */}
                 <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-6 lg:p-8">
@@ -90,6 +95,7 @@ export default function LoginPage() {
                         <motion.button
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
+                            onClick={workinprogress}
                             className="w-full flex items-center justify-center gap-2 rounded-2xl py-3 px-4 mb-6 bg-background transition-all duration-200"
                         >
                             <Image
