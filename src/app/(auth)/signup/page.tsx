@@ -10,6 +10,7 @@ import { ToastContainer, toast } from 'react-toastify';
 export default function SignupPage() {
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
+    const [fullName, setFullName] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +31,7 @@ export default function SignupPage() {
             const res = await fetch('/api/auth/signup', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, email, password })
+                body: JSON.stringify({ username, email, fullName, password })
             });
             const data = await res.json();
             if (res.ok) {
@@ -52,7 +53,6 @@ export default function SignupPage() {
 
     return (
         <>
-
             <ToastContainer
                 position="top-right"
                 autoClose={5000}
@@ -123,6 +123,21 @@ export default function SignupPage() {
 
                         {/* Signup Form */}
                         <form className="space-y-4" onSubmit={handleSubmit}>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="fullName">
+                                    Full Name*
+                                </label>
+                                <input
+                                    type="text"
+                                    id="fullName"
+                                    value={fullName}
+                                    onChange={(e) => setFullName(e.target.value)}
+                                    className="w-full px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                    placeholder="John Doe"
+                                    required
+                                />
+                            </div>
+
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email">
                                     Email Address*

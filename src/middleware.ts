@@ -20,7 +20,7 @@ export function middleware(req: NextRequest) {
   const publicRoutes = [
     '/',
     '/signup',
-    '/signin',
+    '/login',
     '/about',
     '/faq',
     '/features',
@@ -34,7 +34,7 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
-  // If user is logged in and tries to go to signin/signup → send them to home
+  // If user is logged in and tries to go to login/signup → send them to home
   if (token && (pathname === '/login' || pathname === '/signup')) {
     return NextResponse.redirect(new URL('/home', req.url));
   }

@@ -11,35 +11,39 @@ import {
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
+import { getUserProfile } from '@/lib/apiClient';
 
-interface SocialLink {
-    id: string;
+interface SocialHandle {
     platform: string;
     url: string;
 }
 
+interface UsefulLink {
+    title: string;
+    url: string;
+}
+
 interface ProfileData {
-    name: string;
+    id: string;
     username: string;
+    email: string;
+    fullName: string;
     bio: string;
-    avatarUrl: string;
-    socialLinks: SocialLink[];
-    skills: string[];
-    location?: string;
+    profileImage: string;
+    profileImagePublicId: string;
+    location: string;
     availableForWork: boolean;
+    socialHandles: SocialHandle[];
+    usefulLinks: UsefulLink[];
+    profileCompleted: boolean;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export default function ProfilePage() {
-    const [profile, setProfile] = useState<ProfileData>({
-        name: "",
-        username: "",
-        bio: "",
-        avatarUrl: "/default-avatar.png",
-        socialLinks: [],
-        skills: [],
-        availableForWork: false
-    });
+    const [profile, setProfile] = useState<ProfileData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     const getSocialIcon = (platform: string) => {
         const platformLower = platform.toLowerCase();
@@ -59,32 +63,19 @@ export default function ProfilePage() {
         }
     };
 
-    // Fetch profile data (simulated)
+    // Fetch profile data from API
     useEffect(() => {
         const fetchProfile = async () => {
             try {
                 setIsLoading(true);
-                // Simulate API call
-                await new Promise(resolve => setTimeout(resolve, 800));
-
-                const mockProfile: ProfileData = {
-                    name: "Alex Johnson",
-                    username: "alexdev",
-                    bio: "Senior Full-Stack Developer | Open Source Contributor | Tech Educator",
-                    avatarUrl: "/user_1.jpeg",
-                    socialLinks: [
-                        { id: "1", platform: "GitHub", url: "https://github.com/alexdev" },
-                        { id: "2", platform: "LinkedIn", url: "https://linkedin.com/in/alexdev" },
-                        { id: "3", platform: "Twitter", url: "https://twitter.com/alexdev" }
-                    ],
-                    skills: ["React", "TypeScript", "Node.js", "GraphQL", "AWS"],
-                    location: "San Francisco, CA",
-                    availableForWork: true
-                };
-
-                setProfile(mockProfile);
-            } catch (error) {
-                toast.error("Failed to load profile");
+                setError(null);
+                
+                const response = await getUserProfile();
+                setProfile(response.user);
+            } catch (error: any) {
+                const errorMessage = error.response?.data?.error || 'Failed to load profile';
+                setError(errorMessage);
+                toast.error(errorMessage);
             } finally {
                 setIsLoading(false);
             }
@@ -97,6 +88,30 @@ export default function ProfilePage() {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-cardDark">
                 <Loader2 className="w-12 h-12 animate-spin text-primary/80" />
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-cardDark">
+                <div className="text-center">
+                    <p className="text-red-500 mb-4">{error}</p>
+                    <button 
+                        onClick={() => window.location.reload()} 
+                        className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80"
+                    >
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    if (!profile) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-cardDark">
+                <p className="text-gray-500">No profile data found</p>
             </div>
         );
     }
@@ -115,8 +130,8 @@ export default function ProfilePage() {
                         <div className="md:w-1/3 p-6 flex flex-col items-center">
                             <div className="relative group">
                                 <Image
-                                    src={profile.avatarUrl}
-                                    alt={`${profile.name}'s profile`}
+                                    src={profile.profileImage || "/user_1.jpeg"}
+                                    alt={`${profile.fullName}'s profile`}
                                     width={256}
                                     height={256}
                                     className="w-48 h-48 md:w-64 md:h-64 rounded-full object-cover border-4 border-indigo-100 dark:border-indigo-900"
@@ -144,7 +159,7 @@ export default function ProfilePage() {
                         <div className="md:w-2/3 p-6">
                             <div className="flex flex-col space-y-6">
                                 <div>
-                                    <h1 className="text-3xl font-bold text-primaryText dark:text-background">{profile.name}</h1>
+                                    <h1 className="text-3xl font-bold text-primaryText dark:text-background">{profile.fullName}</h1>
                                     <p className="text-primary font-medium">@{profile.username}</p>
 
                                     {profile.location && (
@@ -168,16 +183,17 @@ export default function ProfilePage() {
                                         Connect
                                     </h3>
                                     <div className="flex flex-wrap gap-4">
-                                        {profile.socialLinks?.length > 0 ? (
-                                            profile.socialLinks.map((link) => (
+                                        {profile.socialHandles?.length > 0 ? (
+                                            profile.socialHandles.map((handle, index) => (
                                                 <a
-                                                    key={link.id}
-                                                    href={link.url}
+                                                    key={index}
+                                                    href={handle.url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
                                                 >
-                                                    {getSocialIcon(link.platform)}
+                                                    {getSocialIcon(handle.platform)}
+                                                    <span className="text-sm font-medium">{handle.platform}</span>
                                                 </a>
                                             ))
                                         ) : (
@@ -192,21 +208,21 @@ export default function ProfilePage() {
                                         Useful Links
                                     </h3>
                                     <div className="flex flex-wrap gap-4">
-                                        {profile.socialLinks?.length > 0 ? (
-                                            profile.socialLinks.map((link) => (
+                                        {profile.usefulLinks?.length > 0 ? (
+                                            profile.usefulLinks.map((link, index) => (
                                                 <a
-                                                    key={link.id}
+                                                    key={index}
                                                     href={link.url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
                                                 >
-                                                    {getSocialIcon(link.platform)}
-                                                    <span className="text-sm font-medium">{link.platform}</span>
+                                                    <FaGlobe className="w-4 h-4" />
+                                                    <span className="text-sm font-medium">{link.title}</span>
                                                 </a>
                                             ))
                                         ) : (
-                                            <p className="text-gray-400 dark:text-gray-500">No social links added</p>
+                                            <p className="text-gray-400 dark:text-gray-500">No useful links added</p>
                                         )}
                                     </div>
                                 </div>
@@ -217,10 +233,15 @@ export default function ProfilePage() {
                     <div className="border-t border-gray-200 dark:border-gray-700 px-6 py-4 bg-gray-50 dark:bg-[#1b254b]">
                         <div className="flex justify-center items-center">
                             <div className="flex items-center space-x-2 text-sm text-secondaryText/90">
-                                <span>Member since 2025</span>
+                                <span>Member since {new Date(profile.createdAt).getFullYear()}</span>
                                 {profile.availableForWork && (
                                     <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                                         Available for work
+                                    </span>
+                                )}
+                                {profile.profileCompleted && (
+                                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                        Profile Complete
                                     </span>
                                 )}
                             </div>

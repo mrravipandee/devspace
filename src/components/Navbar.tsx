@@ -1,17 +1,20 @@
 "use client";
 
-import { Bell, Moon, Sun, Search, ChevronDown, Book, Cpu, User, Settings, LogOut } from "lucide-react";
+import { Bell, Moon, Sun, Search, ChevronDown, Book, Cpu, User, Settings, LogOut, RefreshCw } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { getUserProfile } from '@/lib/apiClient';
 
 export default function Navbar() {
   const router = useRouter();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [userData, setUserData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const notificationsRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
@@ -53,6 +56,25 @@ export default function Navbar() {
     }
   }, [darkMode]);
 
+  // Fetch user data
+  const fetchUserData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await getUserProfile();
+      setUserData(response.user);
+    } catch (error: any) {
+      console.error('Failed to fetch user data:', error);
+      // Don't show error toast for navbar, just log it
+      setUserData(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
   };
@@ -93,6 +115,11 @@ export default function Navbar() {
   const profileMenu = [
     { label: "Profile", icon: <User className="h-4 w-4" />, href: "/profile" },
     { label: "Settings", icon: <Settings className="h-4 w-4" />, href: "/setting" },
+    { 
+      label: "Refresh Data", 
+      icon: <RefreshCw className="h-4 w-4" />, 
+      onClick: fetchUserData 
+    },
     { 
       label: "Logout", 
       icon: <LogOut className="h-4 w-4" />, 
@@ -212,21 +239,51 @@ export default function Navbar() {
                 aria-label="User menu"
                 aria-expanded={showProfileMenu}
               >
-                <Image
-                  src="/avtar_logo.avif"
-                  height={36}
-                  width={36}
-                  alt="User profile"
-                  className="rounded-full border-2 border-gray-300 dark:border-gray-600 cursor-pointer hover:border-primary-500 transition-colors duration-200"
-                />
+                {isLoading ? (
+                  <div className="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
+                ) : (
+                  <Image
+                    src={userData?.profileImage || "/avtar_logo.avif"}
+                    height={36}
+                    width={36}
+                    alt="User profile"
+                    className="rounded-full border-2 border-gray-300 dark:border-gray-600 cursor-pointer hover:border-primary-500 transition-colors duration-200"
+                  />
+                )}
                 <ChevronDown className={`h-4 w-4 text-gray-600 dark:text-gray-300 transition-transform ${showProfileMenu ? 'rotate-180' : ''}`} />
               </button>
 
               {/* Profile Dropdown Menu */}
               {showProfileMenu && (
-                <div className="absolute right-0 top-[3.6rem] md:w-52 w-48 bg-white dark:bg-[#1B254B] border border-gray-200 dark:border-gray-900 rounded-lg shadow-lg z-50">
+                <div className="absolute right-0 top-[3.6rem] md:w-64 w-56 bg-white dark:bg-[#1B254B] border border-gray-200 dark:border-gray-900 rounded-lg shadow-lg z-50">
                   {/* Arrow indicator */}
                   <div className="absolute -top-2 right-4 w-4 h-4 rotate-45 bg-white dark:bg-[#1B254B] border-t border-l border-gray-200 dark:border-gray-900" />
+                  
+                  {/* User Info Section */}
+                  {userData && (
+                    <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                      <div className="flex items-center">
+                        <Image
+                          src={userData.profileImage || "/avtar_logo.avif"}
+                          height={40}
+                          width={40}
+                          alt="User profile"
+                          className="rounded-full border-2 border-gray-300 dark:border-gray-600"
+                        />
+                        <div className="ml-3">
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            {userData.fullName || userData.username}
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            @{userData.username}
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {userData.email}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   
                   <ul className="py-1">
                     {profileMenu.map((item, index) => (

@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { Lock, Mail, User, Eye, EyeOff, Check, X, Edit, Trash2, Loader2 } from 'lucide-react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
+import { getUserProfile, updateUserProfile } from '@/lib/apiClient';
 
 export default function SettingsPage() {
     const router = useRouter();
@@ -37,25 +38,25 @@ export default function SettingsPage() {
         reason: ''
     });
 
-    // Fetch user data (simulated)
+    // Fetch user data from API
     useEffect(() => {
         const fetchUserData = async () => {
             try {
                 setIsLoading(true);
-                // Simulate API call
-                await new Promise(resolve => setTimeout(resolve, 800));
-
-                const mockUserData = {
-                    username: 'devuser123',
-                    email: 'user@example.com',
+                
+                const response = await getUserProfile();
+                const user = response.user;
+                
+                setUserData({
+                    username: user.username || '',
+                    email: user.email || '',
                     currentPassword: '',
                     newPassword: '',
                     confirmPassword: ''
-                };
-
-                setUserData(mockUserData);
-            } catch (error) {
-                toast.error('Failed to load user data');
+                });
+            } catch (error: any) {
+                const errorMessage = error.response?.data?.error || 'Failed to load user data';
+                toast.error(errorMessage);
             } finally {
                 setIsLoading(false);
             }
@@ -95,13 +96,16 @@ export default function SettingsPage() {
 
         try {
             setIsLoading(true);
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            await updateUserProfile({
+                username: userData.username
+            });
 
             toast.success('Username updated successfully');
             setIsEditingUsername(false);
-        } catch (error) {
-            toast.error('Failed to update username');
+        } catch (error: any) {
+            const errorMessage = error.response?.data?.error || 'Failed to update username';
+            toast.error(errorMessage);
         } finally {
             setIsLoading(false);
         }
@@ -120,13 +124,14 @@ export default function SettingsPage() {
 
         try {
             setIsLoading(true);
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            toast.success('Email updated successfully');
+            
+            // Note: Email updates might require additional verification
+            // For now, we'll show a message that this feature is coming soon
+            toast.info('Email update feature is coming soon. Please contact support for email changes.');
             setIsEditingEmail(false);
-        } catch (error) {
-            toast.error('Failed to update email');
+        } catch (error: any) {
+            const errorMessage = error.response?.data?.error || 'Failed to update email';
+            toast.error(errorMessage);
         } finally {
             setIsLoading(false);
         }
@@ -155,14 +160,30 @@ export default function SettingsPage() {
 
         try {
             setIsLoading(true);
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            const response = await fetch('/api/auth/change-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    currentPassword: userData.currentPassword,
+                    newPassword: userData.newPassword
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to change password');
+            }
 
             toast.success('Password changed successfully');
             setIsChangingPassword(false);
             setUserData(prev => ({ ...prev, currentPassword: '', newPassword: '', confirmPassword: '' }));
-        } catch (error) {
-            toast.error('Failed to change password');
+        } catch (error: any) {
+            const errorMessage = error.message || 'Failed to change password';
+            toast.error(errorMessage);
         } finally {
             setIsLoading(false);
         }
@@ -186,13 +207,28 @@ export default function SettingsPage() {
 
         try {
             setIsLoading(true);
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            const response = await fetch('/api/auth/delete-account', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    reason: deleteConfirmation.reason
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to delete account');
+            }
 
             toast.success('Account deleted successfully');
             router.push('/');
-        } catch (error) {
-            toast.error('Failed to delete account');
+        } catch (error: any) {
+            const errorMessage = error.message || 'Failed to delete account';
+            toast.error(errorMessage);
         } finally {
             setIsLoading(false);
             setIsDeleteModalOpen(false);
