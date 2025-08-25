@@ -35,7 +35,8 @@ export default function SignupPage() {
             });
             const data = await res.json();
             if (res.ok) {
-                router.push('/login');
+                toast.success('Account created successfully! Please complete your profile.');
+                router.push('/profile');
             } else {
                 setError(data?.msg || 'Something went wrong');
             }

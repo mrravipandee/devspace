@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export function middleware(req: NextRequest) {
   const token = req.cookies.get('token')?.value;
+  const { pathname } = req.nextUrl;
 
   // Private routes
   const privateRoutes = [
@@ -27,7 +28,10 @@ export function middleware(req: NextRequest) {
     '/pricing',
   ];
 
-  const { pathname } = req.nextUrl;
+  // Skip middleware for dynamic username routes (public profiles)
+  if (pathname !== '/' && !pathname.startsWith('/api') && !pathname.startsWith('/_next') && !privateRoutes.some(route => pathname.startsWith(route)) && !publicRoutes.includes(pathname)) {
+    return NextResponse.next();
+  }
 
   // If user is going to a private route without token → redirect to signin
   if (privateRoutes.some(route => pathname.startsWith(route)) && !token) {

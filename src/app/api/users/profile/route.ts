@@ -88,7 +88,7 @@ export async function PUT(req: NextRequest) {
     if (usefulLinks !== undefined) updateData.usefulLinks = usefulLinks;
 
     // Check if profile is complete (has essential fields)
-    const hasEssentialFields = fullName && bio && profileImage;
+    const hasEssentialFields = fullName && bio && fullName.trim() && bio.trim();
     if (hasEssentialFields && !user.profileCompleted) {
       updateData.profileCompleted = true;
     }

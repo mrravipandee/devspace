@@ -9,6 +9,7 @@ import {
     Gpu,
     FileUser,
     GitPullRequestArrow,
+    MessageSquare,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -81,4 +82,5 @@ const menuItems = [
     { href: "/tech", icon: Gpu, label: "Tech Stack" },
     { href: "/resume", icon: FileUser, label: "Resume" },
     { href: "/contributions", icon: GitPullRequestArrow, label: "Contributions" },
+    { href: "/contact", icon: MessageSquare, label: "Contact" },
 ];

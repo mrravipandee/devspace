@@ -280,6 +280,21 @@ export default function Navbar() {
                           <p className="text-xs text-gray-500 dark:text-gray-400">
                             {userData.email}
                           </p>
+                          {userData.profileCompleted ? (
+                            <div className="flex items-center mt-1">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></span>
+                                Complete
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center mt-1">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                                <span className="w-1.5 h-1.5 bg-yellow-500 rounded-full mr-1"></span>
+                                Incomplete
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>

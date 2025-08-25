@@ -29,7 +29,14 @@ export default function LoginPage() {
             const data = await res.json();
             if (res.ok) {
                 toast.success('Login successful');
-                router.push('/home');
+                
+                // Check if profile is completed
+                if (data.user.profileCompleted) {
+                    router.push('/home');
+                } else {
+                    toast.info('Please complete your profile to get started!');
+                    router.push('/profile');
+                }
             } else {
                 setError(data?.msg || 'Invalid credentials');
                 toast.error(data?.msg || 'Invalid credentials');

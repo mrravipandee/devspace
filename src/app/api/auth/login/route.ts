@@ -15,7 +15,14 @@ export async function POST(req: NextRequest) {
   if (!match) return NextResponse.json({ msg: 'Invalid credentials' }, { status: 400 });
 
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, { expiresIn: '1d' });
-  const res = NextResponse.json({ user: { fullName: user.fullName, email: user.email, username: user.username } });
+  const res = NextResponse.json({ 
+    user: { 
+      fullName: user.fullName, 
+      email: user.email, 
+      username: user.username,
+      profileCompleted: user.profileCompleted 
+    } 
+  });
   res.cookies.set('token', token, { httpOnly: true, path: '/', maxAge: 86400 });
   return res;
 }
