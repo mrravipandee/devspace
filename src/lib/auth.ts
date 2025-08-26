@@ -12,7 +12,7 @@ export const verifyToken = (token: string): JWTPayload | null => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JWTPayload;
     return decoded;
-  } catch (error) {
+  } catch {
     return null;
   }
 };
@@ -32,7 +32,7 @@ export const getUserFromToken = async (req: NextRequest) => {
   try {
     const user = await User.findById(decoded.id).select('-password');
     return user;
-  } catch (error) {
+  } catch {
     return null;
   }
 };
@@ -46,7 +46,7 @@ export const getUserFromTokenString = async (token: string) => {
   try {
     const user = await User.findById(decoded.id).select('-password');
     return user;
-  } catch (error) {
+  } catch {
     return null;
   }
 };

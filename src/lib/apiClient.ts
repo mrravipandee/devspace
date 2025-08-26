@@ -35,7 +35,7 @@ export const getUserProfile = async () => {
   return response.data;
 };
 
-export const updateUserProfile = async (profileData: any) => {
+export const updateUserProfile = async <T>(profileData: T) => {
   const response = await apiClient.put('/api/users/profile', profileData);
   return response.data;
 };
