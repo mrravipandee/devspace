@@ -37,6 +37,23 @@ export async function GET(req: NextRequest) {
     });
   } catch (error) {
     console.error('Error fetching user profile:', error);
+    
+    // Provide more specific error messages
+    if (error instanceof Error) {
+      if (error.message.includes('MongoDB connection error')) {
+        return NextResponse.json(
+          { error: 'Database connection failed' },
+          { status: 503 }
+        );
+      }
+      if (error.message.includes('JWT_SECRET')) {
+        return NextResponse.json(
+          { error: 'Authentication configuration error' },
+          { status: 500 }
+        );
+      }
+    }
+    
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -125,6 +142,23 @@ export async function PUT(req: NextRequest) {
     });
   } catch (error) {
     console.error('Error updating user profile:', error);
+    
+    // Provide more specific error messages
+    if (error instanceof Error) {
+      if (error.message.includes('MongoDB connection error')) {
+        return NextResponse.json(
+          { error: 'Database connection failed' },
+          { status: 503 }
+        );
+      }
+      if (error.message.includes('validation failed')) {
+        return NextResponse.json(
+          { error: 'Validation error: ' + error.message },
+          { status: 400 }
+        );
+      }
+    }
+    
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

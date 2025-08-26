@@ -6,7 +6,8 @@ import Link from 'next/link';
 import {
     FaGithub, FaLinkedin, FaTwitter, FaGlobe, FaCodepen,
     FaDev, FaMedium, FaStackOverflow, FaGitlab,
-    FaEdit, FaUserCircle, FaBehance, FaDribbble
+    FaEdit, FaUserCircle, FaBehance, FaDribbble,
+    FaEye, FaStar, FaTrophy, FaAward, FaLink, FaCheckCircle, FaBriefcase
 } from 'react-icons/fa';
 
 import { toast } from 'sonner';
@@ -44,6 +45,7 @@ export default function ProfilePage() {
     const [profile, setProfile] = useState<ProfileData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [activeTab, setActiveTab] = useState('overview');
 
     const getSocialIcon = (platform: string) => {
         const platformLower = platform.toLowerCase();
@@ -91,10 +93,14 @@ export default function ProfilePage() {
     if (isLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-                <div className="text-center">
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-center"
+                >
                     <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
                     <p className="text-gray-600 dark:text-gray-400 text-lg">Loading your profile...</p>
-                </div>
+                </motion.div>
             </div>
         );
     }
@@ -102,7 +108,11 @@ export default function ProfilePage() {
     if (error) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-                <div className="text-center">
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center"
+                >
                     <div className="w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
@@ -115,7 +125,7 @@ export default function ProfilePage() {
                     >
                         Try Again
                     </button>
-                </div>
+                </motion.div>
             </div>
         );
     }
@@ -123,15 +133,26 @@ export default function ProfilePage() {
     if (!profile) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-                <div className="text-center">
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center"
+                >
                     <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
                         <FaUserCircle className="w-8 h-8 text-gray-400" />
                     </div>
                     <p className="text-gray-600 dark:text-gray-400 text-lg">No profile data found</p>
-                </div>
+                </motion.div>
             </div>
         );
     }
+
+    const tabs = [
+        { id: 'overview', label: 'Overview', icon: FaUserCircle },
+        { id: 'social', label: 'Social', icon: FaGlobe },
+        { id: 'links', label: 'Links', icon: FaLink },
+        { id: 'stats', label: 'Stats', icon: FaStar }
+    ];
 
     return (
         <div className="min-h-screen">
@@ -168,14 +189,18 @@ export default function ProfilePage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20  overflow-hidden"
+                    className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden"
                 >
                     {/* Header Section */}
                     <div className="relative h-48 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600">
                         <div className="absolute inset-0 bg-black/10"></div>
                         <div className="absolute bottom-0 left-0 right-0 p-8">
                             <div className="flex flex-col lg:flex-row items-end lg:items-center space-y-4 lg:space-y-0 lg:space-x-6">
-                                <div className="relative">
+                                <motion.div 
+                                    className="relative"
+                                    whileHover={{ scale: 1.05 }}
+                                    transition={{ type: "spring", stiffness: 300 }}
+                                >
                                     <Image
                                         src={profile.profileImage || "/user_1.jpeg"}
                                         alt={`${profile.fullName}'s profile`}
@@ -191,15 +216,19 @@ export default function ProfilePage() {
                                             <span className="text-white text-xs font-bold">DEV</span>
                                         )}
                                     </div>
-                                </div>
+                                </motion.div>
                                 <div className="flex-1 text-white">
                                     <div className="flex items-center space-x-3 mb-2">
                                         <h1 className="text-3xl lg:text-4xl font-bold">{profile.fullName}</h1>
                                         {profile.profileCompleted && (
-                                            <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur-sm border border-white/30">
+                                            <motion.div 
+                                                initial={{ scale: 0 }}
+                                                animate={{ scale: 1 }}
+                                                className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/20 backdrop-blur-sm border border-white/30"
+                                            >
                                                 <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
                                                 Complete
-                                            </div>
+                                            </motion.div>
                                         )}
                                     </div>
                                     <p className="text-blue-100 text-lg font-medium">@{profile.username}</p>
@@ -214,31 +243,64 @@ export default function ProfilePage() {
                                     )}
                                 </div>
                                 <div className="flex space-x-3">
-                                    <Link
-                                        href={`/${profile.username}`}
-                                        target="_blank"
-                                        className="bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-xl transition-all duration-300 flex items-center gap-3 backdrop-blur-sm border border-white/30 hover:border-white/50"
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
                                     >
-                                        <FaGlobe className="w-4 h-4" />
-                                        View Public Profile
-                                    </Link>
-                                    <Link
-                                        href="/profile/edit"
-                                        className="bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-xl transition-all duration-300 flex items-center gap-3 backdrop-blur-sm border border-white/30 hover:border-white/50"
+                                        <Link
+                                            href={`/${profile.username}`}
+                                            target="_blank"
+                                            className="bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-xl transition-all duration-300 flex items-center gap-3 backdrop-blur-sm border border-white/30 hover:border-white/50"
+                                        >
+                                            <FaEye className="w-4 h-4" />
+                                            View Public Profile
+                                        </Link>
+                                    </motion.button>
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
                                     >
-                                        <FaEdit className="w-4 h-4" />
-                                        Edit Profile
-                                    </Link>
+                                        <Link
+                                            href="/profile/edit"
+                                            className="bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-xl transition-all duration-300 flex items-center gap-3 backdrop-blur-sm border border-white/30 hover:border-white/50"
+                                        >
+                                            <FaEdit className="w-4 h-4" />
+                                            Edit Profile
+                                        </Link>
+                                    </motion.button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Content Section */}
+                    {/* Tab Navigation */}
+                    <div className="border-b border-gray-200 dark:border-gray-700 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm">
+                        <div className="flex space-x-8 px-8">
+                            {tabs.map((tab) => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm transition-colors ${
+                                        activeTab === tab.id
+                                            ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                                            : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                                    }`}
+                                >
+                                    <tab.icon className="w-4 h-4" />
+                                    <span>{tab.label}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Tab Content */}
                     <div className="p-8">
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                            {/* Main Content */}
-                            <div className="lg:col-span-2 space-y-8">
+                        {activeTab === 'overview' && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="space-y-8"
+                            >
                                 {/* About Section */}
                                 <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-8 rounded-2xl border border-white/20 dark:border-gray-700/50">
                                     <div className="flex items-center space-x-3 mb-6">
@@ -254,7 +316,56 @@ export default function ProfilePage() {
                                     </p>
                                 </div>
 
-                                {/* Social Links */}
+                                {/* Quick Stats */}
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <motion.div 
+                                        whileHover={{ scale: 1.02 }}
+                                        className="bg-gradient-to-r from-blue-500 to-purple-500 p-6 rounded-2xl text-white"
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <p className="text-blue-100 text-sm">Social Links</p>
+                                                <p className="text-3xl font-bold">{profile.socialHandles?.length || 0}</p>
+                                            </div>
+                                            <FaGlobe className="w-8 h-8 text-blue-200" />
+                                        </div>
+                                    </motion.div>
+                                    
+                                    <motion.div 
+                                        whileHover={{ scale: 1.02 }}
+                                        className="bg-gradient-to-r from-green-500 to-emerald-500 p-6 rounded-2xl text-white"
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <p className="text-green-100 text-sm">Useful Links</p>
+                                                <p className="text-3xl font-bold">{profile.usefulLinks?.length || 0}</p>
+                                            </div>
+                                            <FaLink className="w-8 h-8 text-green-200" />
+                                        </div>
+                                    </motion.div>
+                                    
+                                    <motion.div 
+                                        whileHover={{ scale: 1.02 }}
+                                        className="bg-gradient-to-r from-orange-500 to-red-500 p-6 rounded-2xl text-white"
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <p className="text-orange-100 text-sm">Member Since</p>
+                                                <p className="text-3xl font-bold">{new Date(profile.createdAt).getFullYear()}</p>
+                                            </div>
+                                            <FaTrophy className="w-8 h-8 text-orange-200" />
+                                        </div>
+                                    </motion.div>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {activeTab === 'social' && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="space-y-6"
+                            >
                                 <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-8 rounded-2xl border border-white/20 dark:border-gray-700/50">
                                     <div className="flex items-center space-x-3 mb-6">
                                         <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
@@ -267,18 +378,20 @@ export default function ProfilePage() {
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         {profile.socialHandles?.length > 0 ? (
                                             profile.socialHandles.map((handle, index) => (
-                                                <a
+                                                <motion.a
                                                     key={index}
                                                     href={handle.url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="group flex items-center space-x-4 p-4 rounded-xl hover:bg-white/80 dark:hover:bg-gray-700/80 transition-all duration-300 border border-transparent hover:border-gray-200 dark:hover:border-gray-600"
+                                                    whileHover={{ scale: 1.02 }}
+                                                    whileTap={{ scale: 0.98 }}
                                                 >
                                                     <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                                                         {getSocialIcon(handle.platform)}
                                                     </div>
                                                     <span className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{handle.platform}</span>
-                                                </a>
+                                                </motion.a>
                                             ))
                                         ) : (
                                             <div className="col-span-full text-center py-12">
@@ -291,8 +404,15 @@ export default function ProfilePage() {
                                         )}
                                     </div>
                                 </div>
+                            </motion.div>
+                        )}
 
-                                {/* Useful Links */}
+                        {activeTab === 'links' && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="space-y-6"
+                            >
                                 <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-8 rounded-2xl border border-white/20 dark:border-gray-700/50">
                                     <div className="flex items-center space-x-3 mb-6">
                                         <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center">
@@ -305,18 +425,20 @@ export default function ProfilePage() {
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         {profile.usefulLinks?.length > 0 ? (
                                             profile.usefulLinks.map((link, index) => (
-                                                <a
+                                                <motion.a
                                                     key={index}
                                                     href={link.url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="group flex items-center space-x-4 p-4 rounded-xl hover:bg-white/80 dark:hover:bg-gray-700/80 transition-all duration-300 border border-transparent hover:border-gray-200 dark:hover:border-gray-600"
+                                                    whileHover={{ scale: 1.02 }}
+                                                    whileTap={{ scale: 0.98 }}
                                                 >
                                                     <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
                                                         <FaGlobe className="w-5 h-5 text-white" />
                                                     </div>
                                                     <span className="font-semibold text-gray-900 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">{link.title}</span>
-                                                </a>
+                                                </motion.a>
                                             ))
                                         ) : (
                                             <div className="col-span-full text-center py-12">
@@ -329,52 +451,113 @@ export default function ProfilePage() {
                                         )}
                                     </div>
                                 </div>
-                            </div>
+                            </motion.div>
+                        )}
 
-                            {/* Sidebar */}
-                            <div className="space-y-6">
-                                {/* Stats Card */}
-                                <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-6 rounded-2xl border border-white/20 dark:border-gray-700/50">
-                                    <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Profile Stats</h4>
-                                    <div className="space-y-4">
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-gray-600 dark:text-gray-400">Social Links</span>
-                                            <span className="font-semibold text-gray-900 dark:text-white">{profile.socialHandles?.length || 0}</span>
+                        {activeTab === 'stats' && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="space-y-6"
+                            >
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {/* Profile Stats */}
+                                    <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-6 rounded-2xl border border-white/20 dark:border-gray-700/50">
+                                        <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Profile Stats</h4>
+                                        <div className="space-y-4">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-gray-600 dark:text-gray-400">Social Links</span>
+                                                <span className="font-semibold text-gray-900 dark:text-white">{profile.socialHandles?.length || 0}</span>
+                                            </div>
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-gray-600 dark:text-gray-400">Useful Links</span>
+                                                <span className="font-semibold text-gray-900 dark:text-white">{profile.usefulLinks?.length || 0}</span>
+                                            </div>
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-gray-600 dark:text-gray-400">Profile Status</span>
+                                                <span className={`font-semibold ${profile.profileCompleted ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'}`}>
+                                                    {profile.profileCompleted ? 'Complete' : 'Incomplete'}
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-gray-600 dark:text-gray-400">Useful Links</span>
-                                            <span className="font-semibold text-gray-900 dark:text-white">{profile.usefulLinks?.length || 0}</span>
+                                    </div>
+
+                                    {/* Member Since */}
+                                    <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-6 rounded-2xl border border-white/20 dark:border-gray-700/50">
+                                        <div className="flex items-center space-x-3 mb-4">
+                                            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                                                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                            </div>
+                                            <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Member Since</h4>
                                         </div>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-gray-600 dark:text-gray-400">Profile Status</span>
-                                            <span className={`font-semibold ${profile.profileCompleted ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'}`}>
-                                                {profile.profileCompleted ? 'Complete' : 'Incomplete'}
-                                            </span>
-                                        </div>
+                                        <p className="text-2xl font-bold text-gray-900 dark:text-white">{new Date(profile.createdAt).getFullYear()}</p>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                            {new Date(profile.createdAt).toLocaleDateString('en-US', { 
+                                                year: 'numeric', 
+                                                month: 'long', 
+                                                day: 'numeric' 
+                                            })}
+                                        </p>
                                     </div>
                                 </div>
 
-                                {/* Member Since */}
-                                <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-6 rounded-2xl border border-white/20 dark:border-gray-700/50">
-                                    <div className="flex items-center space-x-3 mb-4">
-                                        <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
+                                {/* Achievements */}
+                                <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-8 rounded-2xl border border-white/20 dark:border-gray-700/50">
+                                    <div className="flex items-center space-x-3 mb-6">
+                                        <div className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center">
+                                            <FaAward className="w-5 h-5 text-white" />
                                         </div>
-                                        <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Member Since</h4>
+                                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Achievements</h3>
                                     </div>
-                                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{new Date(profile.createdAt).getFullYear()}</p>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                        {new Date(profile.createdAt).toLocaleDateString('en-US', { 
-                                            year: 'numeric', 
-                                            month: 'long', 
-                                            day: 'numeric' 
-                                        })}
-                                    </p>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        <motion.div 
+                                            whileHover={{ scale: 1.05 }}
+                                            className="flex items-center space-x-3 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl border border-blue-200 dark:border-blue-800"
+                                        >
+                                            <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                                                <FaUserCircle className="w-5 h-5 text-white" />
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold text-gray-900 dark:text-white">Profile Created</p>
+                                                <p className="text-sm text-gray-600 dark:text-gray-400">Welcome to DevSpace!</p>
+                                            </div>
+                                        </motion.div>
+                                        
+                                        {profile.profileCompleted && (
+                                            <motion.div 
+                                                whileHover={{ scale: 1.05 }}
+                                                className="flex items-center space-x-3 p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl border border-green-200 dark:border-green-800"
+                                            >
+                                                <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+                                                    <FaCheckCircle className="w-5 h-5 text-white" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-semibold text-gray-900 dark:text-white">Profile Complete</p>
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400">All sections filled!</p>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                        
+                                        {profile.availableForWork && (
+                                            <motion.div 
+                                                whileHover={{ scale: 1.05 }}
+                                                className="flex items-center space-x-3 p-4 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-xl border border-orange-200 dark:border-orange-800"
+                                            >
+                                                <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
+                                                    <FaBriefcase className="w-5 h-5 text-white" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-semibold text-gray-900 dark:text-white">Available for Work</p>
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400">Open to opportunities!</p>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
+                            </motion.div>
+                        )}
                     </div>
 
                     {/* Footer */}
