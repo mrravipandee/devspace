@@ -25,18 +25,22 @@ export default function LoginPage() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
+                credentials: 'include', // Ensure cookies are included
             });
             const data = await res.json();
             if (res.ok) {
                 toast.success('Login successful');
                 
-                // Check if profile is completed
-                if (data.user.profileCompleted) {
-                    router.push('/home');
-                } else {
-                    toast.info('Please complete your profile to get started!');
-                    router.push('/profile');
-                }
+                // Add a small delay to ensure cookie is set
+                setTimeout(() => {
+                    // Check if profile is completed
+                    if (data.user.profileCompleted) {
+                        router.push('/home');
+                    } else {
+                        toast.info('Please complete your profile to get started!');
+                        router.push('/profile');
+                    }
+                }, 100);
             } else {
                 setError(data?.msg || 'Invalid credentials');
                 toast.error(data?.msg || 'Invalid credentials');

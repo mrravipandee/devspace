@@ -10,6 +10,7 @@ export function middleware(req: NextRequest) {
     // Allow requests from your production domain and localhost
     const allowedOrigins = [
       'https://www.devspacee.me',
+      'https://api.devspacee.me',
       'https://devspacee.me',
       'http://localhost:3000',
       'http://localhost:3001',
@@ -77,11 +78,13 @@ export function middleware(req: NextRequest) {
 
   // If user is going to a private route without token → redirect to signin
   if (privateRoutes.some(route => pathname.startsWith(route)) && !token) {
+    console.log('Redirecting to login: No token found for private route', pathname);
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
   // If user is logged in and tries to go to login/signup → send them to home
   if (token && (pathname === '/login' || pathname === '/signup')) {
+    console.log('Redirecting to home: User has token but accessing auth page', pathname);
     return NextResponse.redirect(new URL('/home', req.url));
   }
 
@@ -100,7 +103,9 @@ export const config = {
     '/profile/:path*',
     '/tech/:path*',
     '/achivement/:path*',
-    '/signin',
+    '/contributions/:path*',
+    '/login',
     '/signup',
+    '/',
   ],
 };
