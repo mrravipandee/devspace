@@ -76,8 +76,10 @@ export default function EditProfilePage() {
                     usefulLinks: profile.usefulLinks || [],
                     profileCompleted: profile.profileCompleted || false
                 });
-            } catch (error: any) {
-                const errorMessage = error.response?.data?.error || 'Failed to load profile';
+            } catch (error: unknown) {
+                const errorMessage = error instanceof Error && 'response' in error && error.response?.data?.error 
+                    ? error.response.data.error 
+                    : 'Failed to load profile';
                 setError(errorMessage);
                 toast.error(errorMessage);
             } finally {
@@ -88,7 +90,7 @@ export default function EditProfilePage() {
         fetchProfile();
     }, []);
 
-    const handleInputChange = (field: string, value: any) => {
+    const handleInputChange = (field: string, value: string | boolean) => {
         setFormData(prev => ({
             ...prev,
             [field]: value
@@ -179,8 +181,10 @@ export default function EditProfilePage() {
             }
             
             router.push('/profile');
-        } catch (error: any) {
-            const errorMessage = error.response?.data?.error || 'Failed to update profile';
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error && 'response' in error && error.response?.data?.error 
+                ? error.response.data.error 
+                : 'Failed to update profile';
             toast.error(errorMessage);
         } finally {
             setIsSaving(false);

@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { Upload, X, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import Image from 'next/image';
 
 interface ImageUploadProps {
   currentImage?: string;
@@ -49,9 +50,10 @@ export default function ImageUpload({ currentImage, onImageUpload, className = "
 
       onImageUpload(data.url, data.public_id);
       toast.success('Image uploaded successfully!');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Upload error:', error);
-      toast.error(error.message || 'Failed to upload image');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to upload image';
+      toast.error(errorMessage);
     } finally {
       setIsUploading(false);
     }
@@ -110,9 +112,11 @@ export default function ImageUpload({ currentImage, onImageUpload, className = "
         {/* Current Image Display */}
         {currentImage && (
           <div className="relative">
-            <img
+            <Image
               src={currentImage}
               alt="Profile"
+              width={400}
+              height={400}
               className="w-full h-full object-cover rounded-lg"
             />
             <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-lg flex items-center justify-center">

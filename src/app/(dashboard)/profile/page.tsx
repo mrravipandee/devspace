@@ -72,8 +72,10 @@ export default function ProfilePage() {
                 
                 const response = await getUserProfile();
                 setProfile(response.user);
-            } catch (error: any) {
-                const errorMessage = error.response?.data?.error || 'Failed to load profile';
+            } catch (error: unknown) {
+                const errorMessage = error instanceof Error && 'response' in error && error.response?.data?.error 
+                    ? error.response.data.error 
+                    : 'Failed to load profile';
                 setError(errorMessage);
                 toast.error(errorMessage);
             } finally {

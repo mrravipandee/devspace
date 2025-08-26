@@ -76,7 +76,7 @@ export async function PUT(req: NextRequest) {
     }
 
     // Prepare update data
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
     if (fullName !== undefined) updateData.fullName = fullName;
     if (username !== undefined) updateData.username = username;
     if (bio !== undefined) updateData.bio = bio;

@@ -13,7 +13,13 @@ export default function Navbar() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const [userData, setUserData] = useState<any>(null);
+  const [userData, setUserData] = useState<{
+    profileImage?: string;
+    fullName?: string;
+    username?: string;
+    email?: string;
+    profileCompleted?: boolean;
+  } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const notificationsRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -62,7 +68,7 @@ export default function Navbar() {
       setIsLoading(true);
       const response = await getUserProfile();
       setUserData(response.user);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to fetch user data:', error);
       // Don't show error toast for navbar, just log it
       setUserData(null);
@@ -107,7 +113,7 @@ export default function Navbar() {
       } else {
         toast.error(data.msg || "Logout failed");
       }
-    } catch (error) {
+    } catch {
       toast.error("Logout failed. Please try again.");
     }
   };

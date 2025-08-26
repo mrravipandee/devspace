@@ -40,8 +40,9 @@ export default function ContactPage() {
       }
       
       setContacts(data.contacts);
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load contact messages';
+      setError(errorMessage);
       toast.error('Failed to load contact messages');
     } finally {
       setIsLoading(false);
