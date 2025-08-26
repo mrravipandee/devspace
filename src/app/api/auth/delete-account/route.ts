@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { reason } = await req.json();
+    await req.json(); // Extract body but don't use reason for now
 
     // Delete user from database
     await User.findByIdAndDelete(user._id);

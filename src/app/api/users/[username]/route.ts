@@ -4,12 +4,11 @@ import User from '@/models/User';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { username: string } }
+  { params }: { params: Promise<{ username: string }> }
 ) {
+  const { username } = await params;
   try {
     await dbConnect();
-    
-    const { username } = params;
     
     const user = await User.findOne({ username }).select('-password -email');
     

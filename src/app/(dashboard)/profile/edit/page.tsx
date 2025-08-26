@@ -18,23 +18,6 @@ interface UsefulLink {
     url: string;
 }
 
-interface ProfileData {
-    id: string;
-    username: string;
-    email: string;
-    fullName: string;
-    bio: string;
-    profileImage: string;
-    profileImagePublicId: string;
-    location: string;
-    availableForWork: boolean;
-    socialHandles: SocialHandle[];
-    usefulLinks: UsefulLink[];
-    profileCompleted: boolean;
-    createdAt: string;
-    updatedAt: string;
-}
-
 export default function EditProfilePage() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
@@ -77,8 +60,10 @@ export default function EditProfilePage() {
                     profileCompleted: profile.profileCompleted || false
                 });
             } catch (error: unknown) {
-                const errorMessage = error instanceof Error && 'response' in error && error.response?.data?.error 
-                    ? error.response.data.error 
+                const errorMessage = error instanceof Error && 'response' in error && 
+                    typeof error.response === 'object' && error.response && 'data' in error.response &&
+                    typeof error.response.data === 'object' && error.response.data && 'error' in error.response.data
+                    ? (error.response.data as { error: string }).error 
                     : 'Failed to load profile';
                 setError(errorMessage);
                 toast.error(errorMessage);
@@ -182,8 +167,10 @@ export default function EditProfilePage() {
             
             router.push('/profile');
         } catch (error: unknown) {
-            const errorMessage = error instanceof Error && 'response' in error && error.response?.data?.error 
-                ? error.response.data.error 
+            const errorMessage = error instanceof Error && 'response' in error && 
+                typeof error.response === 'object' && error.response && 'data' in error.response &&
+                typeof error.response.data === 'object' && error.response.data && 'error' in error.response.data
+                ? (error.response.data as { error: string }).error 
                 : 'Failed to update profile';
             toast.error(errorMessage);
         } finally {

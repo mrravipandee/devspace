@@ -1,14 +1,14 @@
 "use client";
 
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
     FaGithub, FaLinkedin, FaTwitter, FaGlobe, FaCodepen,
-    FaDev, FaMedium, FaStackOverflow, FaSave, FaTimes, FaGitlab,
+    FaDev, FaMedium, FaStackOverflow, FaGitlab,
     FaEdit, FaUserCircle, FaBehance, FaDribbble
 } from 'react-icons/fa';
-import { Loader2 } from 'lucide-react';
+
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { getUserProfile } from '@/lib/apiClient';
@@ -73,8 +73,10 @@ export default function ProfilePage() {
                 const response = await getUserProfile();
                 setProfile(response.user);
             } catch (error: unknown) {
-                const errorMessage = error instanceof Error && 'response' in error && error.response?.data?.error 
-                    ? error.response.data.error 
+                const errorMessage = error instanceof Error && 'response' in error && 
+                    typeof error.response === 'object' && error.response && 'data' in error.response &&
+                    typeof error.response.data === 'object' && error.response.data && 'error' in error.response.data
+                    ? (error.response.data as { error: string }).error 
                     : 'Failed to load profile';
                 setError(errorMessage);
                 toast.error(errorMessage);

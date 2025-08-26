@@ -40,7 +40,7 @@ export default function SignupPage() {
             } else {
                 setError(data?.msg || 'Something went wrong');
             }
-        } catch (error) {
+        } catch {
             setError('Signup failed. Please try again.');
         } finally {
             setIsLoading(false);

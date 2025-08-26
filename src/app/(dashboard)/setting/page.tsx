@@ -55,8 +55,10 @@ export default function SettingsPage() {
                     confirmPassword: ''
                 });
             } catch (error: unknown) {
-                const errorMessage = error instanceof Error && 'response' in error && error.response?.data?.error 
-                    ? error.response.data.error 
+                const errorMessage = error instanceof Error && 'response' in error && 
+                    typeof error.response === 'object' && error.response && 'data' in error.response &&
+                    typeof error.response.data === 'object' && error.response.data && 'error' in error.response.data
+                    ? (error.response.data as { error: string }).error 
                     : 'Failed to load user data';
                 toast.error(errorMessage);
             } finally {

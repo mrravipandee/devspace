@@ -7,8 +7,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { 
-    Loader2, ArrowLeft, MapPin, Calendar, ExternalLink, Mail, 
-    Github, Twitter, Linkedin, Globe, Moon, Sun, Send, User, MessageSquare
+    ArrowLeft, MapPin, ExternalLink, Moon, Sun, Send, User, MessageSquare
 } from 'lucide-react';
 import {
     FaGithub, FaLinkedin, FaTwitter, FaGlobe, FaCodepen,
@@ -183,7 +182,7 @@ export default function UserPage() {
                     </div>
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">404 - Portfolio Not Found</h1>
                     <p className="text-gray-600 dark:text-gray-400 text-lg mb-6">
-                        The portfolio for <span className="font-semibold">@{username}</span> doesn't exist.
+                        The portfolio for <span className="font-semibold">@{username}</span> doesn&apos;t exist.
                     </p>
                     <div className="space-y-3">
                         <Link
@@ -240,7 +239,7 @@ export default function UserPage() {
                         <div className="relative">
                             <Image
                                 src={userData.profileImage || "/user_1.jpeg"}
-                                alt={`${userData.fullName}'s profile`}
+                                alt={`${userData.fullName}&apos;s profile`}
                                 width={200}
                                 height={200}
                                 className="w-48 h-48 rounded-full object-cover border-4 border-white shadow-2xl"
@@ -351,7 +350,7 @@ export default function UserPage() {
                                 No Projects Yet
                             </h3>
                             <p className="text-gray-600 dark:text-gray-400 mb-6">
-                                Projects will appear here once they're added to the profile.
+                                Projects will appear here once they&apos;re added to the profile.
                             </p>
                         </div>
                     </div>
@@ -378,7 +377,7 @@ export default function UserPage() {
                                 No Blog Posts Yet
                             </h3>
                             <p className="text-gray-600 dark:text-gray-400 mb-6">
-                                Blog posts will appear here once they're published.
+                                Blog posts will appear here once they&apos;re published.
                             </p>
                         </div>
                     </div>
@@ -429,7 +428,7 @@ export default function UserPage() {
                         </h2>
                         <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
                             Interested in working together? Have a question? 
-                            Feel free to reach out and I'll get back to you as soon as possible.
+                            Feel free to reach out and I&apos;ll get back to you as soon as possible.
                         </p>
                         <button
                             onClick={() => setShowContactForm(true)}

@@ -4,12 +4,11 @@ import Contact from '@/models/Contact';
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     await dbConnect();
-    
-    const { id } = params;
     const { status } = await req.json();
     
     if (!status || !['read', 'replied'].includes(status)) {

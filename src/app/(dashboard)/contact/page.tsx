@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Loader2, Mail, User, Calendar, MapPin, Eye, EyeOff, CheckCircle, Clock, MessageSquare } from 'lucide-react';
+import { Loader2, Mail, Calendar, MapPin, Eye, CheckCircle, Clock, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface ContactMessage {
@@ -63,7 +63,7 @@ export default function ContactPage() {
         ));
         toast.success('Status updated successfully');
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to update status');
     }
   };
@@ -212,7 +212,7 @@ export default function ContactPage() {
             ].map((tab) => (
               <button
                 key={tab.key}
-                onClick={() => setFilter(tab.key as any)}
+                onClick={() => setFilter(tab.key as 'all' | 'unread' | 'read' | 'replied')}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-colors ${
                   filter === tab.key
                     ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
