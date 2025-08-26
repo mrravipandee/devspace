@@ -134,7 +134,7 @@ export default function ProfilePage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <div className="min-h-screen">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Profile Completion Banner */}
                 {!profile.profileCompleted && (
@@ -168,7 +168,7 @@ export default function ProfilePage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 overflow-hidden"
+                    className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20  overflow-hidden"
                 >
                     {/* Header Section */}
                     <div className="relative h-48 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600">

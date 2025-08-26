@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 type Theme = 'purple' | 'orange' | 'green' | 'blue-purple';
 
@@ -20,8 +20,42 @@ type ThemeContextType = {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
+    // Initialize state with localStorage values or defaults
     const [darkMode, setDarkMode] = useState(false);
     const [theme, setTheme] = useState<Theme>('purple');
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    // Load theme preferences from localStorage on mount
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const savedDarkMode = localStorage.getItem('darkMode');
+            const savedTheme = localStorage.getItem('theme') as Theme;
+            
+            if (savedDarkMode !== null) {
+                setDarkMode(JSON.parse(savedDarkMode));
+            }
+            
+            if (savedTheme && ['purple', 'orange', 'green', 'blue-purple'].includes(savedTheme)) {
+                setTheme(savedTheme);
+            }
+            
+            setIsLoaded(true);
+        }
+    }, []);
+
+    // Save dark mode preference to localStorage
+    useEffect(() => {
+        if (isLoaded && typeof window !== 'undefined') {
+            localStorage.setItem('darkMode', JSON.stringify(darkMode));
+        }
+    }, [darkMode, isLoaded]);
+
+    // Save theme preference to localStorage
+    useEffect(() => {
+        if (isLoaded && typeof window !== 'undefined') {
+            localStorage.setItem('theme', theme);
+        }
+    }, [theme, isLoaded]);
 
     const themeClasses = {
         purple: {
