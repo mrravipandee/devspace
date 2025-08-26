@@ -12,6 +12,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     const router = useRouter();
     const pathname = usePathname();
     const [isLoading, setIsLoading] = useState(true);
+    const [retryCount, setRetryCount] = useState(0);
 
     useEffect(() => {
         const checkProfileCompletion = async () => {
@@ -38,15 +39,28 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
                 console.log('Profile completed, staying on current page');
                 setIsLoading(false);
+                setRetryCount(0); // Reset retry count on success
             } catch (error) {
                 console.error('Error checking profile completion:', error);
+                
+                // If it's a 401 error and we haven't retried too many times, try again
+                if (error.response?.status === 401 && retryCount < 2) {
+                    console.log(`Retrying profile check (attempt ${retryCount + 1})`);
+                    setRetryCount(prev => prev + 1);
+                    setTimeout(() => {
+                        checkProfileCompletion();
+                    }, 1000); // Wait 1 second before retry
+                    return;
+                }
+                
                 // Don't redirect on error, just show loading and let user continue
+                console.log('Profile check failed, allowing user to continue');
                 setIsLoading(false);
             }
         };
 
         checkProfileCompletion();
-    }, [pathname, router]);
+    }, [pathname, router, retryCount]);
 
     if (isLoading) {
         return (

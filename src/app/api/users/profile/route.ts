@@ -5,14 +5,17 @@ import User from '@/models/User';
 
 export async function GET(req: NextRequest) {
   try {
+    console.log('Profile API called');
     await dbConnect();
     
     const user = await getUserFromToken(req);
     
     if (!user) {
+      console.log('User not found in profile API, returning 401');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    console.log('Profile API success for user:', user.email);
     return NextResponse.json({
       success: true,
       user: {
