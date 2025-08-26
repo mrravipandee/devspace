@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authenticateApiKey } from '@/lib/apiKeyAuth';
 import dbConnect from '@/lib/dbConnect';
 
+import User from '@/models/User';
 import Project from '@/models/Project';
 import Blog from '@/models/Blog';
 import Achievement from '@/models/Achievement';
@@ -13,22 +13,14 @@ export async function GET(
   try {
     await dbConnect();
 
-    // Authenticate API key
-    const authResult = await authenticateApiKey(req);
-    if (!authResult.user) {
-      return NextResponse.json(
-        { error: authResult.error || 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
     const { username } = await params;
     
-    // Verify the username matches the authenticated user
-    if (authResult.user.username !== username) {
+    // Find user by username
+    const user = await User.findOne({ username }).select('-password');
+    if (!user) {
       return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
+        { error: 'User not found' },
+        { status: 404 }
       );
     }
 
@@ -42,16 +34,16 @@ export async function GET(
         success: true,
         data: {
           profile: {
-            id: authResult.user._id,
-            username: authResult.user.username,
-            fullName: authResult.user.fullName,
-            bio: authResult.user.bio,
-            profileImage: authResult.user.profileImage,
-            location: authResult.user.location,
-            availableForWork: authResult.user.availableForWork,
-            socialHandles: authResult.user.socialHandles,
-            usefulLinks: authResult.user.usefulLinks,
-            profileCompleted: authResult.user.profileCompleted
+            id: user._id,
+            username: user.username,
+            fullName: user.fullName,
+            bio: user.bio,
+            profileImage: user.profileImage,
+            location: user.location,
+            availableForWork: user.availableForWork,
+            socialHandles: user.socialHandles,
+            usefulLinks: user.usefulLinks,
+            profileCompleted: user.profileCompleted
           }
         }
       });
@@ -64,21 +56,21 @@ export async function GET(
         return NextResponse.json({
           success: true,
           data: {
-            id: authResult.user._id,
-            username: authResult.user.username,
-            fullName: authResult.user.fullName,
-            bio: authResult.user.bio,
-            profileImage: authResult.user.profileImage,
-            location: authResult.user.location,
-            availableForWork: authResult.user.availableForWork,
-            socialHandles: authResult.user.socialHandles,
-            usefulLinks: authResult.user.usefulLinks,
-            profileCompleted: authResult.user.profileCompleted
+            id: user._id,
+            username: user.username,
+            fullName: user.fullName,
+            bio: user.bio,
+            profileImage: user.profileImage,
+            location: user.location,
+            availableForWork: user.availableForWork,
+            socialHandles: user.socialHandles,
+            usefulLinks: user.usefulLinks,
+            profileCompleted: user.profileCompleted
           }
         });
 
       case 'projects':
-        const projects = await Project.find({ userId: authResult.user._id })
+        const projects = await Project.find({ userId: user._id })
           .sort({ createdAt: -1 });
         
         return NextResponse.json({
@@ -96,7 +88,7 @@ export async function GET(
         });
 
       case 'blog':
-        const blogs = await Blog.find({ userId: authResult.user._id })
+        const blogs = await Blog.find({ userId: user._id })
           .sort({ createdAt: -1 });
         
         return NextResponse.json({
@@ -112,7 +104,7 @@ export async function GET(
         });
 
       case 'achievements':
-        const achievements = await Achievement.find({ userId: authResult.user._id })
+        const achievements = await Achievement.find({ userId: user._id })
           .sort({ createdAt: -1 });
         
         return NextResponse.json({
