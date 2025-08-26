@@ -1,8 +1,50 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export function middleware(req: NextRequest) {
+  const { pathname, hostname } = req.nextUrl;
+
+  // Handle CORS for API routes
+  if (pathname.startsWith('/api')) {
+    const response = NextResponse.next();
+    
+    // Allow requests from your production domain and localhost
+    const allowedOrigins = [
+      'https://www.devspacee.me',
+      'https://devspacee.me',
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:3001'
+    ];
+    
+    const origin = req.headers.get('origin');
+    
+    if (origin && allowedOrigins.includes(origin)) {
+      response.headers.set('Access-Control-Allow-Origin', origin);
+    }
+    
+    // Set other CORS headers
+    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie');
+    response.headers.set('Access-Control-Allow-Credentials', 'true');
+    
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+      return new NextResponse(null, { status: 200, headers: response.headers });
+    }
+    
+    return response;
+  }
+
+  // If this is the API subdomain, only allow API routes
+  if (hostname === 'api.devspacee.me') {
+    if (!pathname.startsWith('/api')) {
+      return NextResponse.redirect(new URL('https://www.devspacee.me', req.url));
+    }
+    return NextResponse.next();
+  }
+
   const token = req.cookies.get('token')?.value;
-  const { pathname } = req.nextUrl;
 
   // Private routes
   const privateRoutes = [
@@ -49,6 +91,7 @@ export function middleware(req: NextRequest) {
 // Only match these paths
 export const config = {
   matcher: [
+    '/api/:path*',
     '/home/:path*',
     '/project/:path*',
     '/blog/:path*',

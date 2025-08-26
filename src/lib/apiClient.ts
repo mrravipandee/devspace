@@ -1,10 +1,22 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
+// Determine the base URL based on environment
+const getBaseURL = () => {
+  // If we're in the browser and on the production domain, use API subdomain
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    if (hostname === 'www.devspacee.me' || hostname === 'devspacee.me') {
+      return 'https://api.devspacee.me'; // Use API subdomain for production
+    }
+  }
+  
+  // For development or when API_URL is explicitly set
+  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+};
 
 // Create axios instance with default config
 const apiClient = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: getBaseURL(),
   headers: {
     'Content-Type': 'application/json',
   },
