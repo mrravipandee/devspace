@@ -107,11 +107,8 @@ export default function SettingsPage() {
 
             toast.success('Username updated successfully');
             setIsEditingUsername(false);
-        } catch (error: unknown) {
-            const errorMessage = error instanceof Error && 'response' in error && error.response?.data?.error 
-                ? error.response.data.error 
-                : 'Failed to update username';
-            toast.error(errorMessage);
+        } catch {
+            toast.error('Failed to update username');
         } finally {
             setIsLoading(false);
         }
@@ -135,11 +132,8 @@ export default function SettingsPage() {
             // For now, we'll show a message that this feature is coming soon
             toast.info('Email update feature is coming soon. Please contact support for email changes.');
             setIsEditingEmail(false);
-        } catch (error: unknown) {
-            const errorMessage = error instanceof Error && 'response' in error && error.response?.data?.error 
-                ? error.response.data.error 
-                : 'Failed to update email';
-            toast.error(errorMessage);
+        } catch {
+            toast.error('Failed to update email');
         } finally {
             setIsLoading(false);
         }
