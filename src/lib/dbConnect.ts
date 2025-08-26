@@ -16,7 +16,7 @@ const dbConnect = async () => {
 
   try {
     const db = await mongoose.connect(MONGO_URI, {
-      dbName: 'devspace-auth',
+      dbName: 'Devspace',
     });
 
     isConnected = db.connections[0].readyState === 1;
