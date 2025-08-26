@@ -8,15 +8,21 @@ export function middleware(req: NextRequest) {
     const response = NextResponse.next();
     
     // Allow requests from your production domain and localhost
-    const allowedOrigins = [
-      'https://www.devspacee.me',
-      'https://api.devspacee.me',
-      'https://devspacee.me',
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'http://127.0.0.1:3000',
-      'http://127.0.0.1:3001'
-    ];
+    const allowedOrigins = process.env.NODE_ENV === 'production' 
+      ? [
+          'https://www.devspacee.me',
+          'https://api.devspacee.me',
+          'https://devspacee.me',
+        ]
+      : [
+          'https://www.devspacee.me',
+          'https://api.devspacee.me',
+          'https://devspacee.me',
+          'http://localhost:3000',
+          'http://localhost:3001',
+          'http://127.0.0.1:3000',
+          'http://127.0.0.1:3001'
+        ];
     
     const origin = req.headers.get('origin');
     
@@ -47,7 +53,7 @@ export function middleware(req: NextRequest) {
 
   const token = req.cookies.get('token')?.value;
 
-  // Private routes
+  // Private routes that require authentication
   const privateRoutes = [
     '/home',
     '/project',
@@ -60,31 +66,36 @@ export function middleware(req: NextRequest) {
     '/contributions'
   ];
 
-  // Public routes
-  const publicRoutes = [
-    '/',
-    '/signup',
-    '/login',
-    '/about',
-    '/faq',
-    '/features',
-    '/pricing',
-  ];
+  // Check if current path is a private route
+  const isPrivateRoute = privateRoutes.some(route => pathname.startsWith(route));
+  
+  // Check if current path is an auth route
+  const isAuthRoute = pathname === '/login' || pathname === '/signup';
 
-  // Skip middleware for dynamic username routes (public profiles)
-  if (pathname !== '/' && !pathname.startsWith('/api') && !pathname.startsWith('/_next') && !privateRoutes.some(route => pathname.startsWith(route)) && !publicRoutes.includes(pathname)) {
-    return NextResponse.next();
+  // Debug logging (only in development)
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Middleware Debug:', {
+      pathname,
+      hasToken: !!token,
+      isPrivateRoute,
+      isAuthRoute,
+      hostname
+    });
   }
 
-  // If user is going to a private route without token → redirect to signin
-  if (privateRoutes.some(route => pathname.startsWith(route)) && !token) {
-    console.log('Redirecting to login: No token found for private route', pathname);
+  // If accessing private route without token → redirect to login
+  if (isPrivateRoute && !token) {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Redirecting to login: No token for private route', pathname);
+    }
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
-  // If user is logged in and tries to go to login/signup → send them to home
-  if (token && (pathname === '/login' || pathname === '/signup')) {
-    console.log('Redirecting to home: User has token but accessing auth page', pathname);
+  // If accessing auth route with token → redirect to home
+  if (isAuthRoute && token) {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Redirecting to home: User has token but accessing auth page', pathname);
+    }
     return NextResponse.redirect(new URL('/home', req.url));
   }
 

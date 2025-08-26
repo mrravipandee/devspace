@@ -11,7 +11,7 @@ const getBaseURL = () => {
   }
   
   // For development or when API_URL is explicitly set
-  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 };
 
 // Create axios instance with default config
@@ -21,21 +21,35 @@ const apiClient = axios.create({
     'Content-Type': 'application/json',
   },
   withCredentials: true, // Include cookies for authentication
+  timeout: 10000, // 10 second timeout
 });
 
 // Request interceptor to add auth token if available
 apiClient.interceptors.request.use((config) => {
-  // Token is handled via cookies, so no need to manually add it
+  // Log request in development
+  if (process.env.NODE_ENV === 'development') {
+    console.log('API Request:', config.method?.toUpperCase(), config.url);
+  }
   return config;
 });
 
 // Response interceptor for error handling
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Log response in development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('API Response:', response.status, response.config.url);
+    }
+    return response;
+  },
   (error) => {
+    console.error('API Error:', error.response?.status, error.config?.url, error.message);
+    
     if (error.response?.status === 401) {
       // Redirect to login if unauthorized
-      window.location.href = '/login';
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

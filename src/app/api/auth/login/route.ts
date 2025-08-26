@@ -31,16 +31,20 @@ export async function POST(req: NextRequest) {
       } 
     });
     
-    // Set cookie with proper configuration
-    res.cookies.set('token', token, { 
+    // Set cookie with proper configuration for production
+    const isProduction = process.env.NODE_ENV === 'production';
+    const cookieOptions = {
       httpOnly: true, 
       path: '/', 
       maxAge: 86400,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax'
-    });
+      secure: isProduction, // Only use secure in production
+      sameSite: isProduction ? 'strict' : 'lax' as const,
+      domain: isProduction ? '.devspacee.me' : undefined // Use domain in production
+    };
     
-    console.log('Login successful for user:', user.email);
+    res.cookies.set('token', token, cookieOptions);
+    
+    console.log('Login successful for user:', user.email, 'Environment:', process.env.NODE_ENV);
     return res;
   } catch (error) {
     console.error('Login error:', error);

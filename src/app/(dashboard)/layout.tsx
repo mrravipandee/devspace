@@ -22,19 +22,25 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                     return;
                 }
 
+                console.log('Checking profile completion for path:', pathname);
                 const response = await getUserProfile();
                 const user = response.user;
 
+                console.log('Profile completion status:', user.profileCompleted);
+
                 // If profile is not completed and user is not on profile page, redirect to profile
                 if (!user.profileCompleted) {
+                    console.log('Profile not completed, redirecting to /profile');
                     toast.info('Please complete your profile to access all features!');
                     router.push('/profile');
                     return;
                 }
 
+                console.log('Profile completed, staying on current page');
                 setIsLoading(false);
             } catch (error) {
                 console.error('Error checking profile completion:', error);
+                // Don't redirect on error, just show loading and let user continue
                 setIsLoading(false);
             }
         };

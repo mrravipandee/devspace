@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+  env: {
+    CUSTOM_KEY: process.env.CUSTOM_KEY,
+  },
   async rewrites() {
     return [
       {
@@ -18,7 +21,9 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: 'Access-Control-Allow-Origin',
-            value: 'https://www.devspacee.me, https://devspacee.me, http://localhost:3000, http://localhost:3001',
+            value: process.env.NODE_ENV === 'production' 
+              ? 'https://www.devspacee.me, https://devspacee.me' 
+              : 'https://www.devspacee.me, https://devspacee.me, http://localhost:3000, http://localhost:3001',
           },
           {
             key: 'Access-Control-Allow-Methods',
