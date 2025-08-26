@@ -10,6 +10,7 @@ import {
     FileUser,
     GitPullRequestArrow,
     MessageSquare,
+    Code,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -83,4 +84,5 @@ const menuItems = [
     { href: "/resume", icon: FileUser, label: "Resume" },
     { href: "/contributions", icon: GitPullRequestArrow, label: "Contributions" },
     { href: "/contact", icon: MessageSquare, label: "Contact" },
+    { href: "/api", icon: Code, label: "API" },
 ];
