@@ -39,8 +39,8 @@ export async function POST(req: NextRequest) {
       path: '/', 
       maxAge: 86400,
       secure: isProduction, // Only use secure in production
-      sameSite: isProduction ? 'strict' : 'lax',
-      domain: isProduction ? '.devspacee.me' : undefined // Use domain in production
+      sameSite: isProduction ? 'lax' : 'lax', // Use lax for better compatibility
+      // Remove domain setting to use default domain
     });
     
     console.log('Login successful for user:', user.email, 'Environment:', process.env.NODE_ENV);

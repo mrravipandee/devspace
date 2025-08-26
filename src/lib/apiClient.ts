@@ -2,11 +2,11 @@ import axios from 'axios';
 
 // Determine the base URL based on environment
 const getBaseURL = () => {
-  // If we're in the browser and on the production domain, use API subdomain
+  // If we're in the browser and on the production domain, use relative URLs
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
     if (hostname === 'www.devspacee.me' || hostname === 'devspacee.me') {
-      return 'https://api.devspacee.me'; // Use API subdomain for production
+      return ''; // Use relative URLs for production to share cookies
     }
   }
   

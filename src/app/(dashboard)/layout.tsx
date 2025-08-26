@@ -46,8 +46,15 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 // Type guard to check if error has response property
                 const axiosError = error as { response?: { status?: number } };
                 
-                // If it's a 401 error and we haven't retried too many times, try again
-                if (axiosError?.response?.status === 401 && retryCount < 2) {
+                // If it's a 401 error, redirect to login (authentication failed)
+                if (axiosError?.response?.status === 401) {
+                    console.log('Authentication failed (401), redirecting to login');
+                    router.push('/login');
+                    return;
+                }
+                
+                // For other errors, retry a few times
+                if (retryCount < 2) {
                     console.log(`Retrying profile check (attempt ${retryCount + 1})`);
                     setRetryCount(prev => prev + 1);
                     setTimeout(() => {
@@ -56,9 +63,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                     return;
                 }
                 
-                // Don't redirect on error, just show loading and let user continue
-                console.log('Profile check failed, allowing user to continue');
-                setIsLoading(false);
+                // If all retries failed, redirect to login
+                console.log('All retries failed, redirecting to login');
+                router.push('/login');
             }
         };
 
