@@ -33,16 +33,15 @@ export async function POST(req: NextRequest) {
     
     // Set cookie with proper configuration for production
     const isProduction = process.env.NODE_ENV === 'production';
-    const cookieOptions = {
+    
+    res.cookies.set('token', token, {
       httpOnly: true, 
       path: '/', 
       maxAge: 86400,
       secure: isProduction, // Only use secure in production
-      sameSite: isProduction ? 'strict' : 'lax' as const,
+      sameSite: isProduction ? 'strict' : 'lax',
       domain: isProduction ? '.devspacee.me' : undefined // Use domain in production
-    };
-    
-    res.cookies.set('token', token, cookieOptions);
+    });
     
     console.log('Login successful for user:', user.email, 'Environment:', process.env.NODE_ENV);
     return res;
