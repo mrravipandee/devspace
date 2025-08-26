@@ -43,8 +43,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             } catch (error) {
                 console.error('Error checking profile completion:', error);
                 
+                // Type guard to check if error has response property
+                const axiosError = error as { response?: { status?: number } };
+                
                 // If it's a 401 error and we haven't retried too many times, try again
-                if (error.response?.status === 401 && retryCount < 2) {
+                if (axiosError?.response?.status === 401 && retryCount < 2) {
                     console.log(`Retrying profile check (attempt ${retryCount + 1})`);
                     setRetryCount(prev => prev + 1);
                     setTimeout(() => {
