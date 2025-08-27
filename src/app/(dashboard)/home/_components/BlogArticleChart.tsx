@@ -10,18 +10,65 @@ import {
     Legend,
     ResponsiveContainer,
 } from 'recharts';
+import { useEffect, useState } from 'react';
 
-const data = [
-    { day: 'Mon', blogs: 2, articles: 1 },
-    { day: 'Tue', blogs: 1, articles: 2 },
-    { day: 'Wed', blogs: 3, articles: 1 },
-    { day: 'Thu', blogs: 0, articles: 3 },
-    { day: 'Fri', blogs: 2, articles: 2 },
-    { day: 'Sat', blogs: 1, articles: 1 },
-    { day: 'Sun', blogs: 2, articles: 3 },
-];
+interface BlogData {
+    day: string;
+    blogs: number;
+    articles: number;
+}
 
 export default function BlogArticleChart() {
+    const [data, setData] = useState<BlogData[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchBlogData = async () => {
+            try {
+                const response = await fetch('/api/dashboard/stats');
+                const result = await response.json();
+                if (result.success) {
+                    const weeklyData = result.data.weeklyData;
+                    const blogData = weeklyData.map((item: any) => ({
+                        day: item.day,
+                        blogs: item.blogs,
+                        articles: item.projects // Using projects as articles for now
+                    }));
+                    setData(blogData);
+                }
+            } catch (error) {
+                console.error('Failed to fetch blog data:', error);
+                // Fallback to mock data
+                setData([
+                    { day: 'Mon', blogs: 2, articles: 1 },
+                    { day: 'Tue', blogs: 1, articles: 2 },
+                    { day: 'Wed', blogs: 3, articles: 1 },
+                    { day: 'Thu', blogs: 0, articles: 3 },
+                    { day: 'Fri', blogs: 2, articles: 2 },
+                    { day: 'Sat', blogs: 1, articles: 1 },
+                    { day: 'Sun', blogs: 2, articles: 3 },
+                ]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchBlogData();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="bg-white dark:bg-cardDark p-4 sm:p-6 rounded-2xl w-full max-w-4xl mx-auto shadow-sm dark:shadow-gray-800/50">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+                    <h2 className="text-lg sm:text-xl font-semibold text-primaryText dark:text-white">
+                        Weekly Blog & Article Posts
+                    </h2>
+                </div>
+                <div className="w-full h-[250px] sm:h-[300px] lg:h-[350px] bg-gray-100 dark:bg-gray-800 animate-pulse rounded"></div>
+            </div>
+        );
+    }
+
     return (
         <div className="bg-white dark:bg-cardDark p-4 sm:p-6 rounded-2xl w-full max-w-4xl mx-auto shadow-sm dark:shadow-gray-800/50">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">

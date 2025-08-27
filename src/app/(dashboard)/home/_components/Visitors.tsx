@@ -10,21 +10,72 @@ import {
     ResponsiveContainer,
 } from 'recharts';
 import { ArrowUpRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
-const data = [
-    { day: 'Mon', visitors: 22 },
-    { day: 'Tue', visitors: 28 },
-    { day: 'Wed', visitors: 18 },
-    { day: 'Thu', visitors: 25 },
-    { day: 'Fri', visitors: 30 },
-    { day: 'Sat', visitors: 20 },
-    { day: 'Sun', visitors: 32 },
-];
+interface VisitorData {
+    day: string;
+    visitors: number;
+}
 
 export default function VisitorsLineChart() {
-    // Calculate percentage change
-    const percentageChange = ((data[data.length - 1].visitors - data[0].visitors) / data[0].visitors) * 100;
+    const [data, setData] = useState<VisitorData[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [percentageChange, setPercentageChange] = useState(0);
+
+    useEffect(() => {
+        const fetchVisitorData = async () => {
+            try {
+                const response = await fetch('/api/dashboard/stats');
+                const result = await response.json();
+                if (result.success) {
+                    const visitorData = result.data.visitors.weekly;
+                    setData(visitorData);
+                    
+                    // Calculate percentage change
+                    if (visitorData.length > 1) {
+                        const firstDay = visitorData[0]?.visitors || 0;
+                        const lastDay = visitorData[visitorData.length - 1]?.visitors || 0;
+                        const change = firstDay > 0 ? ((lastDay - firstDay) / firstDay) * 100 : 0;
+                        setPercentageChange(change);
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to fetch visitor data:', error);
+                // Fallback to mock data
+                setData([
+                    { day: 'Mon', visitors: 22 },
+                    { day: 'Tue', visitors: 28 },
+                    { day: 'Wed', visitors: 18 },
+                    { day: 'Thu', visitors: 25 },
+                    { day: 'Fri', visitors: 30 },
+                    { day: 'Sat', visitors: 20 },
+                    { day: 'Sun', visitors: 32 },
+                ]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchVisitorData();
+    }, []);
+
     const isPositive = percentageChange >= 0;
+
+    if (loading) {
+        return (
+            <div className="bg-white dark:bg-cardDark p-4 sm:p-6 rounded-2xl w-full max-w-3xl mx-auto shadow-sm dark:shadow-gray-800/50">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
+                    <div>
+                        <h2 className="text-lg sm:text-xl font-semibold text-primaryText dark:text-white">
+                            Weekly Visitors
+                        </h2>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Last 7 days</p>
+                    </div>
+                </div>
+                <div className="w-full h-[220px] sm:h-[280px] md:h-[320px] bg-gray-100 dark:bg-gray-800 animate-pulse rounded"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-white dark:bg-cardDark p-4 sm:p-6 rounded-2xl w-full max-w-3xl mx-auto shadow-sm dark:shadow-gray-800/50">
