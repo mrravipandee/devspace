@@ -77,18 +77,139 @@ export const getAchievements = async (username: string) => {
   return response.data;
 };
 
-export const createAchievement = async (achievementData: any) => {
+export const createAchievement = async (achievementData: {
+  title: string;
+  description?: string;
+  type: string;
+  image?: string;
+  issuer: string;
+  date?: Date | string;
+  verificationUrl: string;
+  skills?: string[];
+}) => {
   const response = await apiClient.post('/api/achievements', achievementData);
   return response.data;
 };
 
-export const updateAchievement = async (id: string, achievementData: any) => {
+export const updateAchievement = async (id: string, achievementData: {
+  title: string;
+  description?: string;
+  type: string;
+  image?: string;
+  issuer: string;
+  date?: Date | string;
+  verificationUrl: string;
+  skills?: string[];
+}) => {
   const response = await apiClient.put(`/api/achievements/${id}`, achievementData);
   return response.data;
 };
 
 export const deleteAchievement = async (id: string) => {
   const response = await apiClient.delete(`/api/achievements/${id}`);
+  return response.data;
+};
+
+// TechStack functions
+export const getTechStack = async (username: string) => {
+  const response = await apiClient.get(`/api/${username}/techstack`);
+  return response.data;
+};
+
+export const createTechStack = async (techStackData: {
+  name: string;
+  category: string;
+  proficiency: string;
+  icon?: string;
+  yearsOfExperience: number;
+  lastUsed: Date | string;
+  projects?: string[];
+  description?: string;
+}) => {
+  const response = await apiClient.post('/api/techstack', techStackData);
+  return response.data;
+};
+
+export const updateTechStack = async (id: string, techStackData: {
+  name: string;
+  category: string;
+  proficiency: string;
+  icon?: string;
+  yearsOfExperience: number;
+  lastUsed: Date | string;
+  projects?: string[];
+  description?: string;
+}) => {
+  const response = await apiClient.put(`/api/techstack/${id}`, techStackData);
+  return response.data;
+};
+
+export const deleteTechStack = async (id: string) => {
+  const response = await apiClient.delete(`/api/techstack/${id}`);
+  return response.data;
+};
+
+// Resume functions
+export const getResume = async () => {
+  const response = await apiClient.get('/api/resume');
+  return response.data;
+};
+
+export const uploadResume = async (resumeData: {
+  fileName: string;
+  fileUrl: string;
+  fileSize: number;
+  fileType: string;
+}) => {
+  const response = await apiClient.post('/api/resume', resumeData);
+  return response.data;
+};
+
+export const deleteResume = async (id: string) => {
+  const response = await apiClient.delete(`/api/resume/${id}`);
+  return response.data;
+};
+
+// Contribution functions
+export const getContributions = async () => {
+  const response = await apiClient.get('/api/contributions');
+  return response.data;
+};
+
+export const createContribution = async (contributionData: {
+  projectName: string;
+  projectUrl: string;
+  description: string;
+  contributionType: string;
+  pullRequestUrl: string;
+  stars: number;
+  forks: number;
+  technologies: string[];
+  date: Date | string;
+  projectLogo?: string;
+}) => {
+  const response = await apiClient.post('/api/contributions', contributionData);
+  return response.data;
+};
+
+export const updateContribution = async (id: string, contributionData: {
+  projectName: string;
+  projectUrl: string;
+  description: string;
+  contributionType: string;
+  pullRequestUrl: string;
+  stars: number;
+  forks: number;
+  technologies: string[];
+  date: Date | string;
+  projectLogo?: string;
+}) => {
+  const response = await apiClient.put(`/api/contributions/${id}`, contributionData);
+  return response.data;
+};
+
+export const deleteContribution = async (id: string) => {
+  const response = await apiClient.delete(`/api/contributions/${id}`);
   return response.data;
 };
 

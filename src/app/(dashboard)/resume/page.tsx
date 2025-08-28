@@ -1,208 +1,211 @@
 "use client";
 
-import { useState, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import SmallCards from "@/components/SmallCards";
-import { Upload, FileText, Trash2, Download, CheckCircle } from "lucide-react";
+import ResumeUpload from "@/components/ResumeUpload";
+import { getResume, uploadResume, deleteResume } from '@/lib/apiClient';
+import { toast } from 'sonner';
 
 export default function ResumePage() {
-  const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadSuccess, setUploadSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [currentResume, setCurrentResume] = useState<{
+    id: string;
+    fileName: string;
+    fileUrl: string;
+    fileSize: number;
+    fileType: string;
+    uploadDate: string;
+    isActive: boolean;
+  } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setError(null);
-    setUploadSuccess(false);
+  useEffect(() => {
+    fetchResume();
+  }, []);
+
+  const fetchResume = async () => {
+    try {
+      setIsLoading(true);
+      const response = await getResume();
+      setCurrentResume(response.data);
+    } catch (error) {
+      console.error('Failed to fetch resume:', error);
+      // Don't show error toast if no resume exists
+      if (error instanceof Error && !error.message.includes('not found')) {
+        toast.error('Failed to load resume');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResumeUpload = async (resumeData: {
+    fileName: string;
+    fileUrl: string;
+    fileSize: number;
+    fileType: string;
+  }) => {
+    try {
+      const response = await uploadResume(resumeData);
+      setCurrentResume(response.data);
+      toast.success('Resume uploaded successfully!');
+    } catch (error) {
+      console.error('Failed to upload resume:', error);
+      toast.error('Failed to upload resume');
+    }
+  };
+
+  const handleResumeDelete = async () => {
+    if (!currentResume?.id) return;
     
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Check if file is PDF
-    if (file.type !== 'application/pdf') {
-      setError('Only PDF files are allowed');
-      return;
-    }
-
-    // Check file size (5MB limit)
-    if (file.size > 5 * 1024 * 1024) {
-      setError('File size must be under 5MB');
-      return;
-    }
-
-    setResumeFile(file);
-  };
-
-  const handleUpload = () => {
-    if (!resumeFile) return;
-
-    setIsUploading(true);
-    setError(null);
-
-    // Simulate upload process
-    setTimeout(() => {
-      setIsUploading(false);
-      setUploadSuccess(true);
-      // Here you would typically upload to your backend
-      console.log('Uploading file:', resumeFile);
-    }, 1500);
-  };
-
-  const handleDelete = () => {
-    setResumeFile(null);
-    setUploadSuccess(false);
-    setError(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+    try {
+      await deleteResume(currentResume.id);
+      setCurrentResume(null);
+      toast.success('Resume deleted successfully');
+    } catch (error) {
+      console.error('Failed to delete resume:', error);
+      toast.error('Failed to delete resume');
     }
   };
 
-  const triggerFileInput = () => {
-    fileInputRef.current?.click();
-  };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-  };
-
-  const handleDownload = () => {
-    if (!resumeFile) return; // Add null check
-    
-    const url = URL.createObjectURL(resumeFile); // File extends Blob, so this is safe
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = resumeFile.name;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <SmallCards />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center"
+          >
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600 dark:text-gray-400 text-lg">Loading your resume...</p>
+          </motion.div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <SmallCards />
+      
       <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-          <div>
-            <h2 className="text-3xl font-bold text-primaryText dark:text-background">My Resume</h2>
-            <p className="text-secondaryText mt-2 max-w-2xl">
-              Manage your professional resume. Upload a PDF file under 5MB to keep it updated.
-            </p>
-          </div>
-        </div>
-
-        {/* Resume Upload Area */}
-        <div className="bg-white dark:bg-cardDark rounded-xl shadow-sm p-8 max-w-3xl mx-auto">
-          <div className="text-center">
-            <div className="mx-auto max-w-md">
-              {!resumeFile ? (
-                <>
-                  <div 
-                    onClick={triggerFileInput}
-                    className="mx-auto w-24 h-24 bg-gray-100 dark:bg-[#1b254b] rounded-full flex items-center justify-center cursor-pointer mb-4"
-                  >
-                    <Upload className="w-10 h-10 text-primaryText" />
-                  </div>
-                  <h3 className="text-lg font-medium text-secondaryText mb-2">Upload Your Resume</h3>
-                  <p className="text-secondaryText/65 mb-6">PDF format only, maximum 5MB</p>
-                  <button
-                    onClick={triggerFileInput}
-                    className="bg-primary text-white px-5 py-2.5 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-primary/90 transition-colors mx-auto"
-                  >
-                    <Upload className="w-5 h-5" />
-                    Select PDF File
-                  </button>
-                </>
-              ) : (
-                <>
-                  <div className="mx-auto w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mb-4">
-                    <FileText className="w-10 h-10 text-blue-500" />
-                  </div>
-                  <h3 className="text-lg font-medium text-primaryText mb-1">{resumeFile.name}</h3>
-                  <p className="text-gray-500 mb-4">{formatFileSize(resumeFile.size)}</p>
-                  
-                  <div className="flex justify-center gap-3 mb-6">
-                    <button
-                      onClick={handleUpload}
-                      disabled={isUploading || uploadSuccess}
-                      className={`px-5 py-2.5 rounded-lg flex items-center gap-2 ${
-                        uploadSuccess 
-                          ? 'bg-green-100 text-green-800 cursor-default'
-                          : isUploading
-                            ? 'bg-gray-100 text-gray-500 cursor-wait'
-                            : 'bg-primary text-white hover:bg-primary/90 cursor-pointer'
-                      } transition-colors`}
-                    >
-                      {uploadSuccess ? (
-                        <>
-                          <CheckCircle className="w-5 h-5" />
-                          Uploaded Successfully
-                        </>
-                      ) : isUploading ? (
-                        'Uploading...'
-                      ) : (
-                        <>
-                          <Upload className="w-5 h-5" />
-                          Upload Resume
-                        </>
-                      )}
-                    </button>
-                    <button
-                      onClick={handleDelete}
-                      className="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors flex items-center gap-2"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                      Remove
-                    </button>
-                  </div>
-                </>
-              )}
-
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                accept=".pdf"
-                className="hidden"
-              />
-
-              {error && (
-                <div className="mt-4 text-red-600 bg-red-50 px-4 py-2 rounded-lg">
-                  {error}
+        {/* Header Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+            <div className="flex-1">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
                 </div>
-              )}
-
-              {uploadSuccess && resumeFile && ( // Added null check here
-                <div className="mt-6 border-t pt-6">
-                  <button
-                    onClick={handleDownload} // Use the safe handler
-                    className="text-primary hover:text-primary/90 font-medium flex items-center gap-2 mx-auto"
-                  >
-                    <Download className="w-5 h-5" />
-                    Download Your Resume
-                  </button>
+                <div>
+                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                    My Resume
+                  </h1>
+                  <p className="text-gray-600 dark:text-gray-400 mt-1">
+                    Manage your professional resume. Upload a PDF file under 5MB to keep it updated.
+                  </p>
                 </div>
-              )}
+              </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Resume Tips */}
-        <div className="mt-12 max-w-3xl mx-auto">
-          <h3 className="text-xl font-semibold text-primaryText dark:text-background mb-4">Resume Tips</h3>
-          <div className="bg-white dark:bg-cardDark rounded-xl shadow-sm p-6">
-            <ul className="space-y-3 list-disc pl-5 text-secondaryText">
-              <li>Keep your resume to 1-2 pages maximum</li>
-              <li>Use clear section headings (Experience, Education, Skills)</li>
-              <li>Include measurable achievements (e.g., &quot;Increased performance by 40%&quot;)</li>
-              <li>Update your resume every 6 months or after significant achievements</li>
-              <li>Save as &quot;YourName_Resume.pdf&quot; for professional file naming</li>
-              <li>Ensure all links (GitHub, LinkedIn, etc.) are up-to-date</li>
-            </ul>
+        {/* Resume Upload Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="max-w-4xl mx-auto"
+        >
+          <ResumeUpload
+            onResumeUpload={handleResumeUpload}
+            onResumeDelete={handleResumeDelete}
+            currentResume={currentResume}
+          />
+        </motion.div>
+
+        {/* Additional Features */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mt-12 max-w-4xl mx-auto"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Resume Analytics */}
+            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl border border-white/20 dark:border-gray-700/50 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Resume Analytics
+              </h3>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600 dark:text-gray-400">Status</span>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    currentResume 
+                      ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200'
+                      : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-200'
+                  }`}>
+                    {currentResume ? 'Active' : 'No Resume'}
+                  </span>
+                </div>
+                {currentResume && (
+                  <>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600 dark:text-gray-400">File Size</span>
+                      <span className="text-gray-900 dark:text-white font-medium">
+                        {(currentResume.fileSize / (1024 * 1024)).toFixed(2)} MB
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600 dark:text-gray-400">Upload Date</span>
+                      <span className="text-gray-900 dark:text-white font-medium">
+                        {new Date(currentResume.uploadDate).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl border border-white/20 dark:border-gray-700/50 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Quick Actions
+              </h3>
+              <div className="space-y-3">
+                <button
+                  onClick={() => window.open('https://www.canva.com/resumes/', '_blank')}
+                  className="w-full text-left p-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                >
+                  <div className="font-medium text-blue-900 dark:text-blue-100">Create Resume</div>
+                  <div className="text-sm text-blue-700 dark:text-blue-200">Use Canva templates</div>
+                </button>
+                <button
+                  onClick={() => window.open('https://www.resume.com/', '_blank')}
+                  className="w-full text-left p-3 rounded-xl bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
+                >
+                  <div className="font-medium text-green-900 dark:text-green-100">Resume Builder</div>
+                  <div className="text-sm text-green-700 dark:text-green-200">Professional templates</div>
+                </button>
+                <button
+                  onClick={() => window.open('https://www.grammarly.com/', '_blank')}
+                  className="w-full text-left p-3 rounded-xl bg-purple-50 dark:bg-purple-900/20 hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
+                >
+                  <div className="font-medium text-purple-900 dark:text-purple-100">Grammar Check</div>
+                  <div className="text-sm text-purple-700 dark:text-purple-200">Polish your content</div>
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

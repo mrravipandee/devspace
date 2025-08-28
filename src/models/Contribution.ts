@@ -1,20 +1,21 @@
 import mongoose from "mongoose";
 
 const ContributionSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   projectName: { type: String, required: true },
+  projectUrl: { type: String, required: true },
+  description: { type: String, required: true },
   contributionType: { 
     type: String, 
-    enum: ["Bug Fix", "Feature", "Docs", "Translation", "Other"], 
+    enum: ['bug-fix', 'feature', 'documentation', 'translation', 'other'], 
     required: true 
   },
-  projectUrl: { type: String, default: "" },
-  pullRequestUrl: { type: String, default: "" },
-  description: { type: String, default: "" },
-  stars: { type: Number, default: 0 },
-  forks: { type: Number, default: 0 },
-  date: { type: Date, default: Date.now },
-  techLogos: { type: [String], default: [] }, 
-  projectLogo: { type: String, default: "" } 
+  pullRequestUrl: { type: String, required: true },
+  stars: { type: Number, required: true, min: 0 },
+  forks: { type: Number, required: true, min: 0 },
+  technologies: [{ type: String }],
+  date: { type: Date, required: true },
+  projectLogo: { type: String, default: '' }
 }, { timestamps: true });
 
 export default mongoose.models.Contribution || mongoose.model("Contribution", ContributionSchema);

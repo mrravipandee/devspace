@@ -10,18 +10,35 @@ cloudinary.config({
 export default cloudinary;
 
 // Upload image to Cloudinary
-export const uploadImage = async (file: Buffer, folder: string = 'devspace-profiles') => {
+export const uploadImage = async (file: Buffer, folder: string = 'devspace-profiles', resourceType: 'image' | 'raw' = 'image') => {
   try {
+    const uploadOptions: {
+      folder: string;
+      resource_type: 'image' | 'raw';
+      transformation?: Array<{
+        width?: number;
+        height?: number;
+        crop?: string;
+        gravity?: string;
+        quality?: string;
+        fetch_format?: string;
+      }>;
+    } = {
+      folder,
+      resource_type: resourceType
+    };
+
+    // Only apply image transformations for images
+    if (resourceType === 'image') {
+      uploadOptions.transformation = [
+        { width: 400, height: 400, crop: 'fill', gravity: 'face' },
+        { quality: 'auto', fetch_format: 'auto' }
+      ];
+    }
+
     const result = await cloudinary.uploader.upload(
-      `data:image/jpeg;base64,${file.toString('base64')}`,
-      {
-        folder,
-        resource_type: 'image',
-        transformation: [
-          { width: 400, height: 400, crop: 'fill', gravity: 'face' },
-          { quality: 'auto', fetch_format: 'auto' }
-        ]
-      }
+      `data:${resourceType === 'image' ? 'image/jpeg' : 'application/pdf'};base64,${file.toString('base64')}`,
+      uploadOptions
     );
     
     return {
@@ -33,7 +50,7 @@ export const uploadImage = async (file: Buffer, folder: string = 'devspace-profi
     console.error('Cloudinary upload error:', error);
     return {
       success: false,
-      error: 'Failed to upload image'
+      error: 'Failed to upload file'
     };
   }
 };
