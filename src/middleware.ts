@@ -116,12 +116,10 @@ export function middleware(req: NextRequest) {
     return response;
   }
 
-  // If this is the API subdomain, only allow API routes
+  // If this is the API subdomain, redirect to main domain with API path
   if (hostname === 'api.devspacee.me') {
-    if (!pathname.startsWith('/api')) {
-      return NextResponse.redirect(new URL('https://www.devspacee.me', req.url));
-    }
-    return NextResponse.next();
+    const newUrl = new URL(`https://www.devspacee.me/api${pathname}`, req.url);
+    return NextResponse.redirect(newUrl);
   }
 
   const token = req.cookies.get('token')?.value;

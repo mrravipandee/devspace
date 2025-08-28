@@ -47,8 +47,8 @@ export default function ApiPage() {
     const [isLoading, setIsLoading] = useState(true);
 
     const getApiUrl = () => {
-        if (!profile?.username) return 'https://api.devspacee.me/username';
-        return `https://api.devspacee.me/${profile.username}`;
+        if (!profile?.username) return 'https://www.devspacee.me/api/username';
+        return `https://www.devspacee.me/api/${profile.username}`;
     };
 
     const getApiEndpoints = (): ApiEndpoint[] => [

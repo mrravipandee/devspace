@@ -36,11 +36,6 @@ export default function page() {
         </div>
       </div>
       
-      {/* Documentation Section */}
-      <div className="px-4 py-2">
-        <HowToUse />
-        <Documentation />
-      </div>
     </div>
   );
 }
