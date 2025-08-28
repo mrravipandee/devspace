@@ -46,7 +46,12 @@ export default function ApiPage() {
     const [analytics, setAnalytics] = useState<ApiAnalytics | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    const apiEndpoints: ApiEndpoint[] = [
+    const getApiUrl = () => {
+        if (!profile?.username) return 'https://api.devspacee.me/username';
+        return `https://api.devspacee.me/${profile.username}`;
+    };
+
+    const getApiEndpoints = (): ApiEndpoint[] => [
         {
             name: "Profile",
             path: "/profile",
@@ -243,11 +248,6 @@ export default function ApiPage() {
         toast.success(`${label} copied to clipboard!`);
     };
 
-    const getApiUrl = () => {
-        if (!profile?.username) return 'https://api.devspacee.me/username';
-        return `https://api.devspacee.me/${profile.username}`;
-    };
-
     const getCategoryIcon = (category: string) => {
         switch (category) {
             case 'profile': return <Users className="w-4 h-4" />;
@@ -384,7 +384,7 @@ export default function ApiPage() {
                             >
                                 {/* API Endpoints */}
                                 <div className="space-y-6">
-                                    {apiEndpoints.map((endpoint, index) => (
+                                    {getApiEndpoints().map((endpoint, index) => (
                                         <motion.div
                                             key={endpoint.path}
                                             initial={{ opacity: 0, y: 20 }}
