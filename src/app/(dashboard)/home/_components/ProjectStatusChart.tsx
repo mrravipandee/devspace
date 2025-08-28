@@ -117,7 +117,7 @@ export default function ProjectStatusChart() {
                                 background: '#ffffff',
                                 color: '#2b3674'
                             }}
-                            formatter={(value: any, name: any) => [
+                            formatter={(value: number, name: string) => [
                                 `${value} projects`,
                                 name
                             ]}

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { MoreVertical, ExternalLink, Edit, Trash2, Eye, Calendar, Clock, User } from 'lucide-react';
+import { MoreVertical, Edit, Trash2, Eye, Calendar, Clock, User } from 'lucide-react';
 
 interface BlogPost {
   _id: string;
@@ -24,7 +24,7 @@ interface BlogListViewProps {
 }
 
 export default function BlogListView({ posts, onEdit, onDelete, onView }: BlogListViewProps) {
-  const [expandedPost, setExpandedPost] = useState<string | null>(null);
+  const [expandedPost, setExpandedPost] = useState<string | null>(null); 
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {

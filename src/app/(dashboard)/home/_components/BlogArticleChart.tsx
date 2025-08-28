@@ -29,7 +29,12 @@ export default function BlogArticleChart() {
                 const result = await response.json();
                 if (result.success) {
                     const weeklyData = result.data.weeklyData;
-                    const blogData = weeklyData.map((item: any) => ({
+                    interface WeeklyDataItem {
+                        day: string;
+                        blogs: number;
+                        projects: number;
+                    }
+                    const blogData = weeklyData.map((item: WeeklyDataItem) => ({
                         day: item.day,
                         blogs: item.blogs,
                         articles: item.projects // Using projects as articles for now

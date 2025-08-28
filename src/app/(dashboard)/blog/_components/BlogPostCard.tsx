@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { MoreVertical, ExternalLink, Edit, Trash2, Eye, Calendar, Clock, User } from 'lucide-react';
+import { MoreVertical, Edit, Trash2, Eye, Calendar, Clock } from 'lucide-react';
 
 interface BlogPost {
   _id: string;

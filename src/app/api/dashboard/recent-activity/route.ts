@@ -4,6 +4,16 @@ import User from "@/models/User";
 import Project from "@/models/Project";
 import Blog from "@/models/Blog";
 
+type Activity = {
+  id: string;
+  type: 'blog' | 'project' | 'user';
+  title: string;
+  description: string;
+  timestamp: string;
+  author?: string;
+  views?: number;
+};
+
 export async function GET(request: NextRequest) {
   try {
     await dbConnect();
@@ -17,8 +27,8 @@ export async function GET(request: NextRequest) {
     // Get recent projects (last 5)
     const recentProjects = await Project.find()
       .sort({ createdAt: -1 })
-      .limit(2)
-      .lean();
+    // Combine and format activities
+    // const activities: Activity[] = [];
 
     // Get recent user registrations (last 5)
     const recentUsers = await User.find()
@@ -28,9 +38,10 @@ export async function GET(request: NextRequest) {
       .lean();
 
     // Combine and format activities
-    const activities = [];
+    const activities: Activity[] = [];
 
     // Add blog activities
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recentBlogs.forEach((blog: any) => {
       activities.push({
         id: blog._id.toString(),
@@ -44,6 +55,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Add project activities
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recentProjects.forEach((project: any) => {
       activities.push({
         id: project._id.toString(),
@@ -57,6 +69,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Add user activities
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     recentUsers.forEach((user: any) => {
       activities.push({
         id: user._id.toString(),

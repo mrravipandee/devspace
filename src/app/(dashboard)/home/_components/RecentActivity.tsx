@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Calendar, Clock, User, FileText, LayoutGrid, Eye } from 'lucide-react';
+import { Clock, User, FileText, LayoutGrid, Eye } from 'lucide-react';
 
 interface Activity {
   id: string;

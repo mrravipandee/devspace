@@ -216,7 +216,7 @@ export default function ProjectFilters({
         <div className="mt-4 flex flex-wrap gap-2">
           {searchTerm && (
             <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full text-sm">
-              Search: "{searchTerm}"
+              Search: {searchTerm}
               <button
                 onClick={() => handleSearch('')}
                 className="ml-1 hover:text-blue-600"

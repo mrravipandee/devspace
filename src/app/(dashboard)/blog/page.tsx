@@ -285,7 +285,7 @@ export default function BlogPage() {
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">My Blog</h1>
             <p className="text-gray-500 dark:text-gray-400 mt-1">
-              Welcome to my blog! Here you'll find articles on web development, design, and more.
+              Welcome to my blog! Here you&apos;ll find articles on web development, design, and more.
             </p>
           </div>
           <button

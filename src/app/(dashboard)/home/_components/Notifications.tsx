@@ -102,7 +102,7 @@ export default function Notifications() {
             No Notifications
           </h3>
           <p className="text-gray-500 dark:text-gray-400">
-            You're all caught up! Check back later for updates.
+            You&apos;re all caught up! Check back later for updates.
           </p>
         </div>
       </div>
