@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
 import User from '@/models/User';
-import Blog from '@/models/Blog';
+import Resume from '@/models/Resume';
 
 export async function GET(
   request: NextRequest,
@@ -22,38 +22,40 @@ export async function GET(
       );
     }
     
-    // Get user's published blog posts
-    const blogPosts = await Blog.find({ 
+    // Get user's active resume
+    const resume = await Resume.findOne({ 
       userId: user._id,
-      status: 'published'
-    })
-      .sort({ publishedAt: -1 })
-      .lean();
+      isActive: true
+    }).lean();
     
-    // Format blog posts for public API
-    const formattedPosts = blogPosts.map(post => ({
-      id: post._id,
-      title: post.title,
-      content: post.content,
-      excerpt: post.excerpt,
-      tags: post.tags,
-      category: post.category,
-      image: post.image,
-      publishedAt: post.publishedAt,
-      readTime: post.readTime,
-      views: post.views,
-      likes: post.likes,
-      createdAt: post.createdAt,
-      updatedAt: post.updatedAt
-    }));
+    if (!resume) {
+      return NextResponse.json({
+        success: true,
+        data: null,
+        message: 'No active resume found'
+      });
+    }
+    
+    // Format resume for public API
+    const formattedResume = {
+      id: resume._id,
+      fileName: resume.fileName,
+      fileUrl: resume.fileUrl,
+      fileSize: resume.fileSize,
+      fileType: resume.fileType,
+      uploadDate: resume.uploadDate,
+      isActive: resume.isActive,
+      createdAt: resume.createdAt,
+      updatedAt: resume.updatedAt
+    };
     
     return NextResponse.json({
       success: true,
-      data: formattedPosts
+      data: formattedResume
     });
     
   } catch (error) {
-    console.error('Blog API error:', error);
+    console.error('Resume API error:', error);
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
       { status: 500 }

@@ -4,44 +4,53 @@ import User from '@/models/User';
 import Project from '@/models/Project';
 
 export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ username: string }> }
+  request: NextRequest,
+  { params }: { params: { username: string } }
 ) {
   try {
     await dbConnect();
-
-    const { username } = await params;
+    
+    const { username } = params;
     
     // Find user by username
-    const user = await User.findOne({ username }).select('_id');
+    const user = await User.findOne({ username });
+    
     if (!user) {
       return NextResponse.json(
-        { error: 'User not found' },
+        { success: false, error: 'User not found' },
         { status: 404 }
       );
     }
-
+    
+    // Get user's projects
     const projects = await Project.find({ userId: user._id })
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
+    
+    // Format projects for public API
+    const formattedProjects = projects.map(project => ({
+      id: project._id,
+      title: project.title,
+      description: project.description,
+      technologies: project.technologies,
+      githubUrl: project.githubUrl,
+      liveUrl: project.liveUrl,
+      image: project.image,
+      category: project.category,
+      featured: project.featured,
+      createdAt: project.createdAt,
+      updatedAt: project.updatedAt
+    }));
     
     return NextResponse.json({
       success: true,
-      data: projects.map(project => ({
-        id: project._id,
-        title: project.title,
-        description: project.description,
-        image: project.image,
-        technologies: project.technologies,
-        githubUrl: project.githubUrl,
-        liveUrl: project.liveUrl,
-        createdAt: project.createdAt
-      }))
+      data: formattedProjects
     });
-
+    
   } catch (error) {
     console.error('Projects API error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { success: false, error: 'Internal server error' },
       { status: 500 }
     );
   }

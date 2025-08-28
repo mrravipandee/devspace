@@ -1,122 +1,99 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-export function middleware(req: NextRequest) {
-  const { pathname, hostname } = req.nextUrl;
-
-  // Handle CORS for API routes
-  if (pathname.startsWith('/api')) {
-    const response = NextResponse.next();
+// Function to track API analytics
+async function trackApiAnalytics(request: NextRequest, response: NextResponse, username: string) {
+  try {
+    const startTime = Date.now();
     
-    // Allow requests from your production domain and localhost
-    const allowedOrigins = process.env.NODE_ENV === 'production' 
-      ? [
-          'https://www.devspacee.me',
-          'https://api.devspacee.me',
-          'https://devspacee.me',
-        ]
-      : [
-          'https://www.devspacee.me',
-          'https://api.devspacee.me',
-          'https://devspacee.me',
-          'http://localhost:3000',
-          'http://localhost:3001',
-          'http://127.0.0.1:3000',
-          'http://127.0.0.1:3001'
-        ];
+    // Extract request details
+    const url = new URL(request.url);
+    const endpoint = url.pathname.replace(`/api/${username}`, '') || '/';
+    const method = request.method;
+    const ip = request.ip || request.headers.get('x-forwarded-for') || 'unknown';
+    const userAgent = request.headers.get('user-agent') || '';
+    const referer = request.headers.get('referer') || '';
     
-    const origin = req.headers.get('origin');
-    
-    if (origin && allowedOrigins.includes(origin)) {
-      response.headers.set('Access-Control-Allow-Origin', origin);
+    // Extract website from referer
+    let website = null;
+    if (referer) {
+      try {
+        const refererUrl = new URL(referer);
+        website = refererUrl.hostname;
+      } catch (e) {
+        // Invalid referer URL
+      }
     }
     
-    // Set other CORS headers
-    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie');
-    response.headers.set('Access-Control-Allow-Credentials', 'true');
+    // Calculate response time
+    const responseTime = Date.now() - startTime;
     
-    // Handle preflight requests
-    if (req.method === 'OPTIONS') {
-      return new NextResponse(null, { status: 200, headers: response.headers });
-    }
+    // Prepare analytics data
+    const analyticsData = {
+      username,
+      endpoint,
+      method,
+      ip,
+      userAgent,
+      referer,
+      website,
+      responseTime,
+      statusCode: response.status
+    };
     
-    return response;
-  }
-
-  // If this is the API subdomain, only allow API routes
-  if (hostname === 'api.devspacee.me') {
-    if (!pathname.startsWith('/api')) {
-      return NextResponse.redirect(new URL('https://www.devspacee.me', req.url));
-    }
-    return NextResponse.next();
-  }
-
-  const token = req.cookies.get('token')?.value;
-
-  // Private routes that require authentication
-  const privateRoutes = [
-    '/home',
-    '/project',
-    '/blog',
-    '/resume',
-    '/setting',
-    '/profile',
-    '/tech',
-    '/achivement',
-    '/contributions'
-  ];
-
-  // Check if current path is a private route
-  const isPrivateRoute = privateRoutes.some(route => pathname.startsWith(route));
-  
-  // Check if current path is an auth route
-  const isAuthRoute = pathname === '/login' || pathname === '/signup';
-
-  // Debug logging (only in development)
-  if (process.env.NODE_ENV === 'development') {
-    console.log('Middleware Debug:', {
-      pathname,
-      hasToken: !!token,
-      isPrivateRoute,
-      isAuthRoute,
-      hostname
+    // Send analytics data to internal endpoint (non-blocking)
+    fetch(`${url.origin}/api/analytics/track`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Internal-Request': 'true'
+      },
+      body: JSON.stringify(analyticsData)
+    }).catch(error => {
+      console.error('Failed to track analytics:', error);
     });
+    
+  } catch (error) {
+    console.error('Analytics tracking error:', error);
   }
+}
 
-  // If accessing private route without token → redirect to login
-  if (isPrivateRoute && !token) {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Redirecting to login: No token for private route', pathname);
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  
+  // Check if this is a public API endpoint (username-based)
+  const apiMatch = pathname.match(/^\/api\/([^\/]+)\/(.+)$/);
+  
+  if (apiMatch) {
+    const [, username, endpoint] = apiMatch;
+    
+    // List of public endpoints that don't require authentication
+    const publicEndpoints = ['/profile', '/projects', '/blog', '/achievements', '/techstack', '/contributions', '/resume'];
+    
+    if (publicEndpoints.includes(`/${endpoint}`)) {
+      // This is a public API endpoint, allow access
+      const response = NextResponse.next();
+      
+      // Track analytics (non-blocking)
+      trackApiAnalytics(request, response, username);
+      
+      return response;
     }
-    return NextResponse.redirect(new URL('/login', req.url));
   }
-
-  // If accessing auth route with token → redirect to home
-  if (isAuthRoute && token) {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Redirecting to home: User has token but accessing auth page', pathname);
-    }
-    return NextResponse.redirect(new URL('/home', req.url));
-  }
-
+  
+  // For all other routes, continue with normal middleware
   return NextResponse.next();
 }
 
-// Only match these paths
 export const config = {
   matcher: [
-    '/api/:path*',
-    '/home/:path*',
-    '/project/:path*',
-    '/blog/:path*',
-    '/resume/:path*',
-    '/setting/:path*',
-    '/profile/:path*',
-    '/tech/:path*',
-    '/achivement/:path*',
-    '/contributions/:path*',
-    '/login',
-    '/signup',
-    '/',
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder
+     */
+    '/((?!_next/static|_next/image|favicon.ico|public/).*)',
   ],
 };

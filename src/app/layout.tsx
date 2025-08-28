@@ -23,13 +23,13 @@ export const metadata: Metadata = {
     "blogs API",
     "link in bio for developers",
   ],
-  authors: [{ name: "Ravi Pandey", url: "https://imravidev.vercel.app/" }],
+  authors: [{ name: "Ravi Pandey", url: "https://devspacee.me/mrravipandee" }],
   creator: "Ravi Pandey",
   openGraph: {
-    title: "Devfolio | Dynamic Portfolio for Developers",
+    title: "Devspace | Dynamic Portfolio for Developers",
     description:
       "One dashboard to manage all your tech projects, blogs, and links. Simple API integration for static portfolios.",
-    url: "https://devspace.me",
+    url: "https://devspacee.me",
     siteName: "Devspace",
     images: [
       {

@@ -5,80 +5,232 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { 
     Code, 
-    Key, 
     Copy, 
-    RefreshCw, 
-    Eye, 
-    EyeOff, 
     BookOpen,
     Terminal,
     Globe,
     Zap,
-    X
+    ExternalLink,
+    BarChart3,
+    Users,
+    Eye,
+    TrendingUp,
+    Github,
+    Link,
+    CheckCircle,
+    AlertCircle
 } from 'lucide-react';
 import { getUserProfile } from '@/lib/apiClient';
 
-// API functions for managing API keys
-const fetchApiKeys = async () => {
-  const response = await fetch('/api/api-keys', {
-    credentials: 'include'
-  });
-  if (!response.ok) throw new Error('Failed to fetch API keys');
-  return response.json();
-};
-
-const generateApiKey = async (name: string) => {
-  const response = await fetch('/api/api-keys', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify({ name })
-  });
-  if (!response.ok) throw new Error('Failed to generate API key');
-  return response.json();
-};
-
-const deleteApiKey = async (id: string) => {
-  const response = await fetch(`/api/api-keys/${id}`, {
-    method: 'DELETE',
-    credentials: 'include'
-  });
-  if (!response.ok) throw new Error('Failed to delete API key');
-  return response.json();
-};
-
-interface ApiKey {
-    id: string;
+interface ApiEndpoint {
     name: string;
-    key: string;
-    isActive: boolean;
-    createdAt: string;
-    lastUsed?: string;
+    path: string;
+    method: string;
+    description: string;
+    example: string;
+    response: string;
+    category: 'profile' | 'projects' | 'blog' | 'achievements' | 'tech' | 'contributions' | 'resume';
+}
+
+interface ApiAnalytics {
+    totalRequests: number;
+    uniqueVisitors: number;
+    topEndpoints: { endpoint: string; requests: number }[];
+    recentActivity: { endpoint: string; timestamp: string; ip: string }[];
+    websiteIntegrations: { website: string; requests: number; lastUsed: string }[];
 }
 
 export default function ApiPage() {
-    const [activeTab, setActiveTab] = useState('api');
+    const [activeTab, setActiveTab] = useState('endpoints');
     const [profile, setProfile] = useState<{ username: string } | null>(null);
-    const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
-    const [showApiKey, setShowApiKey] = useState<string | null>(null);
+    const [analytics, setAnalytics] = useState<ApiAnalytics | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [isGenerating, setIsGenerating] = useState(false);
-    const [newKeyName, setNewKeyName] = useState('');
-    const [showNewKey, setShowNewKey] = useState<ApiKey | null>(null);
+
+    const apiEndpoints: ApiEndpoint[] = [
+        {
+            name: "Profile",
+            path: "/profile",
+            method: "GET",
+            description: "Get user profile information including name, bio, social links, and avatar",
+            example: `curl ${getApiUrl()}/profile`,
+            response: `{
+  "success": true,
+  "data": {
+    "name": "John Doe",
+    "username": "johndoe",
+    "bio": "Full-stack developer...",
+    "avatar": "https://...",
+    "social": {
+      "github": "https://github.com/johndoe",
+      "linkedin": "https://linkedin.com/in/johndoe"
+    }
+  }
+}`,
+            category: 'profile'
+        },
+        {
+            name: "Projects",
+            path: "/projects",
+            method: "GET",
+            description: "Get all user projects with details, technologies, and links",
+            example: `curl ${getApiUrl()}/projects`,
+            response: `{
+  "success": true,
+  "data": [
+    {
+      "id": "1",
+      "title": "Project Name",
+      "description": "Project description...",
+      "technologies": ["React", "Node.js"],
+      "githubUrl": "https://github.com/...",
+      "liveUrl": "https://project.com"
+    }
+  ]
+}`,
+            category: 'projects'
+        },
+        {
+            name: "Blog Posts",
+            path: "/blog",
+            method: "GET",
+            description: "Get all published blog posts with content and metadata",
+            example: `curl ${getApiUrl()}/blog`,
+            response: `{
+  "success": true,
+  "data": [
+    {
+      "id": "1",
+      "title": "Blog Post Title",
+      "content": "Blog content...",
+      "publishedAt": "2024-01-01T00:00:00Z",
+      "tags": ["web-development", "react"]
+    }
+  ]
+}`,
+            category: 'blog'
+        },
+        {
+            name: "Achievements",
+            path: "/achievements",
+            method: "GET",
+            description: "Get user achievements, certifications, and awards",
+            example: `curl ${getApiUrl()}/achievements`,
+            response: `{
+  "success": true,
+  "data": [
+    {
+      "id": "1",
+      "title": "Achievement Title",
+      "description": "Achievement description...",
+      "type": "certification",
+      "issuer": "Company Name",
+      "date": "2024-01-01"
+    }
+  ]
+}`,
+            category: 'achievements'
+        },
+        {
+            name: "Tech Stack",
+            path: "/techstack",
+            method: "GET",
+            description: "Get user's technology stack with proficiency levels",
+            example: `curl ${getApiUrl()}/techstack`,
+            response: `{
+  "success": true,
+  "data": [
+    {
+      "id": "1",
+      "name": "React",
+      "category": "frontend",
+      "proficiency": "advanced",
+      "yearsOfExperience": 3,
+      "icon": "https://..."
+    }
+  ]
+}`,
+            category: 'tech'
+        },
+        {
+            name: "Contributions",
+            path: "/contributions",
+            method: "GET",
+            description: "Get open source contributions and GitHub activity",
+            example: `curl ${getApiUrl()}/contributions`,
+            response: `{
+  "success": true,
+  "data": [
+    {
+      "id": "1",
+      "projectName": "Project Name",
+      "description": "Contribution description...",
+      "type": "feature",
+      "pullRequestUrl": "https://github.com/...",
+      "stars": 1000,
+      "forks": 500
+    }
+  ]
+}`,
+            category: 'contributions'
+        },
+        {
+            name: "Resume",
+            path: "/resume",
+            method: "GET",
+            description: "Get user's resume information and download link",
+            example: `curl ${getApiUrl()}/resume`,
+            response: `{
+  "success": true,
+  "data": {
+    "fileName": "resume.pdf",
+    "fileUrl": "https://...",
+    "uploadDate": "2024-01-01",
+    "fileSize": 1024000
+  }
+}`,
+            category: 'resume'
+        }
+    ];
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [profileResponse, apiKeysResponse] = await Promise.all([
-                    getUserProfile(),
-                    fetchApiKeys()
-                ]);
+                const profileResponse = await getUserProfile();
                 setProfile(profileResponse.user);
-                setApiKeys(apiKeysResponse.apiKeys);
-                    } catch (error: unknown) {
-            console.error('Failed to load data:', error);
-            toast.error('Failed to load data');
-        } finally {
+                
+                // Fetch real analytics data
+                try {
+                    const analyticsResponse = await fetch('/api/analytics?days=30', {
+                        credentials: 'include'
+                    });
+                    if (analyticsResponse.ok) {
+                        const analyticsData = await analyticsResponse.json();
+                        setAnalytics(analyticsData.data);
+                    } else {
+                        // Fallback to mock data if analytics API fails
+                        setAnalytics({
+                            totalRequests: 0,
+                            uniqueVisitors: 0,
+                            topEndpoints: [],
+                            recentActivity: [],
+                            websiteIntegrations: []
+                        });
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch analytics:', error);
+                    // Fallback to mock data
+                    setAnalytics({
+                        totalRequests: 0,
+                        uniqueVisitors: 0,
+                        topEndpoints: [],
+                        recentActivity: [],
+                        websiteIntegrations: []
+                    });
+                }
+            } catch (error: unknown) {
+                console.error('Failed to load data:', error);
+                toast.error('Failed to load data');
+            } finally {
                 setIsLoading(false);
             }
         };
@@ -86,57 +238,45 @@ export default function ApiPage() {
         fetchData();
     }, []);
 
-    const handleGenerateApiKey = async () => {
-        if (!newKeyName.trim()) {
-            toast.error('Please enter a name for the API key');
-            return;
-        }
-
-        try {
-            setIsGenerating(true);
-            const response = await generateApiKey(newKeyName.trim());
-            const newKey = response.apiKey;
-            
-            setApiKeys(prev => [newKey, ...prev]);
-            setShowNewKey(newKey);
-            setNewKeyName('');
-            toast.success('API key generated successfully!');
-        } catch (error: unknown) {
-            console.error('Failed to generate API key:', error);
-            toast.error('Failed to generate API key');
-        } finally {
-            setIsGenerating(false);
-        }
-    };
-
-    const handleDeleteApiKey = async (id: string) => {
-        try {
-            await deleteApiKey(id);
-            setApiKeys(prev => prev.filter(key => key.id !== id));
-            toast.success('API key deleted successfully!');
-        } catch (error: unknown) {
-            console.error('Failed to delete API key:', error);
-            toast.error('Failed to delete API key');
-        }
-    };
-
     const copyToClipboard = (text: string, label: string) => {
         navigator.clipboard.writeText(text);
         toast.success(`${label} copied to clipboard!`);
     };
 
-    const toggleApiKeyVisibility = (keyId: string) => {
-        setShowApiKey(showApiKey === keyId ? null : keyId);
+    const getApiUrl = () => {
+        if (!profile?.username) return 'https://api.devspacee.me/username';
+        return `https://api.devspacee.me/${profile.username}`;
     };
 
-    const getApiUrl = () => {
-        if (!profile?.username) return '';
-        return `https://api.devspacee.me/${profile.username}`;
+    const getCategoryIcon = (category: string) => {
+        switch (category) {
+            case 'profile': return <Users className="w-4 h-4" />;
+            case 'projects': return <Code className="w-4 h-4" />;
+            case 'blog': return <BookOpen className="w-4 h-4" />;
+            case 'achievements': return <CheckCircle className="w-4 h-4" />;
+            case 'tech': return <Zap className="w-4 h-4" />;
+            case 'contributions': return <Github className="w-4 h-4" />;
+            case 'resume': return <Link className="w-4 h-4" />;
+            default: return <Code className="w-4 h-4" />;
+        }
+    };
+
+    const getCategoryColor = (category: string) => {
+        switch (category) {
+            case 'profile': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200';
+            case 'projects': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200';
+            case 'blog': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-200';
+            case 'achievements': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200';
+            case 'tech': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-200';
+            case 'contributions': return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-200';
+            case 'resume': return 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-200';
+            default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-200';
+        }
     };
 
     if (isLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
                 <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
             </div>
         );
@@ -156,234 +296,145 @@ export default function ApiPage() {
                             <Code className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">API Management</h1>
-                            <p className="text-gray-600 dark:text-gray-400">Manage your API keys and access your data programmatically</p>
+                            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">API Documentation</h1>
+                            <p className="text-gray-600 dark:text-gray-400">Public API endpoints to access your portfolio data programmatically</p>
                         </div>
                     </div>
+                </motion.div>
+
+                {/* API URL Section */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-6 mb-8"
+                >
+                    <div className="flex items-center space-x-3 mb-4">
+                        <Globe className="w-6 h-6 text-blue-600" />
+                        <h3 className="text-xl font-semibold text-blue-900 dark:text-blue-100">
+                            Your API Base URL
+                        </h3>
+                    </div>
+                    <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
+                        <div className="flex items-center justify-between">
+                            <code className="text-sm font-mono text-gray-900 dark:text-white">
+                                {getApiUrl()}
+                            </code>
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => copyToClipboard(getApiUrl(), 'API URL')}
+                                className="flex items-center space-x-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                            >
+                                <Copy className="w-4 h-4" />
+                                <span className="text-sm">Copy</span>
+                            </motion.button>
+                        </div>
+                    </div>
+                    <p className="text-sm text-blue-700 dark:text-blue-300 mt-3">
+                        This is your unique API endpoint. All endpoints are public and don't require authentication.
+                    </p>
                 </motion.div>
 
                 {/* Tab Navigation */}
                 <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/50 overflow-hidden mb-8">
                     <div className="flex border-b border-gray-200 dark:border-gray-700">
                         <button
-                            onClick={() => setActiveTab('api')}
+                            onClick={() => setActiveTab('endpoints')}
                             className={`flex-1 flex items-center justify-center space-x-2 py-4 px-6 font-medium transition-colors ${
-                                activeTab === 'api'
+                                activeTab === 'endpoints'
                                     ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
                                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                             }`}
                         >
-                            <Key className="w-5 h-5" />
-                            <span>API Keys</span>
+                            <Code className="w-5 h-5" />
+                            <span>Endpoints</span>
                         </button>
                         <button
-                            onClick={() => setActiveTab('docs')}
+                            onClick={() => setActiveTab('analytics')}
                             className={`flex-1 flex items-center justify-center space-x-2 py-4 px-6 font-medium transition-colors ${
-                                activeTab === 'docs'
+                                activeTab === 'analytics'
                                     ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
                                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                             }`}
                         >
-                            <BookOpen className="w-5 h-5" />
-                            <span>Documentation</span>
+                            <BarChart3 className="w-5 h-5" />
+                            <span>Analytics</span>
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('integrations')}
+                            className={`flex-1 flex items-center justify-center space-x-2 py-4 px-6 font-medium transition-colors ${
+                                activeTab === 'integrations'
+                                    ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
+                                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                            }`}
+                        >
+                            <Link className="w-5 h-5" />
+                            <span>Integrations</span>
                         </button>
                     </div>
 
                     {/* Tab Content */}
                     <div className="p-8">
-                        {activeTab === 'api' && (
+                        {activeTab === 'endpoints' && (
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 className="space-y-8"
                             >
-                                {/* API URL Section */}
-                                <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-6">
-                                    <div className="flex items-center space-x-3 mb-4">
-                                        <Globe className="w-6 h-6 text-blue-600" />
-                                        <h3 className="text-xl font-semibold text-blue-900 dark:text-blue-100">
-                                            Your API Endpoint
-                                        </h3>
-                                    </div>
-                                    <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
-                                        <div className="flex items-center justify-between">
-                                            <code className="text-sm font-mono text-gray-900 dark:text-white">
-                                                {getApiUrl()}
-                                            </code>
-                                            <motion.button
-                                                whileHover={{ scale: 1.05 }}
-                                                whileTap={{ scale: 0.95 }}
-                                                onClick={() => copyToClipboard(getApiUrl(), 'API URL')}
-                                                className="flex items-center space-x-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                                            >
-                                                <Copy className="w-4 h-4" />
-                                                <span className="text-sm">Copy</span>
-                                            </motion.button>
-                                        </div>
-                                    </div>
-                                    <p className="text-sm text-blue-700 dark:text-blue-300 mt-3">
-                                        This is your unique API endpoint. Use it with your API keys to access your data.
-                                    </p>
-                                </div>
-
-                                {/* API Keys Section */}
-                                <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-8 rounded-2xl border border-white/20 dark:border-gray-700/50">
-                                    <div className="flex items-center justify-between mb-6">
-                                        <div className="flex items-center space-x-3">
-                                            <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
-                                                <Key className="w-5 h-5 text-white" />
-                                            </div>
-                                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                                                API Keys
-                                            </h2>
-                                        </div>
-                                    </div>
-
-                                    {/* Generate New Key Form */}
-                                    <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-6 mb-6 border border-gray-200 dark:border-gray-600">
-                                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                                            Generate New API Key
-                                        </h3>
-                                        <div className="flex items-center space-x-4">
-                                            <input
-                                                type="text"
-                                                value={newKeyName}
-                                                onChange={(e) => setNewKeyName(e.target.value)}
-                                                placeholder="Enter API key name"
-                                                className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200"
-                                            />
-                                            <motion.button
-                                                whileHover={{ scale: 1.05 }}
-                                                whileTap={{ scale: 0.95 }}
-                                                onClick={handleGenerateApiKey}
-                                                disabled={isGenerating || !newKeyName.trim()}
-                                                className="flex items-center space-x-2 px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
-                                            >
-                                                {isGenerating ? (
-                                                    <RefreshCw className="w-4 h-4 animate-spin" />
-                                                ) : (
-                                                    <Zap className="w-4 h-4" />
-                                                )}
-                                                <span>{isGenerating ? 'Generating...' : 'Generate'}</span>
-                                            </motion.button>
-                                        </div>
-                                    </div>
-
-                                    {/* Newly Generated Key Display */}
-                                    {showNewKey && (
+                                {/* API Endpoints */}
+                                <div className="space-y-6">
+                                    {apiEndpoints.map((endpoint, index) => (
                                         <motion.div
-                                            initial={{ opacity: 0, y: -20 }}
+                                            key={endpoint.path}
+                                            initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
-                                            className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-800 rounded-xl p-6 mb-6"
+                                            transition={{ delay: index * 0.1 }}
+                                            className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl border border-white/20 dark:border-gray-700/50 overflow-hidden"
                                         >
-                                            <div className="flex items-center justify-between mb-4">
-                                                <h3 className="text-lg font-semibold text-green-900 dark:text-green-100">
-                                                    🎉 New API Key Generated!
-                                                </h3>
-                                                <button
-                                                    onClick={() => setShowNewKey(null)}
-                                                    className="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-200"
-                                                >
-                                                    <X className="w-5 h-5" />
-                                                </button>
-                                            </div>
-                                            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-green-200 dark:border-green-800">
-                                                <div className="flex items-center justify-between">
-                                                    <code className="text-sm font-mono text-gray-900 dark:text-white">
-                                                        {showNewKey.key}
-                                                    </code>
-                                                    <motion.button
-                                                        whileHover={{ scale: 1.05 }}
-                                                        whileTap={{ scale: 0.95 }}
-                                                        onClick={() => copyToClipboard(showNewKey.key, 'API Key')}
-                                                        className="flex items-center space-x-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-                                                    >
-                                                        <Copy className="w-4 h-4" />
-                                                        <span className="text-sm">Copy</span>
-                                                    </motion.button>
-                                                </div>
-                                            </div>
-                                            <p className="text-sm text-green-700 dark:text-green-300 mt-3">
-                                                ⚠️ Make sure to copy this key now. You won&apos;t be able to see it again!
-                                            </p>
-                                        </motion.div>
-                                    )}
-
-                                    {apiKeys.length === 0 ? (
-                                        <div className="text-center py-12">
-                                            <Key className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                                                No API Keys Yet
-                                            </h3>
-                                            <p className="text-gray-600 dark:text-gray-400 mb-4">
-                                                Generate your first API key to start accessing your data programmatically.
-                                            </p>
-                                        </div>
-                                    ) : (
-                                        <div className="space-y-4">
-                                            {apiKeys.map((apiKey) => (
-                                                <motion.div
-                                                    key={apiKey.id}
-                                                    initial={{ opacity: 0, y: 20 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-6 border border-gray-200 dark:border-gray-600"
-                                                >
-                                                    <div className="flex items-center justify-between mb-4">
+                                            <div className="p-6">
+                                                <div className="flex items-start justify-between mb-4">
+                                                    <div className="flex items-center space-x-3">
+                                                        <div className={`p-2 rounded-lg ${getCategoryColor(endpoint.category)}`}>
+                                                            {getCategoryIcon(endpoint.category)}
+                                                        </div>
                                                         <div>
-                                                            <h4 className="font-semibold text-gray-900 dark:text-white">
-                                                                {apiKey.name}
-                                                            </h4>
-                                                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                                                                Created {new Date(apiKey.createdAt).toLocaleDateString()}
-                                                                {apiKey.lastUsed && (
-                                                                    <span className="ml-2">
-                                                                        • Last used {new Date(apiKey.lastUsed).toLocaleDateString()}
-                                                                    </span>
-                                                                )}
+                                                            <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                                                                {endpoint.name}
+                                                            </h3>
+                                                            <p className="text-gray-600 dark:text-gray-400">
+                                                                {endpoint.description}
                                                             </p>
                                                         </div>
-                                                        <div className="flex items-center space-x-2">
-                                                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                                                apiKey.isActive 
-                                                                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
-                                                                    : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                                                            }`}>
-                                                                {apiKey.isActive ? 'Active' : 'Inactive'}
-                                                            </span>
-                                                            <motion.button
-                                                                whileHover={{ scale: 1.05 }}
-                                                                whileTap={{ scale: 0.95 }}
-                                                                onClick={() => handleDeleteApiKey(apiKey.id)}
-                                                                className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                                                                title="Delete API key"
-                                                            >
-                                                                <X className="w-4 h-4" />
-                                                            </motion.button>
+                                                    </div>
+                                                    <span className="px-3 py-1 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200 rounded-full text-sm font-medium">
+                                                        {endpoint.method}
+                                                    </span>
+                                                </div>
+
+                                                <div className="space-y-4">
+                                                    {/* Endpoint Path */}
+                                                    <div>
+                                                        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Endpoint</h4>
+                                                        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 border border-gray-200 dark:border-gray-600">
+                                                            <code className="text-sm font-mono text-gray-900 dark:text-white">
+                                                                {endpoint.path}
+                                                            </code>
                                                         </div>
                                                     </div>
-                                                    
-                                                    <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
-                                                        <div className="flex items-center justify-between">
-                                                            <code className="text-sm font-mono text-gray-900 dark:text-white">
-                                                                {showApiKey === apiKey.id ? apiKey.key : '••••••••••••••••••••••••••••••••'}
-                                                            </code>
-                                                            <div className="flex items-center space-x-2">
+
+                                                    {/* Example Request */}
+                                                    <div>
+                                                        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Example Request</h4>
+                                                        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 border border-gray-200 dark:border-gray-600">
+                                                            <div className="flex items-center justify-between">
+                                                                <code className="text-sm font-mono text-gray-900 dark:text-white">
+                                                                    {endpoint.example}
+                                                                </code>
                                                                 <motion.button
                                                                     whileHover={{ scale: 1.05 }}
                                                                     whileTap={{ scale: 0.95 }}
-                                                                    onClick={() => toggleApiKeyVisibility(apiKey.id)}
-                                                                    className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-                                                                >
-                                                                    {showApiKey === apiKey.id ? (
-                                                                        <EyeOff className="w-4 h-4" />
-                                                                    ) : (
-                                                                        <Eye className="w-4 h-4" />
-                                                                    )}
-                                                                </motion.button>
-                                                                <motion.button
-                                                                    whileHover={{ scale: 1.05 }}
-                                                                    whileTap={{ scale: 0.95 }}
-                                                                    onClick={() => copyToClipboard(apiKey.key, 'API Key')}
+                                                                    onClick={() => copyToClipboard(endpoint.example, 'Example')}
                                                                     className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                                                                 >
                                                                     <Copy className="w-4 h-4" />
@@ -391,158 +442,210 @@ export default function ApiPage() {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </motion.div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
 
-                                {/* Usage Examples */}
-                                <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-8 rounded-2xl border border-white/20 dark:border-gray-700/50">
-                                    <div className="flex items-center space-x-3 mb-6">
-                                        <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center">
-                                            <Terminal className="w-5 h-5 text-white" />
-                                        </div>
-                                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                                            Quick Examples
-                                        </h2>
-                                    </div>
-                                    
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
-                                            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Get Profile Data</h4>
-                                            <code className="text-sm font-mono text-gray-700 dark:text-gray-300 block bg-white dark:bg-gray-800 p-3 rounded border">
-                                                curl -H &quot;Authorization: Bearer YOUR_API_KEY&quot; {getApiUrl()}/profile
-                                            </code>
-                                        </div>
-                                        
-                                        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
-                                            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Get Projects</h4>
-                                            <code className="text-sm font-mono text-gray-700 dark:text-gray-300 block bg-white dark:bg-gray-800 p-3 rounded border">
-                                                curl -H &quot;Authorization: Bearer YOUR_API_KEY&quot; {getApiUrl()}/projects
-                                            </code>
-                                        </div>
-                                    </div>
+                                                    {/* Response Example */}
+                                                    <div>
+                                                        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Response Example</h4>
+                                                        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 border border-gray-200 dark:border-gray-600">
+                                                            <pre className="text-sm font-mono text-gray-900 dark:text-white overflow-x-auto">
+                                                                <code>{endpoint.response}</code>
+                                                            </pre>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Test Button */}
+                                                    <div className="flex justify-end">
+                                                        <motion.button
+                                                            whileHover={{ scale: 1.05 }}
+                                                            whileTap={{ scale: 0.95 }}
+                                                            onClick={() => window.open(`${getApiUrl()}${endpoint.path}`, '_blank')}
+                                                            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                                        >
+                                                            <ExternalLink className="w-4 h-4" />
+                                                            <span>Test Endpoint</span>
+                                                        </motion.button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    ))}
                                 </div>
                             </motion.div>
                         )}
 
-                        {activeTab === 'docs' && (
+                        {activeTab === 'analytics' && analytics && (
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 className="space-y-8"
                             >
-                                {/* API Documentation */}
-                                <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-8 rounded-2xl border border-white/20 dark:border-gray-700/50">
-                                    <div className="flex items-center space-x-3 mb-6">
-                                        <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-                                            <BookOpen className="w-5 h-5 text-white" />
+                                {/* Analytics Overview */}
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl border border-white/20 dark:border-gray-700/50 p-6">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total API Requests</p>
+                                                <p className="text-2xl font-bold text-gray-900 dark:text-white">{analytics.totalRequests.toLocaleString()}</p>
+                                            </div>
+                                            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                                                <TrendingUp className="w-6 h-6 text-blue-600" />
+                                            </div>
                                         </div>
-                                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                                            API Documentation
-                                        </h2>
                                     </div>
 
-                                    <div className="prose dark:prose-invert max-w-none">
-                                        <h3>Authentication</h3>
-                                        <p>All API requests require authentication using your API key in the Authorization header:</p>
-                                        <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
-                                            <code>Authorization: Bearer YOUR_API_KEY</code>
-                                        </pre>
+                                    <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl border border-white/20 dark:border-gray-700/50 p-6">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Unique Visitors</p>
+                                                <p className="text-2xl font-bold text-gray-900 dark:text-white">{analytics.uniqueVisitors.toLocaleString()}</p>
+                                            </div>
+                                            <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                                                <Users className="w-6 h-6 text-green-600" />
+                                            </div>
+                                        </div>
+                                    </div>
 
-                                        <h3>Base URL</h3>
-                                        <p>Your API base URL is:</p>
-                                        <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
-                                            <code>{getApiUrl()}</code>
-                                        </pre>
-
-                                        <h3>Endpoints</h3>
-                                        
-                                        <h4>GET /profile</h4>
-                                        <p>Retrieve your profile information.</p>
-                                        <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
-                                            <code>curl -H &quot;Authorization: Bearer YOUR_API_KEY&quot; {getApiUrl()}/profile</code>
-                                        </pre>
-
-                                        <h4>GET /projects</h4>
-                                        <p>Retrieve your projects list.</p>
-                                        <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
-                                            <code>curl -H &quot;Authorization: Bearer YOUR_API_KEY&quot; {getApiUrl()}/projects</code>
-                                        </pre>
-
-                                        <h4>GET /blog</h4>
-                                        <p>Retrieve your blog posts.</p>
-                                        <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
-                                            <code>curl -H &quot;Authorization: Bearer YOUR_API_KEY&quot; {getApiUrl()}/blog</code>
-                                        </pre>
-
-                                        <h4>GET /achievements</h4>
-                                        <p>Retrieve your achievements.</p>
-                                        <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
-                                            <code>curl -H &quot;Authorization: Bearer YOUR_API_KEY&quot; {getApiUrl()}/achievements</code>
-                                        </pre>
-
-                                        <h3>Response Format</h3>
-                                        <p>All API responses are returned in JSON format:</p>
-                                        <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
-                                            <code>{`{
-  "success": true,
-  "data": {
-    // Response data
-  }
-}`}</code>
-                                        </pre>
-
-                                        <h3>Error Handling</h3>
-                                        <p>Error responses include an error message:</p>
-                                        <pre className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg">
-                                            <code>{`{
-  "success": false,
-  "error": "Error message"
-}`}</code>
-                                        </pre>
-
-                                        <h3>Rate Limiting</h3>
-                                        <p>API requests are limited to 1000 requests per hour per API key.</p>
-
-                                        <h3>Security</h3>
-                                        <p>Keep your API keys secure and never share them publicly. If you suspect a key has been compromised, regenerate it immediately.</p>
+                                    <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl border border-white/20 dark:border-gray-700/50 p-6">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Integrations</p>
+                                                <p className="text-2xl font-bold text-gray-900 dark:text-white">{analytics.websiteIntegrations.length}</p>
+                                            </div>
+                                            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">
+                                                <Link className="w-6 h-6 text-purple-600" />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
-                                {/* SDK Examples */}
-                                <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm p-8 rounded-2xl border border-white/20 dark:border-gray-700/50">
-                                    <div className="flex items-center space-x-3 mb-6">
-                                        <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center">
-                                            <Code className="w-5 h-5 text-white" />
-                                        </div>
-                                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                                            SDK Examples
-                                        </h2>
+                                {/* Top Endpoints */}
+                                <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl border border-white/20 dark:border-gray-700/50 p-6">
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Most Popular Endpoints</h3>
+                                    <div className="space-y-3">
+                                        {analytics.topEndpoints.map((endpoint, index) => (
+                                            <div key={endpoint.endpoint} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                                <div className="flex items-center space-x-3">
+                                                    <span className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center text-sm font-bold text-blue-600">
+                                                        {index + 1}
+                                                    </span>
+                                                    <code className="text-sm font-mono text-gray-900 dark:text-white">
+                                                        {endpoint.endpoint}
+                                                    </code>
+                                                </div>
+                                                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                                                    {endpoint.requests.toLocaleString()} requests
+                                                </span>
+                                            </div>
+                                        ))}
                                     </div>
+                                </div>
 
+                                {/* Recent Activity */}
+                                <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl border border-white/20 dark:border-gray-700/50 p-6">
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Recent API Activity</h3>
+                                    <div className="space-y-3">
+                                        {analytics.recentActivity.map((activity, index) => (
+                                            <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                                <div className="flex items-center space-x-3">
+                                                    <Eye className="w-4 h-4 text-gray-400" />
+                                                    <code className="text-sm font-mono text-gray-900 dark:text-white">
+                                                        {activity.endpoint}
+                                                    </code>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                                        {new Date(activity.timestamp).toLocaleString()}
+                                                    </p>
+                                                    <p className="text-xs text-gray-500 dark:text-gray-500">
+                                                        {activity.ip}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {activeTab === 'integrations' && analytics && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="space-y-8"
+                            >
+                                {/* Integration Guide */}
+                                <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl border border-white/20 dark:border-gray-700/50 p-6">
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">How to Integrate</h3>
+                                    <div className="prose dark:prose-invert max-w-none">
+                                        <p className="text-gray-600 dark:text-gray-400 mb-4">
+                                            Add your API to your website, portfolio, or any application to display your data dynamically.
+                                        </p>
+                                        
+                                        <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Benefits:</h4>
+                                        <ul className="space-y-2 text-gray-600 dark:text-gray-400">
+                                            <li>• Real-time data updates across all your platforms</li>
+                                            <li>• Automatic portfolio synchronization</li>
+                                            <li>• Professional API integration</li>
+                                            <li>• Analytics tracking and insights</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                {/* Website Integrations */}
+                                <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl border border-white/20 dark:border-gray-700/50 p-6">
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Active Website Integrations</h3>
+                                    <div className="space-y-4">
+                                        {analytics.websiteIntegrations.map((integration, index) => (
+                                            <div key={index} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                                <div className="flex items-center space-x-3">
+                                                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                                                        <Link className="w-5 h-5 text-white" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-medium text-gray-900 dark:text-white">
+                                                            {integration.website}
+                                                        </p>
+                                                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                                                            Last used: {new Date(integration.lastUsed).toLocaleDateString()}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="font-medium text-gray-900 dark:text-white">
+                                                        {integration.requests.toLocaleString()} requests
+                                                    </p>
+                                                    <p className="text-sm text-green-600 dark:text-green-400">
+                                                        Active
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Integration Examples */}
+                                <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-2xl border border-white/20 dark:border-gray-700/50 p-6">
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Integration Examples</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
-                                            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">JavaScript/Node.js</h4>
+                                        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                                            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Portfolio Website</h4>
                                             <pre className="text-sm font-mono text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded border overflow-x-auto">
-                                                <code>{`const response = await fetch('${getApiUrl()}/profile', {
-  headers: {
-    'Authorization': 'Bearer YOUR_API_KEY'
-  }
-});
-const data = await response.json();`}</code>
+                                                <code>{`// Fetch projects for portfolio
+fetch('${getApiUrl()}/projects')
+  .then(response => response.json())
+  .then(data => {
+    // Display projects on your website
+    displayProjects(data.data);
+  });`}</code>
                                             </pre>
                                         </div>
                                         
-                                        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
-                                            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Python</h4>
+                                        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                                            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">GitHub README</h4>
                                             <pre className="text-sm font-mono text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded border overflow-x-auto">
-                                                <code>{`import requests
-
-response = requests.get('${getApiUrl()}/profile', 
-    headers={'Authorization': 'Bearer YOUR_API_KEY'})
-data = response.json()`}</code>
+                                                <code>{`<!-- Add to your README.md -->
+![Profile](https://api.devspacee.me/${profile?.username || 'username'}/profile)
+![Projects](https://api.devspacee.me/${profile?.username || 'username'}/projects)`}</code>
                                             </pre>
                                         </div>
                                     </div>
