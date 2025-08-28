@@ -7,12 +7,14 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { toast } from "sonner";
 import { getUserProfile } from "@/lib/apiClient";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
     const router = useRouter();
     const pathname = usePathname();
     const [isLoading, setIsLoading] = useState(true);
     const [retryCount, setRetryCount] = useState(0);
+    const { currentTheme, isLoaded } = useTheme();
 
     useEffect(() => {
         const checkProfileCompletion = async () => {
@@ -74,17 +76,17 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
     if (isLoading) {
         return (
-            <div className="bg-background dark:bg-[#0B1437] h-screen flex items-center justify-center">
+            <div className={`${currentTheme.bg} h-screen flex items-center justify-center`}>
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-                    <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+                    <p className={`${currentTheme.text}`}>Loading...</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="bg-background dark:bg-[#0B1437] h-screen flex">
+        <div className={`${currentTheme.bg} h-screen flex`}>
             {/* Sidebar */}
             <div className="w-[18%] sm:w-[12%] md:w-[8%] lg:w-[18%] xl:w-[18%]">
                 <Sidebar />

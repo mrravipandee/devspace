@@ -14,6 +14,7 @@ import {
     FaDev, FaMedium, FaStackOverflow, FaGitlab,
     FaBehance, FaDribbble, FaYoutube, FaInstagram
 } from 'react-icons/fa';
+import { useTheme } from '@/context/ThemeContext';
 
 interface SocialHandle {
     platform: string;
@@ -59,13 +60,13 @@ export default function UserPage() {
     const [achievements, setAchievements] = useState<Achievement[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [darkMode, setDarkMode] = useState(false);
     const [showContactForm, setShowContactForm] = useState(false);
     const [contactForm, setContactForm] = useState({
         name: '',
         email: '',
         message: ''
     });
+    const { darkMode, toggleDarkMode, currentTheme } = useTheme();
 
     const getSocialIcon = (platform: string) => {
         const platformLower = platform.toLowerCase();
@@ -87,27 +88,7 @@ export default function UserPage() {
         }
     };
 
-    // Theme management
-    useEffect(() => {
-        const savedMode = localStorage.getItem('darkMode');
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        
-        if (savedMode !== null) {
-            setDarkMode(savedMode === 'true');
-        } else if (systemPrefersDark) {
-            setDarkMode(true);
-        }
-    }, []);
-
-    useEffect(() => {
-        if (darkMode) {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('darkMode', 'true');
-        } else {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('darkMode', 'false');
-        }
-    }, [darkMode]);
+    // Theme management is now handled by ThemeContext
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -243,7 +224,7 @@ export default function UserPage() {
                         <div className="flex items-center space-x-4">
                             {/* Theme Toggle */}
                             <button
-                                onClick={() => setDarkMode(!darkMode)}
+                                onClick={toggleDarkMode}
                                 className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                             >
                                 {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}

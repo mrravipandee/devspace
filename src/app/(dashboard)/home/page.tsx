@@ -1,6 +1,4 @@
 import BlogArticleChart from "./_components/BlogArticleChart";
-import Documentation from "./_components/Documentation";
-import HowToUse from "./_components/HowToUse";
 import SmallCards from "../../../components/SmallCards";
 import VisitorsChart from "./_components/Visitors";
 import RecentActivity from "./_components/RecentActivity";

@@ -60,7 +60,7 @@ export default function AchievementsPage() {
   };
 
   useEffect(() => {
-    let filtered = achievements;
+    let filtered = achievements || [];
     if (searchTerm) {
       filtered = filtered.filter(achievement =>
         achievement.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -106,10 +106,11 @@ export default function AchievementsPage() {
     try {
       setIsLoading(true);
       const response = await getAchievements(currentUser.username);
-      setAchievements(response.data || []);
+      setAchievements(response.data?.data || []);
     } catch (error) {
       console.error('Failed to fetch achievements:', error);
       toast.error('Failed to load achievements');
+      setAchievements([]); // Set empty array on error
     } finally {
       setIsLoading(false);
     }
@@ -132,7 +133,7 @@ export default function AchievementsPage() {
     if (!confirm('Are you sure you want to delete this achievement?')) return;
     try {
       await deleteAchievement(id);
-      setAchievements(achievements.filter(achievement => achievement.id !== id));
+      setAchievements(achievements?.filter(achievement => achievement.id !== id) || []);
       toast.success('Achievement deleted successfully');
     } catch (error) {
       toast.error('Failed to delete achievement');
@@ -153,17 +154,17 @@ export default function AchievementsPage() {
         issuer: formData.get('issuer') as string,
         date: formData.get('date') as string,
         verificationUrl: formData.get('verificationUrl') as string,
-        skills: (formData.get('skills') as string).split(',').map(skill => skill.trim()).filter(Boolean),
+        skills: (formData.get('skills') as string || '').split(',').map(skill => skill.trim()).filter(Boolean),
       };
       if (currentAchievement.id) {
         const response = await updateAchievement(currentAchievement.id, achievementData);
-        setAchievements(achievements.map(achievement => 
+        setAchievements(achievements?.map(achievement => 
           achievement.id === currentAchievement.id ? response.data : achievement
-        ));
+        ) || []);
         toast.success('Achievement updated successfully');
       } else {
         const response = await createAchievement(achievementData);
-        setAchievements([response.data, ...achievements]);
+        setAchievements([response.data, ...(achievements || [])]);
         toast.success('Achievement created successfully');
       }
       setIsModalOpen(false);
@@ -240,7 +241,7 @@ export default function AchievementsPage() {
                       <Award className="w-5 h-5 text-blue-600" />
                     </div>
                     <div>
-                      <p className="text-2xl font-bold text-gray-900 dark:text-white">{achievements.length}</p>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-white">{achievements?.length || 0}</p>
                       <p className="text-sm text-gray-600 dark:text-gray-400">Total</p>
                     </div>
                   </div>
@@ -252,7 +253,7 @@ export default function AchievementsPage() {
                     </div>
                     <div>
                       <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {achievements.filter(a => new Date(a.date) >= new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).length}
+                        {achievements?.filter(a => new Date(a.date) >= new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).length || 0}
                       </p>
                       <p className="text-sm text-gray-600 dark:text-gray-400">Recent</p>
                     </div>
@@ -265,7 +266,7 @@ export default function AchievementsPage() {
                     </div>
                     <div>
                       <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {achievements.filter(a => a.verificationUrl).length}
+                        {achievements?.filter(a => a.verificationUrl).length || 0}
                       </p>
                       <p className="text-sm text-gray-600 dark:text-gray-400">Verified</p>
                     </div>
@@ -278,7 +279,7 @@ export default function AchievementsPage() {
                     </div>
                     <div>
                       <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {achievements.length > 0 ? Math.round((achievements.filter(a => a.verificationUrl).length / achievements.length) * 100) : 0}%
+                        {achievements && achievements.length > 0 ? Math.round((achievements.filter(a => a.verificationUrl).length / achievements.length) * 100) : 0}%
                       </p>
                       <p className="text-sm text-gray-600 dark:text-gray-400">Completion</p>
                     </div>
@@ -351,7 +352,7 @@ export default function AchievementsPage() {
         {/* Achievements Grid */}
         <div className="space-y-6">
           <AnimatePresence mode="wait">
-            {filteredAchievements.length > 0 ? (
+            {filteredAchievements && filteredAchievements.length > 0 ? (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {filteredAchievements.map((achievement, index) => (
                   <motion.div
@@ -421,7 +422,7 @@ export default function AchievementsPage() {
 
                         {achievement.skills.length > 0 && (
                           <div className="flex flex-wrap gap-2 mb-4">
-                            {achievement.skills.slice(0, 3).map(skill => (
+                            {achievement.skills?.slice(0, 3).map(skill => (
                               <span 
                                 key={skill} 
                                 className="bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-800 dark:text-blue-200 text-xs px-3 py-1 rounded-full font-medium"
@@ -429,7 +430,7 @@ export default function AchievementsPage() {
                                 {skill}
                               </span>
                             ))}
-                            {achievement.skills.length > 3 && (
+                            {achievement.skills && achievement.skills.length > 3 && (
                               <span className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs px-3 py-1 rounded-full">
                                 +{achievement.skills.length - 3} more
                               </span>
@@ -625,7 +626,7 @@ export default function AchievementsPage() {
                     <input
                       type="text"
                       name="skills"
-                      defaultValue={currentAchievement?.skills.join(', ') || ''}
+                      defaultValue={currentAchievement?.skills?.join(', ') || ''}
                       className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-white transition-all duration-200"
                       placeholder="JavaScript, React, Cloud Computing, AWS"
                     />

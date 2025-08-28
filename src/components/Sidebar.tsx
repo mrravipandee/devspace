@@ -12,9 +12,11 @@ import {
     MessageSquare,
     Code,
 } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function Sidebar() {
     const pathname = usePathname();
+    const { currentTheme } = useTheme();
 
     return (
         <div className="flex flex-col h-screen bg-white/80 dark:bg-cardDark w-full px-2 md:px-4 py-6 md:py-8">

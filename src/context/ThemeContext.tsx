@@ -15,6 +15,7 @@ type ThemeContextType = {
         primary: string;
         secondary: string;
     };
+    isLoaded: boolean;
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -24,6 +25,12 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
     const [darkMode, setDarkMode] = useState(false);
     const [theme, setTheme] = useState<Theme>('purple');
     const [isLoaded, setIsLoaded] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    // Set mounted state on client side
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // Load theme preferences from localStorage on mount
     useEffect(() => {
@@ -33,6 +40,10 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
             
             if (savedDarkMode !== null) {
                 setDarkMode(JSON.parse(savedDarkMode));
+            } else {
+                // Check system preference if no saved preference
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                setDarkMode(prefersDark);
             }
             
             if (savedTheme && ['purple', 'orange', 'green', 'blue-purple'].includes(savedTheme)) {
@@ -43,12 +54,18 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
         }
     }, []);
 
-    // Save dark mode preference to localStorage
+    // Save dark mode preference to localStorage and update document class
     useEffect(() => {
-        if (isLoaded && typeof window !== 'undefined') {
+        if (isLoaded && mounted && typeof window !== 'undefined') {
             localStorage.setItem('darkMode', JSON.stringify(darkMode));
+            // Update document class for immediate effect
+            if (darkMode) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
         }
-    }, [darkMode, isLoaded]);
+    }, [darkMode, isLoaded, mounted]);
 
     // Save theme preference to localStorage
     useEffect(() => {
@@ -104,6 +121,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
         darkMode,
         toggleDarkMode,
         currentTheme,
+        isLoaded: isLoaded && mounted,
     };
 
     return (
