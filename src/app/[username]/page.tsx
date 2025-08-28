@@ -39,11 +39,24 @@ interface UserData {
     createdAt: string;
 }
 
+interface Achievement {
+    id: string;
+    title: string;
+    description: string;
+    type: 'certification' | 'hackathon' | 'internship' | 'project' | 'challenge';
+    image: string;
+    issuer: string;
+    date: string;
+    verificationUrl: string;
+    skills: string[];
+}
+
 export default function UserPage() {
     const params = useParams();
     const username = params.username as string;
     
     const [userData, setUserData] = useState<UserData | null>(null);
+    const [achievements, setAchievements] = useState<Achievement[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [darkMode, setDarkMode] = useState(false);
@@ -123,8 +136,22 @@ export default function UserPage() {
             }
         };
 
+        const fetchAchievements = async () => {
+            try {
+                const response = await fetch(`/api/${username}/achievements`);
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    setAchievements(data.data);
+                }
+            } catch (error) {
+                console.error('Error fetching achievements:', error);
+            }
+        };
+
         if (username) {
             fetchUserData();
+            fetchAchievements();
         }
     }, [username]);
 
@@ -383,11 +410,114 @@ export default function UserPage() {
                     </div>
                 </motion.div>
 
-                {/* Create Your Own Section */}
+                {/* Achievements Section */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.4 }}
+                    className="mb-16"
+                >
+                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-8">
+                        Achievements
+                    </h2>
+                    {achievements.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {achievements.map((achievement) => (
+                                <div
+                                    key={achievement.id}
+                                    className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow duration-300"
+                                >
+                                    {achievement.image && (
+                                        <div className="relative w-full h-48 mb-4 rounded-xl overflow-hidden">
+                                            <Image
+                                                src={achievement.image}
+                                                alt={achievement.title}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        </div>
+                                    )}
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                                            achievement.type === 'certification' ? 'bg-blue-100 dark:bg-blue-900/30' :
+                                            achievement.type === 'hackathon' ? 'bg-yellow-100 dark:bg-yellow-900/30' :
+                                            achievement.type === 'internship' ? 'bg-green-100 dark:bg-green-900/30' :
+                                            achievement.type === 'project' ? 'bg-purple-100 dark:bg-purple-900/30' :
+                                            'bg-red-100 dark:bg-red-900/30'
+                                        }`}>
+                                            <svg className={`w-4 h-4 ${
+                                                achievement.type === 'certification' ? 'text-blue-600 dark:text-blue-400' :
+                                                achievement.type === 'hackathon' ? 'text-yellow-600 dark:text-yellow-400' :
+                                                achievement.type === 'internship' ? 'text-green-600 dark:text-green-400' :
+                                                achievement.type === 'project' ? 'text-purple-600 dark:text-purple-400' :
+                                                'text-red-600 dark:text-red-400'
+                                            }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                                            </svg>
+                                        </div>
+                                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                            {achievement.title}
+                                        </h3>
+                                    </div>
+                                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                                        {achievement.issuer} • {new Date(achievement.date).toLocaleDateString()}
+                                    </div>
+                                    <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">
+                                        {achievement.description}
+                                    </p>
+                                    {achievement.skills && achievement.skills.length > 0 && (
+                                        <div className="flex flex-wrap gap-2 mb-4">
+                                            {achievement.skills.slice(0, 3).map((skill, index) => (
+                                                <span
+                                                    key={index}
+                                                    className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 text-xs rounded-full"
+                                                >
+                                                    {skill}
+                                                </span>
+                                            ))}
+                                            {achievement.skills.length > 3 && (
+                                                <span className="px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs rounded-full">
+                                                    +{achievement.skills.length - 3}
+                                                </span>
+                                            )}
+                                        </div>
+                                    )}
+                                    <a
+                                        href={achievement.verificationUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium transition-colors"
+                                    >
+                                        Verify this achievement
+                                        <ExternalLink className="w-3 h-3" />
+                                    </a>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
+                            <div className="text-center py-12">
+                                <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                                    </svg>
+                                </div>
+                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                                    No Achievements Yet
+                                </h3>
+                                <p className="text-gray-600 dark:text-gray-400 mb-6">
+                                    Achievements will appear here once they&apos;re added to the profile.
+                                </p>
+                            </div>
+                        </div>
+                    )}
+                </motion.div>
+
+                {/* Create Your Own Section */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.5 }}
                     className="text-center mb-16"
                 >
                     <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-3xl p-12 text-white">
@@ -419,7 +549,7 @@ export default function UserPage() {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.5 }}
+                    transition={{ duration: 0.5, delay: 0.6 }}
                     className="text-center"
                 >
                     <div className="bg-white dark:bg-gray-800 rounded-3xl p-12 shadow-lg border border-gray-200 dark:border-gray-700">

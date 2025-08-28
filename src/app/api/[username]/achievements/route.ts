@@ -22,7 +22,7 @@ export async function GET(
     }
 
     const achievements = await Achievement.find({ userId: user._id })
-      .sort({ createdAt: -1 });
+      .sort({ date: -1 });
     
     return NextResponse.json({
       success: true,
@@ -30,8 +30,12 @@ export async function GET(
         id: achievement._id,
         title: achievement.title,
         description: achievement.description,
+        type: achievement.type,
         image: achievement.image,
+        issuer: achievement.issuer,
         date: achievement.date,
+        verificationUrl: achievement.verificationUrl,
+        skills: achievement.skills,
         createdAt: achievement.createdAt
       }))
     });
