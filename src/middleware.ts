@@ -9,7 +9,7 @@ async function trackApiAnalytics(request: NextRequest, response: NextResponse, u
     const url = new URL(request.url);
     const endpoint = url.pathname.replace(`/api/${username}`, '') || '/';
     const method = request.method;
-    const ip = request.ip || request.headers.get('x-forwarded-for') || 'unknown';
+    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
     const userAgent = request.headers.get('user-agent') || '';
     const referer = request.headers.get('referer') || '';
     
@@ -116,10 +116,26 @@ export function middleware(req: NextRequest) {
     return response;
   }
 
-  // If this is the API subdomain, redirect to main domain with API path
+  // If this is the API subdomain, handle API-only requests
   if (hostname === 'api.devspacee.me') {
-    const newUrl = new URL(`https://www.devspacee.me/api${pathname}`, req.url);
-    return NextResponse.redirect(newUrl);
+    // Remove /api prefix for cleaner URLs like api.devspacee.me/username/profile
+    if (pathname.startsWith('/api/')) {
+      const newPath = pathname.replace('/api/', '/');
+      const newUrl = new URL(newPath, req.url);
+      return NextResponse.rewrite(newUrl);
+    }
+    
+    // If it's not an API path, redirect to main site
+    if (!pathname.startsWith('/api') && pathname !== '/') {
+      return NextResponse.redirect(new URL('https://www.devspacee.me', req.url));
+    }
+    
+    // For root path, redirect to main site
+    if (pathname === '/') {
+      return NextResponse.redirect(new URL('https://www.devspacee.me', req.url));
+    }
+    
+    return NextResponse.next();
   }
 
   const token = req.cookies.get('token')?.value;
