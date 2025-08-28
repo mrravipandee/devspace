@@ -129,7 +129,7 @@ export default function SmallCards() {
                 {trend !== undefined && (
                   <div className={`flex items-center text-xs mt-1 ${trend === "increase" ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>
                     <ArrowUpLeftSquare className={`w-3 h-3 mr-1 ${trend === "increase" ? '' : 'rotate-180'}`} />
-                    {Math.abs(trend).toFixed(1)}% {trend === "increase" ? 'increase' : 'decrease'}
+                    {typeof trend === 'number' ? Math.abs(trend).toFixed(1) : ''}% {trend === "increase" ? 'increase' : 'decrease'}
                   </div>
                 )}
               </div>
