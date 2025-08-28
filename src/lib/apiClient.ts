@@ -71,4 +71,25 @@ export const getUserByUsername = async (username: string) => {
   return response.data;
 };
 
+// Achievement functions
+export const getAchievements = async (username: string) => {
+  const response = await apiClient.get(`/api/${username}/achievements`);
+  return response.data;
+};
+
+export const createAchievement = async (achievementData: any) => {
+  const response = await apiClient.post('/api/achievements', achievementData);
+  return response.data;
+};
+
+export const updateAchievement = async (id: string, achievementData: any) => {
+  const response = await apiClient.put(`/api/achievements/${id}`, achievementData);
+  return response.data;
+};
+
+export const deleteAchievement = async (id: string) => {
+  const response = await apiClient.delete(`/api/achievements/${id}`);
+  return response.data;
+};
+
 export default apiClient;

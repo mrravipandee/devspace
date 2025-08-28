@@ -1,11 +1,19 @@
 "use client";
 
-import { useRef, useState } from 'react';
-import SmallCards from "@/components/SmallCards";
-import { PlusCircle, Trash2, Edit, X, Image as ImageIcon, Award, Trophy, FileBadge, Briefcase } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  PlusCircle, Trash2, Edit, X, Award, Trophy, FileBadge, Briefcase, Search,
+  Filter, SortAsc, SortDesc, Calendar, ExternalLink, Star, TrendingUp,
+  CheckCircle, Loader2, Sparkles, Target, Medal, Eye, Share2, Download
+} from "lucide-react";
 import Image from "next/image";
+import { toast } from 'sonner';
+import SmallCards from "@/components/SmallCards";
+import AchievementImageUpload from "@/components/AchievementImageUpload";
+import { getAchievements, createAchievement, updateAchievement, deleteAchievement, getUserProfile } from '@/lib/apiClient';
 
-type Achievement = { 
+interface Achievement {
   id: string;
   title: string;
   description: string;
@@ -15,276 +23,533 @@ type Achievement = {
   date: string;
   verificationUrl: string;
   skills: string[];
-};
+  createdAt?: string;
+}
 
 export default function AchievementsPage() {
-  const [achievements, setAchievements] = useState<Achievement[]>([
-    {
-      id: '1',
-      title: 'AWS Certified Developer',
-      description: 'Earned AWS Certified Developer - Associate certification',
-      type: 'certification',
-      image: '/certificate_demo.jpg',
-      issuer: 'Amazon Web Services',
-      date: '2025-03-15',
-      verificationUrl: 'https://aws.amazon.com/certification/',
-      skills: ['AWS', 'Cloud Computing', 'Serverless']
-    },
-    {
-      id: '2',
-      title: '1st Place - Hack the Future',
-      description: 'Won first place in the annual Hack the Future hackathon',
-      type: 'hackathon',
-      image: '/certificate_demo.jpg',
-      issuer: 'Tech Innovators Inc.',
-      date: '2025-02-20',
-      verificationUrl: 'https://hackthefuture.dev/winners',
-      skills: ['React', 'Node.js', 'AI Integration']
-    }
-  ]);
-
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [filteredAchievements, setFilteredAchievements] = useState<Achievement[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentAchievement, setCurrentAchievement] = useState<Achievement | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterType, setFilterType] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<'date' | 'title' | 'type'>('date');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [currentUser, setCurrentUser] = useState<{ username: string } | null>(null);
+
+  useEffect(() => {
+    fetchCurrentUser();
+  }, []);
+
+  useEffect(() => {
+    if (currentUser) {
+      fetchAchievements();
+    }
+  }, [currentUser]);
+
+  const fetchCurrentUser = async () => {
+    try {
+      const response = await getUserProfile();
+      setCurrentUser(response.user);
+    } catch (error) {
+      console.error('Failed to fetch current user:', error);
+      toast.error('Failed to load user data');
+    }
+  };
+
+  useEffect(() => {
+    let filtered = achievements;
+    if (searchTerm) {
+      filtered = filtered.filter(achievement =>
+        achievement.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        achievement.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        achievement.issuer.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    if (filterType !== 'all') {
+      filtered = filtered.filter(achievement => achievement.type === filterType);
+    }
+    filtered.sort((a, b) => {
+      let aValue: string | Date;
+      let bValue: string | Date;
+      switch (sortBy) {
+        case 'date':
+          aValue = new Date(a.date);
+          bValue = new Date(b.date);
+          break;
+        case 'title':
+          aValue = a.title.toLowerCase();
+          bValue = b.title.toLowerCase();
+          break;
+        case 'type':
+          aValue = a.type;
+          bValue = b.type;
+          break;
+        default:
+          aValue = new Date(a.date);
+          bValue = new Date(b.date);
+      }
+      if (sortOrder === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+    setFilteredAchievements(filtered);
+  }, [achievements, searchTerm, filterType, sortBy, sortOrder]);
+
+  const fetchAchievements = async () => {
+    if (!currentUser?.username) return;
+    
+    try {
+      setIsLoading(true);
+      const response = await getAchievements(currentUser.username);
+      setAchievements(response.data || []);
+    } catch (error) {
+      console.error('Failed to fetch achievements:', error);
+      toast.error('Failed to load achievements');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleCreateNew = () => {
     setCurrentAchievement({
-      id: '',
-      title: '',
-      description: '',
-      type: 'certification',
-      image: '',
-      issuer: '',
-      date: new Date().toISOString().split('T')[0],
-      verificationUrl: '',
-      skills: []
+      id: '', title: '', description: '', type: 'certification', image: '',
+      issuer: '', date: new Date().toISOString().split('T')[0], verificationUrl: '', skills: []
     });
-    setImagePreview(null);
     setIsModalOpen(true);
   };
 
   const handleEdit = (achievement: Achievement) => {
     setCurrentAchievement(achievement);
-    setImagePreview(achievement.image);
     setIsModalOpen(true);
   };
 
-  const handleDelete = (id: string) => {
-    if (confirm('Are you sure you want to delete this achievement?')) {
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this achievement?')) return;
+    try {
+      await deleteAchievement(id);
       setAchievements(achievements.filter(achievement => achievement.id !== id));
+      toast.success('Achievement deleted successfully');
+    } catch (error) {
+      toast.error('Failed to delete achievement');
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = new FormData(e.target as HTMLFormElement);
-    const newAchievementData = {
-      id: currentAchievement?.id || Date.now().toString(),
-      title: formData.get('title') as string,
-      description: formData.get('description') as string,
-      type: formData.get('type') as Achievement['type'],
-      image: imagePreview || '/certificate_demo.jpg',
-      issuer: formData.get('issuer') as string,
-      date: formData.get('date') as string,
-      verificationUrl: formData.get('verificationUrl') as string,
-      skills: (formData.get('skills') as string).split(',').map(skill => skill.trim()),
-    };
-
-    if (currentAchievement?.id) {
-      // Update existing achievement
-      setAchievements(achievements.map(achievement => 
-        achievement.id === currentAchievement.id ? newAchievementData : achievement
-      ));
-    } else {
-      // Add new achievement
-      setAchievements([...achievements, newAchievementData]);
-    }
-
-    setIsModalOpen(false);
-    setCurrentAchievement(null);
-    setImagePreview(null);
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
+    if (!currentAchievement) return;
+    try {
+      setIsSubmitting(true);
+      const formData = new FormData(e.target as HTMLFormElement);
+      const achievementData = {
+        title: formData.get('title') as string,
+        description: formData.get('description') as string,
+        type: formData.get('type') as Achievement['type'],
+        image: currentAchievement.image,
+        issuer: formData.get('issuer') as string,
+        date: formData.get('date') as string,
+        verificationUrl: formData.get('verificationUrl') as string,
+        skills: (formData.get('skills') as string).split(',').map(skill => skill.trim()).filter(Boolean),
       };
-      reader.readAsDataURL(file);
+      if (currentAchievement.id) {
+        const response = await updateAchievement(currentAchievement.id, achievementData);
+        setAchievements(achievements.map(achievement => 
+          achievement.id === currentAchievement.id ? response.data : achievement
+        ));
+        toast.success('Achievement updated successfully');
+      } else {
+        const response = await createAchievement(achievementData);
+        setAchievements([response.data, ...achievements]);
+        toast.success('Achievement created successfully');
+      }
+      setIsModalOpen(false);
+      setCurrentAchievement(null);
+    } catch (error) {
+      toast.error('Failed to save achievement');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const triggerFileInput = () => {
-    fileInputRef.current?.click();
+  const handleImageUpload = (url: string, publicId: string) => {
+    if (currentAchievement) {
+      setCurrentAchievement({ ...currentAchievement, image: url });
+    }
   };
 
   const getAchievementIcon = (type: Achievement['type']) => {
+    const iconClasses = "w-6 h-6";
     switch (type) {
-      case 'certification': return <FileBadge className="w-5 h-5 text-blue-500" />;
-      case 'hackathon': return <Trophy className="w-5 h-5 text-yellow-500" />;
-      case 'internship': return <Briefcase className="w-5 h-5 text-green-500" />;
-      case 'project': return <ImageIcon className="w-5 h-5 text-purple-500" />;
-      case 'challenge': return <Award className="w-5 h-5 text-red-500" />;
-      default: return <Award className="w-5 h-5 text-gray-500" />;
+      case 'certification': return <FileBadge className={`${iconClasses} text-blue-500`} />;
+      case 'hackathon': return <Trophy className={`${iconClasses} text-yellow-500`} />;
+      case 'internship': return <Briefcase className={`${iconClasses} text-green-500`} />;
+      case 'project': return <Target className={`${iconClasses} text-purple-500`} />;
+      case 'challenge': return <Medal className={`${iconClasses} text-red-500`} />;
+      default: return <Award className={`${iconClasses} text-gray-500`} />;
     }
   };
 
-  return (
-    <div className="min-h-screen">
-      <SmallCards />
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-          <div>
-            <h2 className="text-3xl font-bold text-primaryText dark:text-background">My Achievements</h2>
-            <p className="text-secondaryText mt-2 max-w-2xl">
-              A showcase of my professional accomplishments, certifications, and recognitions.
-            </p>
-          </div>
-          <button
-            onClick={handleCreateNew}
-            className="bg-primary text-white px-5 py-2.5 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-primary/90 transition-colors whitespace-nowrap"
+  if (isLoading || !currentUser) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <SmallCards />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center"
           >
-            <PlusCircle className="w-5 h-5" />
-            Add Achievement
-          </button>
+            <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+            <p className="text-gray-600 dark:text-gray-400 text-lg">
+              {!currentUser ? 'Loading user data...' : 'Loading your achievements...'}
+            </p>
+          </motion.div>
         </div>
+      </div>
+    );
+  }
 
-        {/* Achievements List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
-          {achievements.map(achievement => (
-            <div key={achievement.id} className="bg-white dark:bg-cardDark rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-              <div className="flex flex-col md:flex-row">
-                {achievement.image && (
-                  <div className="relative w-full md:w-1/3 h-48 md:h-auto">
-                    <Image
-                      src={achievement.image}
-                      alt={achievement.title}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
-                  </div>
-                )}
-                <div className="flex-1 p-6">
-                  <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-3">
-                      {getAchievementIcon(achievement.type)}
-                      <h3 className="text-xl font-bold text-primaryText dark:text-background">{achievement.title}</h3>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <SmallCards />
+      
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+            <div className="flex-1">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center">
+                  <Trophy className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white">My Achievements</h1>
+                  <p className="text-gray-600 dark:text-gray-400 mt-1">Showcase your professional accomplishments</p>
+                </div>
+              </div>
+              
+              {/* Stats */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-4 rounded-2xl border border-white/20 dark:border-gray-700/50">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                      <Award className="w-5 h-5 text-blue-600" />
                     </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleEdit(achievement)}
-                        className="text-secondaryText hover:text-primary p-1 rounded-full hover:bg-background"
-                        title="Edit achievement"
-                        aria-label="Edit achievement"
-                      >
-                        <Edit className="w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(achievement.id)}
-                        className="text-secondaryText hover:text-primary p-1 rounded-full hover:bg-background"
-                        title="Delete achievement"
-                        aria-label="Delete achievement"
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
+                    <div>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-white">{achievements.length}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Total</p>
                     </div>
                   </div>
-                  <div className="mt-2 flex items-center gap-2 text-sm text-secondaryText/80">
-                    <span>{achievement.issuer}</span>
-                    <span>•</span>
-                    <span>{achievement.date}</span>
+                </div>
+                <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-4 rounded-2xl border border-white/20 dark:border-gray-700/50">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                      <TrendingUp className="w-5 h-5 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                        {achievements.filter(a => new Date(a.date) >= new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).length}
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Recent</p>
+                    </div>
                   </div>
-                  <p className="text-secondaryText my-4">{achievement.description}</p>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {achievement.skills.map(skill => (
-                      <span 
-                        key={skill} 
-                        className="bg-background text-primary/80 text-xs px-3 py-1 rounded-full"
-                      >
-                        {skill}
-                      </span>
-                    ))}
+                </div>
+                <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-4 rounded-2xl border border-white/20 dark:border-gray-700/50">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">
+                      <CheckCircle className="w-5 h-5 text-purple-600" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                        {achievements.filter(a => a.verificationUrl).length}
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Verified</p>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <a 
-                      href={achievement.verificationUrl} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-primary hover:text-primary/90 font-medium"
-                    >
-                      Verify this achievement
-                    </a>
+                </div>
+                <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-4 rounded-2xl border border-white/20 dark:border-gray-700/50">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-xl flex items-center justify-center">
+                      <Star className="w-5 h-5 text-orange-600" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                        {achievements.length > 0 ? Math.round((achievements.filter(a => a.verificationUrl).length / achievements.length) * 100) : 0}%
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Completion</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
 
-        {achievements.length === 0 && (
-          <div className="bg-white dark:bg-cardDark rounded-xl shadow-sm p-8 text-center">
-            <div className="mx-auto max-w-md">
-              <Award className="w-12 h-12 mx-auto text-primaryText mb-4" />
-              <h3 className="text-lg font-medium text-primaryText mb-2">No achievements yet</h3>
-              <p className="text-secondaryText mb-6">Start building your achievements portfolio by adding your first accomplishment.</p>
-              <button
-                onClick={handleCreateNew}
-                className="bg-primary text-white px-5 py-2.5 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-primary/90 transition-colors mx-auto"
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleCreateNew}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-2xl flex items-center space-x-2 hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg font-medium"
+            >
+              <PlusCircle className="w-5 h-5" />
+              <span>Add Achievement</span>
+            </motion.button>
+          </div>
+        </motion.div>
+
+        {/* Filters */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 rounded-2xl border border-white/20 dark:border-gray-700/50 mb-8">
+          <div className="flex flex-col lg:flex-row gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search achievements..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200"
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Filter className="w-5 h-5 text-gray-400" />
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value)}
+                className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200"
               >
-                <PlusCircle className="w-5 h-5" />
-                Add First Achievement
+                <option value="all">All Types</option>
+                <option value="certification">Certification</option>
+                <option value="hackathon">Hackathon</option>
+                <option value="internship">Internship</option>
+                <option value="project">Project</option>
+                <option value="challenge">Challenge</option>
+              </select>
+            </div>
+            <div className="flex items-center space-x-2">
+              {sortOrder === 'asc' ? <SortAsc className="w-5 h-5 text-gray-400" /> : <SortDesc className="w-5 h-5 text-gray-400" />}
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as 'date' | 'title' | 'type')}
+                className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200"
+              >
+                <option value="date">Date</option>
+                <option value="title">Title</option>
+                <option value="type">Type</option>
+              </select>
+              <button
+                onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                className="p-3 border border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                {sortOrder === 'asc' ? <SortAsc className="w-5 h-5" /> : <SortDesc className="w-5 h-5" />}
               </button>
             </div>
           </div>
-        )}
+        </motion.div>
+
+        {/* Achievements Grid */}
+        <div className="space-y-6">
+          <AnimatePresence mode="wait">
+            {filteredAchievements.length > 0 ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {filteredAchievements.map((achievement, index) => (
+                  <motion.div
+                    key={achievement.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ delay: index * 0.1 }}
+                    whileHover={{ scale: 1.02 }}
+                    className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl border border-white/20 dark:border-gray-700/50 overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    <div className="flex flex-col lg:flex-row h-full">
+                      {achievement.image && (
+                        <div className="relative w-full lg:w-1/3 h-48 lg:h-auto">
+                          <Image
+                            src={achievement.image}
+                            alt={achievement.title}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          />
+                          <div className="absolute top-3 right-3">
+                            {getAchievementIcon(achievement.type)}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="flex-1 p-6">
+                        <div className="flex justify-between items-start mb-4">
+                          <div className="flex-1">
+                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                              {achievement.title}
+                            </h3>
+                            <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400 mb-3">
+                              <span>{achievement.issuer}</span>
+                              <span>•</span>
+                              <div className="flex items-center space-x-1">
+                                <Calendar className="w-4 h-4" />
+                                <span>{new Date(achievement.date).toLocaleDateString()}</span>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center space-x-2">
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() => handleEdit(achievement)}
+                              className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-xl transition-colors"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </motion.button>
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={() => handleDelete(achievement.id)}
+                              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </motion.button>
+                          </div>
+                        </div>
+
+                        <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
+                          {achievement.description}
+                        </p>
+
+                        {achievement.skills.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {achievement.skills.slice(0, 3).map(skill => (
+                              <span 
+                                key={skill} 
+                                className="bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-800 dark:text-blue-200 text-xs px-3 py-1 rounded-full font-medium"
+                              >
+                                {skill}
+                              </span>
+                            ))}
+                            {achievement.skills.length > 3 && (
+                              <span className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs px-3 py-1 rounded-full">
+                                +{achievement.skills.length - 3} more
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        <div className="flex items-center justify-between">
+                          <a 
+                            href={achievement.verificationUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="flex items-center space-x-2 text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                            <span>Verify this achievement</span>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl border border-white/20 dark:border-gray-700/50 p-12 text-center"
+              >
+                <div className="max-w-md mx-auto">
+                  <div className="w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                    <Trophy className="w-10 h-10 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                    {searchTerm || filterType !== 'all' ? 'No matching achievements' : 'No achievements yet'}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-8">
+                    {searchTerm || filterType !== 'all' 
+                      ? 'Try adjusting your search or filters to find what you\'re looking for.'
+                      : 'Start building your achievements portfolio by adding your first accomplishment.'
+                    }
+                  </p>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleCreateNew}
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-2xl flex items-center space-x-2 hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg font-medium mx-auto"
+                  >
+                    <PlusCircle className="w-5 h-5" />
+                    <span>Add First Achievement</span>
+                  </motion.button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
-      {/* Create/Edit Achievement Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-cardDark rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-primaryText dark:text-background">
-                  {currentAchievement?.id ? 'Edit Achievement' : 'Add New Achievement'}
-                </h2>
-                <button
-                  onClick={() => {
-                    setIsModalOpen(false);
-                    setCurrentAchievement(null);
-                  }}
-                  className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
-                  aria-label="Close modal"
-                >
-                  <X size={24} />
-                </button>
-              </div>
+      {/* Create/Edit Modal */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+            >
+              <div className="p-8">
+                <div className="flex justify-between items-center mb-8">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
+                      <Sparkles className="w-5 h-5 text-white" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                      {currentAchievement?.id ? 'Edit Achievement' : 'Add New Achievement'}
+                    </h2>
+                  </div>
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => {
+                      setIsModalOpen(false);
+                      setCurrentAchievement(null);
+                    }}
+                    className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors"
+                  >
+                    <X className="w-6 h-6" />
+                  </motion.button>
+                </div>
 
-              <form onSubmit={handleSubmit}>
-                <div className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-secondaryText/80 mb-2">Title*</label>
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                        Achievement Title *
+                      </label>
                       <input
                         type="text"
                         name="title"
                         defaultValue={currentAchievement?.title || ''}
-                        className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryText focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-white transition-all duration-200"
+                        placeholder="e.g., AWS Certified Developer"
                         required
-                        placeholder="Achievement title"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-secondaryText/80 mb-2">Type*</label>
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                        Type *
+                      </label>
                       <select
                         name="type"
                         defaultValue={currentAchievement?.type || 'certification'}
-                        className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-white transition-all duration-200"
                         required
                       >
                         <option value="certification">Certification</option>
@@ -297,139 +562,115 @@ export default function AchievementsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-secondaryText/80 mb-2">Description*</label>
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                      Description *
+                    </label>
                     <textarea
                       name="description"
                       defaultValue={currentAchievement?.description || ''}
                       rows={3}
-                      className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-white transition-all duration-200"
+                      placeholder="Describe your achievement and what you learned..."
                       required
-                      placeholder="Describe your achievement"
                     />
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-secondaryText/80 mb-2">Issuer/Organization*</label>
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                        Issuer/Organization *
+                      </label>
                       <input
                         type="text"
                         name="issuer"
                         defaultValue={currentAchievement?.issuer || ''}
-                        className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-white transition-all duration-200"
+                        placeholder="e.g., Amazon Web Services"
                         required
-                        placeholder="Company or organization name"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-secondaryText/80 mb-2">Date*</label>
+                      <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                        Date Achieved *
+                      </label>
                       <input
                         type="date"
                         name="date"
                         defaultValue={currentAchievement?.date || ''}
-                        className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText custom-date-icon [color-scheme:dark] text-[#2B3674] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-white transition-all duration-200"
                         required
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-secondaryText/80 mb-2">Verification URL*</label>
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                      Verification URL *
+                    </label>
                     <input
                       type="url"
                       name="verificationUrl"
                       defaultValue={currentAchievement?.verificationUrl || ''}
-                      className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      required
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-white transition-all duration-200"
                       placeholder="https://example.com/verification"
+                      required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-secondaryText/80 mb-2">Skills (comma separated)</label>
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                      Skills & Technologies (comma separated)
+                    </label>
                     <input
                       type="text"
                       name="skills"
                       defaultValue={currentAchievement?.skills.join(', ') || ''}
-                      className="w-full px-4 py-2.5 dark:bg-[#0b1437] dark:text-secondaryText rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="JavaScript, React, Cloud Computing"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-white transition-all duration-200"
+                      placeholder="JavaScript, React, Cloud Computing, AWS"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-secondaryText/80 mb-2">Certificate/Badge Image</label>
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      onChange={handleImageChange}
-                      accept="image/*"
-                      className="hidden"
+                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                      Certificate/Badge Image
+                    </label>
+                    <AchievementImageUpload
+                      currentImage={currentAchievement?.image}
+                      onImageUpload={handleImageUpload}
                     />
-                    <div className="space-y-2">
-                      <div
-                        onClick={triggerFileInput}
-                        className={`w-full h-64 border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer transition-colors ${
-                          imagePreview ? 'border-transparent' : 'border-gray-300 hover:border-gray-400'
-                        }`}
-                      >
-                        {imagePreview ? (
-                          <div className="relative w-full h-full">
-                            <Image
-                              src={imagePreview}
-                              alt="Preview"
-                              fill
-                              className="object-cover rounded-lg"
-                            />
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setImagePreview(null);
-                              }}
-                              className="absolute top-3 right-3 bg-white/80 hover:bg-white p-1.5 rounded-full shadow-sm"
-                              aria-label="Remove image"
-                            >
-                              <X size={18} className="text-primary border border-primaryText rounded-full" />
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="text-center p-4">
-                            <ImageIcon className="w-10 h-10 text-gray-400 mx-auto mb-3" />
-                            <p className="text-gray-500 font-medium">Click to upload an image</p>
-                            <p className="text-xs text-gray-400 mt-1">Recommended size: 800x600px</p>
-                          </div>
-                        )}
-                      </div>
-                      {currentAchievement?.image && !imagePreview && (
-                        <p className="text-sm text-gray-500">Current image will be kept if no new image is selected</p>
-                      )}
-                    </div>
                   </div>
-                </div>
 
-                <div className="mt-8 flex justify-end gap-3">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsModalOpen(false);
-                      setCurrentAchievement(null);
-                    }}
-                    className="px-5 py-2.5 bg-secondaryText rounded-lg text-gray-700 hover:bg-gray-200 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-5 py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors shadow-sm"
-                  >
-                    {currentAchievement?.id ? 'Update Achievement' : 'Add Achievement'}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
+                  <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      type="button"
+                      onClick={() => {
+                        setIsModalOpen(false);
+                        setCurrentAchievement(null);
+                      }}
+                      className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors font-medium"
+                    >
+                      Cancel
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 flex items-center space-x-2 font-medium shadow-lg"
+                    >
+                      {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
+                      <span>{isSubmitting ? 'Saving...' : (currentAchievement?.id ? 'Update Achievement' : 'Add Achievement')}</span>
+                    </motion.button>
+                  </div>
+                </form>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
