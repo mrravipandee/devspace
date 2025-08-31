@@ -22,8 +22,8 @@ export async function GET(
       );
     }
     
-    // Get user's projects
-    const projects = await Project.find({ userId: user._id })
+    // Get user's projects (where user is a member)
+    const projects = await Project.find({ members: user._id })
       .sort({ createdAt: -1 })
       .lean();
     
@@ -32,12 +32,15 @@ export async function GET(
       id: project._id,
       title: project.title,
       description: project.description,
-      technologies: project.technologies,
-      githubUrl: project.githubUrl,
-      liveUrl: project.liveUrl,
       image: project.image,
-      category: project.category,
-      featured: project.featured,
+      tech: project.tech,
+      tags: project.tags,
+      status: project.status,
+      progress: project.progress,
+      liveLink: project.liveLink,
+      sourceCode: project.sourceCode,
+      projectLogo: project.projectLogo,
+      techLogos: project.techLogos,
       createdAt: project.createdAt,
       updatedAt: project.updatedAt
     }));
