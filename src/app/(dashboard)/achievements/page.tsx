@@ -106,7 +106,9 @@ export default function AchievementsPage() {
     try {
       setIsLoading(true);
       const response = await getAchievements(currentUser.username);
-      setAchievements(response.data?.data || []);
+      console.log('Achievements API response:', response);
+      console.log('Achievements data:', response.data);
+      setAchievements(response.data || []);
     } catch (error) {
       console.error('Failed to fetch achievements:', error);
       toast.error('Failed to load achievements');
