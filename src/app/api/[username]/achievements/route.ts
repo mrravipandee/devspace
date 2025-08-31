@@ -5,12 +5,12 @@ import Achievement from '@/models/Achievement';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { username: string } }
+  { params }: { params: Promise<{ username: string }> }
 ) {
   try {
     await dbConnect();
     
-    const { username } = params;
+    const { username } = await params;
     
     // Find user by username
     const user = await User.findOne({ username });
@@ -36,8 +36,8 @@ export async function GET(
       issuer: achievement.issuer,
       date: achievement.date,
       image: achievement.image,
-      url: achievement.url,
-      category: achievement.category,
+      verificationUrl: achievement.verificationUrl,
+      skills: achievement.skills,
       createdAt: achievement.createdAt,
       updatedAt: achievement.updatedAt
     }));

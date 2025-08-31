@@ -77,18 +77,42 @@ export default function ApiPage() {
             name: "Projects",
             path: "/projects",
             method: "GET",
-            description: "Get all user projects with details, technologies, and links",
+            description: "Get all user projects with details, technologies, live links, and source code",
             example: `curl ${getApiUrl()}/projects`,
             response: `{
   "success": true,
   "data": [
     {
-      "id": "1",
-      "title": "Project Name",
-      "description": "Project description...",
-      "technologies": ["React", "Node.js"],
-      "githubUrl": "https://github.com/...",
-      "liveUrl": "https://project.com"
+      "id": "68b4339e95ddfe7be09e422c",
+      "title": "DevSpace Portfolio Platform",
+      "description": "A modern portfolio platform for developers to showcase their work, projects, and achievements. Built with Next.js, MongoDB, and Tailwind CSS.",
+      "image": "/devspace_adarsh.png",
+      "tech": ["Next.js", "MongoDB", "Tailwind CSS", "TypeScript"],
+      "tags": ["Full Stack", "Portfolio", "Web App"],
+      "status": "Completed",
+      "progress": 100,
+      "liveLink": "https://devspace.me",
+      "sourceCode": "https://github.com/yourusername/devspace",
+      "projectLogo": "/devspace_adarsh.png",
+      "techLogos": [],
+      "createdAt": "2024-08-31T10:00:00.000Z",
+      "updatedAt": "2024-08-31T10:00:00.000Z"
+    },
+    {
+      "id": "68b4339e95ddfe7be09e422d",
+      "title": "E-Commerce Dashboard",
+      "description": "A comprehensive e-commerce dashboard with analytics, order management, and inventory tracking.",
+      "image": "/certificate_demo.jpg",
+      "tech": ["React", "Node.js", "Express", "PostgreSQL"],
+      "tags": ["Dashboard", "E-Commerce", "Analytics"],
+      "status": "Ongoing",
+      "progress": 75,
+      "liveLink": "https://ecommerce-demo.com",
+      "sourceCode": "https://github.com/yourusername/ecommerce-dashboard",
+      "projectLogo": "",
+      "techLogos": [],
+      "createdAt": "2024-08-30T15:30:00.000Z",
+      "updatedAt": "2024-08-31T09:15:00.000Z"
     }
   ]
 }`,
@@ -334,6 +358,50 @@ export default function ApiPage() {
                     <p className="text-sm text-blue-700 dark:text-blue-300 mt-3">
                         This is your unique API endpoint. All endpoints are public and don't require authentication.
                     </p>
+                </motion.div>
+
+                {/* Enhanced Features Section */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 border border-green-200 dark:border-green-800 rounded-2xl p-6 mb-8"
+                >
+                    <div className="flex items-center space-x-3 mb-4">
+                        <Zap className="w-6 h-6 text-green-600" />
+                        <h3 className="text-xl font-semibold text-green-900 dark:text-green-100">
+                            Enhanced Project Features
+                        </h3>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-green-200 dark:border-green-800">
+                            <div className="flex items-center space-x-2 mb-2">
+                                <Globe className="w-5 h-5 text-blue-600" />
+                                <h4 className="font-semibold text-gray-900 dark:text-white">Live Links</h4>
+                            </div>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                                Direct links to live demos and deployed applications
+                            </p>
+                        </div>
+                        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-green-200 dark:border-green-800">
+                            <div className="flex items-center space-x-2 mb-2">
+                                <Github className="w-5 h-5 text-gray-600" />
+                                <h4 className="font-semibold text-gray-900 dark:text-white">Source Code</h4>
+                            </div>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                                GitHub repositories and source code links
+                            </p>
+                        </div>
+                        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-green-200 dark:border-green-800">
+                            <div className="flex items-center space-x-2 mb-2">
+                                <BarChart3 className="w-5 h-5 text-purple-600" />
+                                <h4 className="font-semibold text-gray-900 dark:text-white">Project Status</h4>
+                            </div>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                                Track project progress and completion status
+                            </p>
+                        </div>
+                    </div>
                 </motion.div>
 
                 {/* Tab Navigation */}
@@ -630,22 +698,83 @@ export default function ApiPage() {
                                         <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
                                             <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Portfolio Website</h4>
                                             <pre className="text-sm font-mono text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded border overflow-x-auto">
-                                                <code>{`// Fetch projects for portfolio
+                                                <code>{`// Fetch projects with live links and source code
 fetch('${getApiUrl()}/projects')
   .then(response => response.json())
   .then(data => {
-    // Display projects on your website
-    displayProjects(data.data);
+    data.data.forEach(project => {
+      console.log(\`\${project.title} - \${project.status}\`);
+      console.log(\`Live Demo: \${project.liveLink}\`);
+      console.log(\`Source Code: \${project.sourceCode}\`);
+      console.log(\`Technologies: \${project.tech.join(', ')}\`);
+    });
   });`}</code>
                                             </pre>
                                         </div>
                                         
+                                        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                                            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">React Component</h4>
+                                            <pre className="text-sm font-mono text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded border overflow-x-auto">
+                                                <code>{`// React component to display projects
+import React, { useState, useEffect } from 'react';
+
+function ProjectCard({ project }) {
+  return (
+    <div className="project-card">
+      <h3>{project.title}</h3>
+      <p>{project.description}</p>
+      <div className="tech-stack">
+        {project.tech.map(tech => (
+          <span key={tech} className="tech-tag">{tech}</span>
+        ))}
+      </div>
+      <div className="project-links">
+        {project.liveLink && (
+          <a href={project.liveLink} target="_blank">Live Demo</a>
+        )}
+        {project.sourceCode && (
+          <a href={project.sourceCode} target="_blank">Source Code</a>
+        )}
+      </div>
+    </div>
+  );
+}`}</code>
+                                            </pre>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                                         <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
                                             <h4 className="font-semibold text-gray-900 dark:text-white mb-2">GitHub README</h4>
                                             <pre className="text-sm font-mono text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded border overflow-x-auto">
                                                 <code>{`<!-- Add to your README.md -->
 ![Profile](https://api.devspacee.me/${profile?.username || 'username'}/profile)
 ![Projects](https://api.devspacee.me/${profile?.username || 'username'}/projects)`}</code>
+                                            </pre>
+                                        </div>
+                                        
+                                        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                                            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Node.js Integration</h4>
+                                            <pre className="text-sm font-mono text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded border overflow-x-auto">
+                                                <code>{`// Node.js server integration
+const axios = require('axios');
+
+async function getProjects() {
+  try {
+    const response = await axios.get('${getApiUrl()}/projects');
+    const projects = response.data.data;
+    
+    // Filter completed projects
+    const completedProjects = projects.filter(p => p.status === 'Completed');
+    
+    // Get projects with live demos
+    const projectsWithDemos = projects.filter(p => p.liveLink);
+    
+    return { completedProjects, projectsWithDemos };
+  } catch (error) {
+    console.error('Error fetching projects:', error);
+  }
+}`}</code>
                                             </pre>
                                         </div>
                                     </div>

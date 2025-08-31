@@ -5,12 +5,12 @@ import Blog from '@/models/Blog';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { username: string } }
+  { params }: { params: Promise<{ username: string }> }
 ) {
   try {
     await dbConnect();
     
-    const { username } = params;
+    const { username } = await params;
     
     // Find user by username
     const user = await User.findOne({ username });
@@ -22,12 +22,9 @@ export async function GET(
       );
     }
     
-    // Get user's published blog posts
-    const blogPosts = await Blog.find({ 
-      userId: user._id,
-      status: 'published'
-    })
-      .sort({ publishedAt: -1 })
+    // Get all blog posts (since Blog model doesn't have userId field)
+    const blogPosts = await Blog.find()
+      .sort({ createdAt: -1 })
       .lean();
     
     // Format blog posts for public API
@@ -36,13 +33,8 @@ export async function GET(
       title: post.title,
       content: post.content,
       excerpt: post.excerpt,
+      featureImage: post.featureImage,
       tags: post.tags,
-      category: post.category,
-      image: post.image,
-      publishedAt: post.publishedAt,
-      readTime: post.readTime,
-      views: post.views,
-      likes: post.likes,
       createdAt: post.createdAt,
       updatedAt: post.updatedAt
     }));
