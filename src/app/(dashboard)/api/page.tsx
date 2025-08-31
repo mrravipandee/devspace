@@ -47,8 +47,8 @@ export default function ApiPage() {
     const [isLoading, setIsLoading] = useState(true);
 
     const getApiUrl = () => {
-        if (!profile?.username) return 'https://api.devspacee.me/username';
-        return `https://api.devspacee.me/${profile.username}`;
+        if (!profile?.username) return 'https://devspacee.me/api/username';
+        return `https://devspacee.me/api/${profile.username}`;
     };
 
     const getApiEndpoints = (): ApiEndpoint[] => [
@@ -928,8 +928,8 @@ function ProjectCard({ project }) {
                                             <h4 className="font-semibold text-gray-900 dark:text-white mb-2">GitHub README</h4>
                                             <pre className="text-sm font-mono text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded border overflow-x-auto">
                                                 <code>{`<!-- Add to your README.md -->
-![Profile](https://api.devspacee.me/${profile?.username || 'username'}/profile)
-![Projects](https://api.devspacee.me/${profile?.username || 'username'}/projects)`}</code>
+![Profile](https://devspacee.me/api/${profile?.username || 'username'}/profile)
+![Projects](https://devspacee.me/api/${profile?.username || 'username'}/projects)`}</code>
                                             </pre>
                                         </div>
                                         
