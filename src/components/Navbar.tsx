@@ -133,7 +133,7 @@ export default function Navbar() {
       />
       
       <nav className="w-full px-4 py-3 mt-2 flex justify-end relative">
-        <div className={`${currentTheme.bg} px-6 py-2 rounded-full flex justify-end items-center gap-4 shadow-sm`}>
+        <div className={`bg-white dark:bg-[#1B254B]  px-6 py-2 rounded-full flex justify-end items-center gap-4 shadow-sm`}>
           {/* Search Bar */}
           <div className="w-3/5 hidden md:block">
             <div className="relative w-full">
@@ -143,7 +143,7 @@ export default function Navbar() {
               <input
                 type="text"
                 placeholder="Search..."
-                className={`block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-full bg-gray-50 ${currentTheme.text} placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
+                className={`block w-full pl-10 pr-3 py-2 outline-none rounded-full bg-gray-50 dark:bg-[#0B1437] ${currentTheme.text} `}
               />
             </div>
           </div>

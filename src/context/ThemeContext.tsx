@@ -76,8 +76,8 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
     const themeClasses = {
         purple: {
-            bg: darkMode ? 'bg-gray-900' : 'bg-purple-50',
-            text: darkMode ? 'text-purple-200' : 'text-purple-900',
+            bg: darkMode ? 'bg-[#0B1437]' : 'bg-[#F4F7FE]',
+            text: darkMode ? 'text-[#2B3674]' : 'text-[#fff]',
             primary: darkMode ? 'bg-purple-800' : 'bg-purple-600',
             secondary: darkMode ? 'bg-purple-900' : 'bg-purple-500',
             gradientFrom: darkMode ? 'from-purple-700' : 'from-purple-500',
