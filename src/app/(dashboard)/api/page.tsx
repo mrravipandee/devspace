@@ -53,22 +53,41 @@ export default function ApiPage() {
 
     const getApiEndpoints = (): ApiEndpoint[] => [
         {
-            name: "Profile",
+            name: "User Profile",
             path: "/profile",
             method: "GET",
-            description: "Get user profile information including name, bio, social links, and avatar",
+            description: "Get complete user profile information including name, bio, social links, location, and profile completion status",
             example: `curl ${getApiUrl()}/profile`,
             response: `{
   "success": true,
   "data": {
-    "name": "John Doe",
-    "username": "johndoe",
-    "bio": "Full-stack developer...",
-    "avatar": "https://...",
-    "social": {
-      "github": "https://github.com/johndoe",
-      "linkedin": "https://linkedin.com/in/johndoe"
-    }
+    "id": "68ad6c5ef0056f85d1cad178",
+    "username": "mrravipandee",
+    "fullName": "Ravi Pandey",
+    "email": "imravipanday@gmail.com",
+    "bio": "Full-stack developer passionate about creating innovative solutions",
+    "profileImage": "https://res.cloudinary.com/...",
+    "location": "India",
+    "availableForWork": true,
+    "socialHandles": [
+      {
+        "platform": "github",
+        "url": "https://github.com/mrravipandee"
+      },
+      {
+        "platform": "linkedin", 
+        "url": "https://linkedin.com/in/ravi-pandey"
+      }
+    ],
+    "usefulLinks": [
+      {
+        "title": "My Blog",
+        "url": "https://blog.example.com"
+      }
+    ],
+    "profileCompleted": true,
+    "createdAt": "2024-08-31T10:00:00.000Z",
+    "updatedAt": "2024-08-31T10:00:00.000Z"
   }
 }`,
             category: 'profile'
@@ -122,17 +141,30 @@ export default function ApiPage() {
             name: "Blog Posts",
             path: "/blog",
             method: "GET",
-            description: "Get all published blog posts with content and metadata",
+            description: "Get all published blog posts with content, excerpts, feature images, and tags",
             example: `curl ${getApiUrl()}/blog`,
             response: `{
   "success": true,
   "data": [
     {
-      "id": "1",
-      "title": "Blog Post Title",
-      "content": "Blog content...",
-      "publishedAt": "2024-01-01T00:00:00Z",
-      "tags": ["web-development", "react"]
+      "id": "68b4372e3cb0855707aa4124",
+      "title": "Building Modern Web Applications with Next.js",
+      "content": "Next.js has revolutionized the way we build React applications. With its powerful features like Server-Side Rendering (SSR), Static Site Generation (SSG), and API routes, it provides everything you need to create modern web applications...",
+      "excerpt": "Learn how to create fast, SEO-friendly web applications using Next.js 14 and the latest React features. This comprehensive guide covers everything from setup to deployment.",
+      "featureImage": "/certificate_demo.jpg",
+      "tags": ["Next.js", "React", "Web Development", "JavaScript"],
+      "createdAt": "2024-08-31T11:51:10.544Z",
+      "updatedAt": "2024-08-31T11:51:10.544Z"
+    },
+    {
+      "id": "68b4372e3cb0855707aa4125",
+      "title": "Mastering TypeScript for Better Code Quality",
+      "content": "TypeScript brings static typing to JavaScript, making your code more robust and maintainable. In this article, we'll explore advanced TypeScript features and best practices...",
+      "excerpt": "Discover how TypeScript can improve your development workflow and help you catch errors before they reach production. A practical guide for developers.",
+      "featureImage": "/img_dev.jpeg",
+      "tags": ["TypeScript", "JavaScript", "Programming", "Best Practices"],
+      "createdAt": "2024-08-31T11:51:10.545Z",
+      "updatedAt": "2024-08-31T11:51:10.545Z"
     }
   ]
 }`,
@@ -142,18 +174,36 @@ export default function ApiPage() {
             name: "Achievements",
             path: "/achievements",
             method: "GET",
-            description: "Get user achievements, certifications, and awards",
+            description: "Get user achievements, certifications, hackathon wins, and professional milestones with verification links",
             example: `curl ${getApiUrl()}/achievements`,
             response: `{
   "success": true,
   "data": [
     {
-      "id": "1",
-      "title": "Achievement Title",
-      "description": "Achievement description...",
+      "id": "68b4372e3cb0855707aa4128",
+      "title": "AWS Certified Solutions Architect",
+      "description": "Successfully completed the AWS Certified Solutions Architect - Associate certification, demonstrating expertise in designing distributed systems on AWS.",
       "type": "certification",
-      "issuer": "Company Name",
-      "date": "2024-01-01"
+      "issuer": "Amazon Web Services",
+      "date": "2024-06-15T00:00:00.000Z",
+      "image": "/certificate_demo.jpg",
+      "verificationUrl": "https://aws.amazon.com/verification",
+      "skills": ["AWS", "Cloud Architecture", "DevOps", "Infrastructure"],
+      "createdAt": "2024-08-31T11:51:10.561Z",
+      "updatedAt": "2024-08-31T11:51:10.561Z"
+    },
+    {
+      "id": "68b4372e3cb0855707aa4129",
+      "title": "Hackathon Winner - TechCrunch Disrupt",
+      "description": "Won first place in the TechCrunch Disrupt Hackathon 2024 with our innovative AI-powered project management tool that helps teams collaborate more effectively.",
+      "type": "hackathon",
+      "issuer": "TechCrunch",
+      "date": "2024-05-20T00:00:00.000Z",
+      "image": "/img_dev.jpeg",
+      "verificationUrl": "https://techcrunch.com/hackathon-winners",
+      "skills": ["AI", "Machine Learning", "Team Leadership", "Innovation"],
+      "createdAt": "2024-08-31T11:51:10.561Z",
+      "updatedAt": "2024-08-31T11:51:10.561Z"
     }
   ]
 }`,
@@ -218,6 +268,89 @@ export default function ApiPage() {
   }
 }`,
             category: 'resume'
+        }
+    ];
+
+    const getAdditionalEndpoints = (): ApiEndpoint[] => [
+        {
+            name: "Health Check",
+            path: "/api/health",
+            method: "GET",
+            description: "Check API health status and server information",
+            example: `curl https://devspacee.me/api/health`,
+            response: `{
+  "status": "healthy",
+  "timestamp": "2024-08-31T12:00:00.000Z",
+  "version": "1.0.0",
+  "uptime": 3600
+}`,
+            category: 'profile'
+        },
+        {
+            name: "Analytics",
+            path: "/api/analytics",
+            method: "GET",
+            description: "Get API usage analytics and statistics (requires authentication)",
+            example: `curl -H "Authorization: Bearer YOUR_TOKEN" https://devspacee.me/api/analytics?days=30`,
+            response: `{
+  "success": true,
+  "data": {
+    "totalRequests": 1250,
+    "uniqueVisitors": 89,
+    "topEndpoints": [
+      {"endpoint": "/profile", "requests": 450},
+      {"endpoint": "/projects", "requests": 320}
+    ],
+    "recentActivity": [
+      {
+        "endpoint": "/profile",
+        "timestamp": "2024-08-31T11:45:00.000Z",
+        "ip": "192.168.1.1"
+      }
+    ]
+  }
+}`,
+            category: 'profile'
+        },
+        {
+            name: "Contact Form",
+            path: "/api/contact",
+            method: "POST",
+            description: "Submit contact form messages (public endpoint)",
+            example: `curl -X POST https://devspacee.me/api/contact \\
+  -H "Content-Type: application/json" \\
+  -d '{"name": "John Doe", "email": "john@example.com", "message": "Hello!"}'`,
+            response: `{
+  "success": true,
+  "message": "Contact form submitted successfully",
+  "data": {
+    "id": "68b4372e3cb0855707aa412c",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "message": "Hello!",
+    "createdAt": "2024-08-31T12:00:00.000Z"
+  }
+}`,
+            category: 'profile'
+        },
+        {
+            name: "Upload Document",
+            path: "/api/upload-document",
+            method: "POST",
+            description: "Upload documents like resumes, certificates (requires authentication)",
+            example: `curl -X POST https://devspacee.me/api/upload-document \\
+  -H "Authorization: Bearer YOUR_TOKEN" \\
+  -F "file=@resume.pdf"`,
+            response: `{
+  "success": true,
+  "data": {
+    "fileName": "resume.pdf",
+    "fileUrl": "https://res.cloudinary.com/...",
+    "fileSize": 1024000,
+    "fileType": "application/pdf"
+  }
+}`,
+            category: 'profile'
         }
     ];
 
@@ -404,6 +537,53 @@ export default function ApiPage() {
                     </div>
                 </motion.div>
 
+                {/* API Authentication & Rate Limiting */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200 dark:border-purple-800 rounded-2xl p-6 mb-8"
+                >
+                    <div className="flex items-center space-x-3 mb-4">
+                        <CheckCircle className="w-6 h-6 text-purple-600" />
+                        <h3 className="text-xl font-semibold text-purple-900 dark:text-purple-100">
+                            API Authentication & Rate Limiting
+                        </h3>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-purple-200 dark:border-purple-800">
+                            <div className="flex items-center space-x-2 mb-2">
+                                <AlertCircle className="w-5 h-5 text-orange-600" />
+                                <h4 className="font-semibold text-gray-900 dark:text-white">Public Endpoints</h4>
+                            </div>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                                No authentication required for public portfolio data:
+                            </p>
+                            <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                                <li>• /{profile?.username || 'username'}/profile</li>
+                                <li>• /{profile?.username || 'username'}/projects</li>
+                                <li>• /{profile?.username || 'username'}/blog</li>
+                                <li>• /{profile?.username || 'username'}/achievements</li>
+                            </ul>
+                        </div>
+                        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-purple-200 dark:border-purple-800">
+                            <div className="flex items-center space-x-2 mb-2">
+                                <CheckCircle className="w-5 h-5 text-green-600" />
+                                <h4 className="font-semibold text-gray-900 dark:text-white">Rate Limiting</h4>
+                            </div>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                                Generous rate limits for public access:
+                            </p>
+                            <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                                <li>• 1000 requests per hour per IP</li>
+                                <li>• 100 requests per minute per IP</li>
+                                <li>• No API key required for public data</li>
+                                <li>• CORS enabled for web applications</li>
+                            </ul>
+                        </div>
+                    </div>
+                </motion.div>
+
                 {/* Tab Navigation */}
                 <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/50 overflow-hidden mb-8">
                     <div className="flex border-b border-gray-200 dark:border-gray-700">
@@ -452,7 +632,7 @@ export default function ApiPage() {
                             >
                                 {/* API Endpoints */}
                                 <div className="space-y-6">
-                                    {getApiEndpoints().map((endpoint, index) => (
+                                    {[...getApiEndpoints(), ...getAdditionalEndpoints()].map((endpoint, index) => (
                                         <motion.div
                                             key={endpoint.path}
                                             initial={{ opacity: 0, y: 20 }}
