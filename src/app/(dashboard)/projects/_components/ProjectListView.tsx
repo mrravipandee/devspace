@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+// import { useState } from 'react';
 import Image from 'next/image';
 import { MoreVertical, ExternalLink, Github, Edit, Trash2, Eye, Users, Calendar, Clock } from 'lucide-react';
 
@@ -27,7 +27,7 @@ interface ProjectListViewProps {
 }
 
 export default function ProjectListView({ projects, onEdit, onDelete, onView }: ProjectListViewProps) {
-  const [expandedProject, setExpandedProject] = useState<string | null>(null);
+  // const [expandedProject, setExpandedProject] = useState<string | null>(null);
 
   const getStatusColor = (status: string) => {
     switch (status) {

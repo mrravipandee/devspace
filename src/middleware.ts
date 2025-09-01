@@ -19,7 +19,7 @@ async function trackApiAnalytics(request: NextRequest, response: NextResponse, u
       try {
         const refererUrl = new URL(referer);
         website = refererUrl.hostname;
-      } catch (e) {
+      } catch {
         // Invalid referer URL
       }
     }

@@ -7,7 +7,6 @@ import {
     Code, 
     Copy, 
     BookOpen,
-    Terminal,
     Globe,
     Zap,
     ExternalLink,
@@ -489,7 +488,7 @@ export default function ApiPage() {
                         </div>
                     </div>
                     <p className="text-sm text-blue-700 dark:text-blue-300 mt-3">
-                        This is your unique API endpoint. All endpoints are public and don't require authentication.
+                        This is your unique API endpoint. All endpoints are public and don&apos;t require authentication.
                     </p>
                 </motion.div>
 

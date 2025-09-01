@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { 
     ArrowLeft, MapPin, ExternalLink, Moon, Sun, Send, User, MessageSquare,
-    Share2, Copy, Check, Mail, Phone, Calendar, Award, Code, BookOpen,
-    Globe, Github, Linkedin, Twitter, Instagram, Youtube, Heart
+    Share2, Check, Calendar, Award, Code, BookOpen,
+    Globe, Github, Heart
 } from 'lucide-react';
 import {
     FaGithub, FaLinkedin, FaTwitter, FaGlobe, FaCodepen,
@@ -95,7 +95,7 @@ export default function UserPage() {
         message: ''
     });
     const [copied, setCopied] = useState(false);
-    const { darkMode, toggleDarkMode, currentTheme } = useTheme();
+    const { darkMode, toggleDarkMode } = useTheme();
 
     const getSocialIcon = (platform: string) => {
         const platformLower = platform.toLowerCase();
@@ -125,7 +125,7 @@ export default function UserPage() {
             setCopied(true);
             toast.success('Profile link copied to clipboard!');
             setTimeout(() => setCopied(false), 2000);
-        } catch (err) {
+        } catch {
             toast.error('Failed to copy link');
         }
     };

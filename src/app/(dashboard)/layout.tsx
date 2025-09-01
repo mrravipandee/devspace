@@ -14,7 +14,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     const pathname = usePathname();
     const [isLoading, setIsLoading] = useState(true);
     const [retryCount, setRetryCount] = useState(0);
-    const { currentTheme, isLoaded } = useTheme();
+    const { currentTheme } = useTheme();
 
     useEffect(() => {
         const checkProfileCompletion = async () => {

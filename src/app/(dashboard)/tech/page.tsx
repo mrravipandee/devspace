@@ -4,9 +4,8 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   PlusCircle, Trash2, Edit, X, Code, Cpu, Database, Cloud, Layers, Smartphone, 
-  Search, Filter, SortAsc, SortDesc, Calendar, Star, TrendingUp, CheckCircle, 
-  Loader2, Sparkles, Target, Medal, Eye, Share2, Download, Zap, Briefcase,
-  Clock, Award, Users, EyeOff, ExternalLink
+  Search, Filter, SortAsc, SortDesc, Calendar, Star, TrendingUp, Loader2, Sparkles, Clock, Award,
+  Eye,
 } from "lucide-react";
 import Image from "next/image";
 import { toast } from 'sonner';
@@ -227,7 +226,7 @@ export default function TechStackPage() {
     }
   };
 
-  const handleImageUpload = (url: string, publicId: string) => {
+  const handleImageUpload = (url: string ) => {
     if (currentTech) {
       setCurrentTech({
         ...currentTech,

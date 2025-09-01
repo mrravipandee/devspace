@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   PlusCircle, Trash2, Edit, X, Award, Trophy, FileBadge, Briefcase, Search,
   Filter, SortAsc, SortDesc, Calendar, ExternalLink, Star, TrendingUp,
-  CheckCircle, Loader2, Sparkles, Target, Medal, Eye, Share2, Download
+  CheckCircle, Loader2, Sparkles, Target, Medal,
 } from "lucide-react";
 import Image from "next/image";
 import { toast } from 'sonner';
@@ -137,7 +137,7 @@ export default function AchievementsPage() {
       await deleteAchievement(id);
       setAchievements(achievements?.filter(achievement => achievement.id !== id) || []);
       toast.success('Achievement deleted successfully');
-    } catch (error) {
+    } catch{
       toast.error('Failed to delete achievement');
     }
   };
@@ -171,14 +171,15 @@ export default function AchievementsPage() {
       }
       setIsModalOpen(false);
       setCurrentAchievement(null);
-    } catch (error) {
+    } catch {
       toast.error('Failed to save achievement');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleImageUpload = (url: string, publicId: string) => {
+  // const handleImageUpload = (url: string, publicId: string)
+  const handleImageUpload = (url: string) => {
     if (currentAchievement) {
       setCurrentAchievement({ ...currentAchievement, image: url });
     }

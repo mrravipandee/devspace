@@ -7,7 +7,7 @@ import ContributionImageUpload from "@/components/ContributionImageUpload";
 import { 
   Github, GitPullRequest, Star, GitFork, Code2, PlusCircle, Trash2, Edit, X, 
   Search, Filter, SortAsc, SortDesc, Calendar, ExternalLink, TrendingUp,
-  Bug, Zap, FileText, Globe, Settings, Eye, Share2, Download
+  Bug, Zap, FileText, Globe, Settings,
 } from "lucide-react";
 import Image from "next/image";
 import { toast } from 'sonner';
@@ -135,7 +135,7 @@ export default function ContributionsPage() {
 
     // Apply sorting
     filtered.sort((a, b) => {
-      let aValue: any, bValue: any;
+      let aValue: string | number | Date, bValue: string | number | Date;
       
       switch (sortBy) {
         case 'date':
@@ -442,7 +442,7 @@ export default function ContributionsPage() {
                 {sortOrder === 'asc' ? <SortAsc className="w-5 h-5 text-gray-400" /> : <SortDesc className="w-5 h-5 text-gray-400" />}
                 <select
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
+                  onChange={(e) => setSortBy(e.target.value as 'date' | 'projectName' | 'stars' | 'forks')}
                   className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 >
                   <option value="date">Date</option>

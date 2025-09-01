@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { 
-    ArrowLeft, MapPin, ExternalLink, Moon, Sun, User, Heart, Globe
+    ArrowLeft, ExternalLink, Moon, Sun, User, Heart, Globe, Github
 } from 'lucide-react';
 import {
     FaGithub, FaLinkedin, FaTwitter, FaGlobe, FaCodepen,
@@ -81,7 +81,7 @@ export default function SimpleUserPage() {
             setCopied(true);
             toast.success('Profile link copied to clipboard!');
             setTimeout(() => setCopied(false), 2000);
-        } catch (err) {
+        } catch {
             toast.error('Failed to copy link');
         }
     };

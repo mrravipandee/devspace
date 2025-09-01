@@ -5,12 +5,10 @@ import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { toast } from 'sonner';
+// import { toast } from 'sonner';
 import { 
-    ArrowLeft, MapPin, ExternalLink, Moon, Sun, User, Heart,
-    BarChart3, TrendingUp, Users, Code, BookOpen, Calendar,
-    Eye, MessageSquare, Star, Activity, Globe, Github,
-    ChevronRight, Clock, Award, Target, Zap
+    ArrowLeft, MapPin, ExternalLink, Moon, Sun,
+    TrendingUp, Users, Code, BookOpen, Eye, Activity, Clock,
 } from 'lucide-react';
 import {
     FaGithub, FaLinkedin, FaTwitter, FaGlobe, FaCodepen,

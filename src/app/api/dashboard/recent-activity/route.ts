@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import User from "@/models/User";
 import Project from "@/models/Project";
@@ -14,7 +14,7 @@ type Activity = {
   views?: number;
 };
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     await dbConnect();
 
