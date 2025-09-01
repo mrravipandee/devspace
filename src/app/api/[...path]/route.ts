@@ -152,29 +152,43 @@ export async function GET(
           return NextResponse.json({ success: true, data: formattedContributions });
           
         case 'resume':
+          interface ResumeType {
+            _id: string;
+            fileName: string;
+            fileUrl: string;
+            fileSize: number;
+            fileType: string;
+            uploadDate: Date;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
+          }
+
           const resume = await Resume.findOne({ 
             userId: user._id,
             isActive: true
           }).lean();
-          
-          if (!resume) {
+
+          if (!resume || Array.isArray(resume)) {
             return NextResponse.json({
               success: true,
               data: null,
               message: 'No active resume found'
             });
           }
-          
+
+          const r = resume as unknown as ResumeType;
+
           const formattedResume = {
-            id: resume._id,
-            fileName: resume.fileName,
-            fileUrl: resume.fileUrl,
-            fileSize: resume.fileSize,
-            fileType: resume.fileType,
-            uploadDate: resume.uploadDate,
-            isActive: resume.isActive,
-            createdAt: resume.createdAt,
-            updatedAt: resume.updatedAt
+            id: r._id,
+            fileName: r.fileName,
+            fileUrl: r.fileUrl,
+            fileSize: r.fileSize,
+            fileType: r.fileType,
+            uploadDate: r.uploadDate,
+            isActive: r.isActive,
+            createdAt: r.createdAt,
+            updatedAt: r.updatedAt
           };
           return NextResponse.json({ success: true, data: formattedResume });
           
