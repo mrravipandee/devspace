@@ -10,7 +10,7 @@ import Resume from '@/models/Resume';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Record<string, string | string[]> }
 ) {
   try {
     await dbConnect();
