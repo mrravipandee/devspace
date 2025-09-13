@@ -9,13 +9,7 @@ import Contribution from '@/models/Contribution';
 import Resume from '@/models/Resume';
 import { Types } from 'mongoose';
 
-interface RouteParams {
-  params: {
-    path: string[];
-  };
-}
-
-// Base interface for all documents
+// Interface definitions
 interface BaseDocument {
   _id: Types.ObjectId;
   userId: Types.ObjectId;
@@ -23,22 +17,6 @@ interface BaseDocument {
   updatedAt: Date;
 }
 
-// User profile interface
-interface UserProfile {
-  name: string;
-  username: string;
-  bio?: string;
-  avatar?: string;
-  social?: Record<string, string>;
-  location?: string;
-  website?: string;
-  company?: string;
-  jobTitle?: string;
-  skills?: string[];
-  createdAt: Date;
-}
-
-// Project interface
 interface ProjectDocument extends BaseDocument {
   title: string;
   description: string;
@@ -50,7 +28,6 @@ interface ProjectDocument extends BaseDocument {
   featured: boolean;
 }
 
-// Blog interface
 interface BlogDocument extends BaseDocument {
   title: string;
   content: string;
@@ -65,7 +42,6 @@ interface BlogDocument extends BaseDocument {
   status: 'draft' | 'published';
 }
 
-// Achievement interface
 interface AchievementDocument extends BaseDocument {
   title: string;
   description: string;
@@ -77,11 +53,10 @@ interface AchievementDocument extends BaseDocument {
   category: string;
 }
 
-// TechStack interface
 interface TechStackDocument extends BaseDocument {
   name: string;
   category: string;
-  proficiency: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+  proficiency: string;
   yearsOfExperience: number;
   lastUsed?: Date;
   icon?: string;
@@ -89,7 +64,6 @@ interface TechStackDocument extends BaseDocument {
   description?: string;
 }
 
-// Contribution interface
 interface ContributionDocument extends BaseDocument {
   projectName: string;
   projectUrl?: string;
@@ -103,7 +77,6 @@ interface ContributionDocument extends BaseDocument {
   projectLogo?: string;
 }
 
-// Resume interface
 interface ResumeDocument extends BaseDocument {
   fileName: string;
   fileUrl: string;
@@ -115,7 +88,7 @@ interface ResumeDocument extends BaseDocument {
 
 export async function GET(
   request: NextRequest,
-  { params }: RouteParams
+  { params }: { params: { path: string[] } }
 ) {
   try {
     await dbConnect();
@@ -138,21 +111,22 @@ export async function GET(
 
     // If no endpoint or profile
     if (!endpoint || endpoint === 'profile') {
-      const userProfile: UserProfile = {
-        name: user.name,
-        username: user.username,
-        bio: user.bio,
-        avatar: user.avatar,
-        social: user.social,
-        location: user.location,
-        website: user.website,
-        company: user.company,
-        jobTitle: user.jobTitle,
-        skills: user.skills,
-        createdAt: user.createdAt,
-      };
-      
-      return NextResponse.json({ success: true, data: userProfile });
+      return NextResponse.json({
+        success: true,
+        data: {
+          name: user.name,
+          username: user.username,
+          bio: user.bio,
+          avatar: user.avatar,
+          social: user.social,
+          location: user.location,
+          website: user.website,
+          company: user.company,
+          jobTitle: user.jobTitle,
+          skills: user.skills,
+          createdAt: user.createdAt,
+        },
+      });
     }
 
     // Other endpoints
