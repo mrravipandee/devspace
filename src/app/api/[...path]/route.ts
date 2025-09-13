@@ -88,12 +88,14 @@ interface ResumeDocument extends BaseDocument {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
   try {
     await dbConnect();
 
-    const path = params.path;
+    // Await the params promise
+    const resolvedParams = await params;
+    const path = resolvedParams.path;
     const segments = Array.isArray(path) ? path : [path];
 
     if (!segments || segments.length === 0) {
