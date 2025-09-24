@@ -3,28 +3,13 @@
 import { X, Star, StarHalf } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Hero() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const router = useRouter();
     const containerRef = useRef<HTMLDivElement>(null);
 
-    // Scroll-based animations for the main container
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ['start start', 'end start'],
-    });
-
-    // Animation for left content - flip and move left
-    const leftFlip = useTransform(scrollYProgress, [0, 0.5], [0, -180]);
-    const leftX = useTransform(scrollYProgress, [0, 0.5], [0, -200]);
-    const leftOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-
-    // Animation for right content - zoom in and fade
-    const rightScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.5]);
-    const rightOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
     useEffect(() => {
         document.body.style.overflow = isModalOpen ? 'hidden' : 'auto';
@@ -94,46 +79,6 @@ export default function Hero() {
                         >
                             See Live Demo
                         </button>
-                    </motion.div>
-                </div>
-
-                {/* Animated Images - Left and Right Content */}
-                <div className="hidden md:block absolute inset-0 overflow-hidden pointer-events-none">
-                    {/* Left Content - Will flip and move left */}
-                    <motion.div
-                        style={{
-                            rotateY: leftFlip,
-                            x: leftX,
-                            opacity: leftOpacity,
-                            perspective: '1000px',
-                            transformStyle: 'preserve-3d'
-                        }}
-                        className="absolute top-[15%] left-[-80px] w-[400px]"
-                    >
-                        <Image
-                            src="/devspace_adarsh.png"
-                            height={500}
-                            width={500}
-                            className="-rotate-12"
-                            alt="Adarsh dubey Review"
-                        />
-                    </motion.div>
-
-                    {/* Right Content - Will zoom in */}
-                    <motion.div
-                        style={{
-                            scale: rightScale,
-                            opacity: rightOpacity,
-                        }}
-                        className="absolute top-[15%] right-[5%] w-[220px] origin-center"
-                    >
-                        <Image
-                            src="/user_in_frame.png"
-                            height={400}
-                            width={200}
-                            className="rounded-[30px] object-cover shadow-xl h-[30rem]"
-                            alt="Phone user mode right"
-                        />
                     </motion.div>
                 </div>
             </section>
